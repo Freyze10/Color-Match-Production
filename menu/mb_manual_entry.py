@@ -1,0 +1,1115 @@
+from datetime import datetime
+
+from PyQt6.QtCore import Qt, QThread, QTimer
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QScrollArea, QFrame, QHBoxLayout, QGroupBox, QGridLayout, QLineEdit, \
+    QLabel, QComboBox, QTextEdit, QCheckBox, QTableWidget, QHeaderView, QAbstractItemView, QPushButton, QMessageBox, \
+    QTableWidgetItem, QCompleter
+import qtawesome as fa
+
+from db.legacy import SyncRM
+from db.read import get_single_production_data, get_single_production_details, get_rm_code_lists, get_latest_prod_id, \
+    get_cancelled_production_data, check_production_exists
+from db.update import cancel_production
+from db.write import log_audit_trail, save_production_record
+from print.print_preview import ProductionPrintPreview
+from util.display_print_message import show_printed_locked_message
+from util.field_format import format_to_float, SmartDateEdit, production_mixing_time, NumericTableWidgetItem, \
+    add_batch_text, setup_auto_completers
+from util.loading import LoadingDialog
+from util.validate_input import validate_lot_field
+from workstation.workstation_details import _get_workstation_info
+
+
+class MBManualEntry(QWidget):
+    def __init__(self, is_mac_enabled, user_role, prod_id=0):
+        super().__init__()
+        self.prod_id = prod_id
+        self.prod_results = None
+        self.prod_materials = None
+        self.work_station = _get_workstation_info()
+        self.is_mac_enabled = is_mac_enabled
+        self.user_role = user_role
+        # Track current production for edit/view
+        self.current_production_id = None
+
+        self.setup_ui()
+
+        if str(self.user_role).upper() == "VIEWER" or not self.is_mac_enabled:
+            self.apply_viewer_restrictions()
+    def setup_ui(self):
+
+        main_layout = QVBoxLayout(self)
+        main_layout.setContentsMargins(5, 5, 5, 5)
+        main_layout.setSpacing(5)
+
+        # Scrollable content
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        scroll.setFrameShape(QFrame.Shape.NoFrame)
+
+        scroll_widget = QWidget()
+        scroll_layout = QHBoxLayout(scroll_widget)
+        scroll_layout.setSpacing(12)
+
+        # Left Column - Production Information
+        left_column = QVBoxLayout()
+        left_column.setSpacing(6)
+
+        # Production Information Card
+        primary_card = QGroupBox("Production Information")
+        primary_layout = QGridLayout(primary_card)
+        primary_layout.setSpacing(4)
+        primary_layout.setContentsMargins(8, 12, 8, 4)
+        row = 0
+
+        # WIP No (Production ID)
+        self.wip_no_input = QLineEdit(objectName='gray_bg')
+        primary_layout.addWidget(QLabel("WIP No:"), row, 0)
+        primary_layout.addWidget(self.wip_no_input, row, 1)
+        row += 1
+
+        # Production ID
+        self.production_id_input = QLineEdit(objectName='required')
+        self.production_id_input.setPlaceholderText("000000")
+        primary_layout.addWidget(QLabel("Production ID:"), row, 0)
+        primary_layout.addWidget(self.production_id_input, row, 1)
+        row += 1
+
+        # Form Type
+        self.form_type_combo = QComboBox()
+        self.form_type_combo.addItems(["NEW", "CORRECTION"])
+        self.form_type_combo.setStyleSheet("background-color: #FDECCE;")
+        primary_layout.addWidget(QLabel("Form Type:"), row, 0)
+        primary_layout.addWidget(self.form_type_combo, row, 1)
+        row += 1
+
+        # Product Code
+        self.product_code_input = QLineEdit(objectName='required')
+        self.product_code_input.setPlaceholderText("Enter product code")
+        primary_layout.addWidget(QLabel("Product Code:"), row, 0)
+        primary_layout.addWidget(self.product_code_input, row, 1)
+        row += 1
+
+        # Product Color
+        self.product_color_input = QLineEdit()
+        self.product_color_input.setPlaceholderText("Enter product color")
+        primary_layout.addWidget(QLabel("Product Color:"), row, 0)
+        primary_layout.addWidget(self.product_color_input, row, 1)
+        row += 1
+
+        # Formula
+        self.formula_input = QLineEdit()
+        self.formula_input.setPlaceholderText("0")
+        primary_layout.addWidget(QLabel("Formula:"), row, 0)
+        primary_layout.addWidget(self.formula_input, row, 1)
+        row += 1
+
+        # Sum of Cons and Dosage in one row
+        sum_dosage_layout = QHBoxLayout()
+        sum_dosage_layout.setSpacing(9)
+
+        self.sum_cons_input = QLineEdit()
+        self.sum_cons_input.setPlaceholderText("0.00000")
+        self.sum_cons_input.focusOutEvent = lambda event: format_to_float(self, event, self.sum_cons_input)
+        sum_dosage_layout.addWidget(self.sum_cons_input)
+
+        dosage_label = QLabel("Dosage:")
+        sum_dosage_layout.addWidget(dosage_label)
+
+        self.dosage_input = QLineEdit(objectName='required')
+        self.dosage_input.setPlaceholderText("0.000000")
+        self.dosage_input.focusOutEvent = lambda event: format_to_float(self, event, self.dosage_input)
+        sum_dosage_layout.addWidget(self.dosage_input)
+
+        primary_layout.addWidget(QLabel("Sum of Cons:"), row, 0)
+        primary_layout.addLayout(sum_dosage_layout, row, 1)
+        row += 1
+
+        # Customer
+        self.customer_input = QLineEdit(objectName='required')
+        self.customer_input.setPlaceholderText("Enter customer")
+        primary_layout.addWidget(QLabel("Customer:"), row, 0)
+        primary_layout.addWidget(self.customer_input, row, 1)
+        row += 1
+
+        # Lot No
+        self.lot_no_input = QLineEdit(objectName='required')
+        self.lot_no_input.setPlaceholderText("Enter lot number")
+        primary_layout.addWidget(QLabel("Lot No:"), row, 0)
+        self.lot_no_input.focusOutEvent = self.validate_lot_no
+        primary_layout.addWidget(self.lot_no_input, row, 1)
+        row += 1
+
+        # Production Date
+        self.production_date_input = SmartDateEdit()
+        self.production_date_input.setStyleSheet("background-color: #FDECCE;")
+        primary_layout.addWidget(QLabel("Production Date:"), row, 0)
+        primary_layout.addWidget(self.production_date_input, row, 1)
+        row += 1
+
+        # Confirmation Date
+        self.confirmation_date_input = SmartDateEdit()
+        primary_layout.addWidget(QLabel("Confirmation Date:  <br><span style='font-size: 10px;'>(For Inventory Only)</span>"), row, 0)
+        primary_layout.addWidget(self.confirmation_date_input, row, 1)
+        row += 1
+
+        # Order Form No
+        self.order_form_no_input = QLineEdit(objectName='required')
+        self.order_form_no_input.setPlaceholderText("Enter order form number")
+        primary_layout.addWidget(QLabel("Order Form No:"), row, 0)
+        primary_layout.addWidget(self.order_form_no_input, row, 1)
+        row += 1
+
+        # Colormatch No
+        self.colormatch_no_input = QLineEdit()
+        self.colormatch_no_input.setPlaceholderText("Enter colormatch number")
+        # primary_layout.addWidget(QLabel("Colormatch No:"), row, 0)
+        # primary_layout.addWidget(self.colormatch_no_input, row, 1)
+        row += 1
+
+        # Matched Date
+        self.matched_date_input = SmartDateEdit()
+        # primary_layout.addWidget(QLabel("Matched Date:"), row, 0)
+        # primary_layout.addWidget(self.matched_date_input, row, 1)
+        row += 1
+
+        # Mixing Time and Machine No in one row
+        mixing_machine_layout = QHBoxLayout()
+        mixing_machine_layout.setSpacing(9)
+
+        self.mixing_time_input = QLineEdit()
+        self.mixing_time_input.setPlaceholderText("Enter mixing time")
+        self.mixing_time_input.focusOutEvent = lambda event: production_mixing_time(event, self.mixing_time_input)
+        mixing_machine_layout.addWidget(self.mixing_time_input)
+
+        machine_no_label = QLabel("Machine No:")
+        mixing_machine_layout.addWidget(machine_no_label)
+
+        self.machine_no_input = QLineEdit()
+        self.machine_no_input.setPlaceholderText("Enter machine number")
+        mixing_machine_layout.addWidget(self.machine_no_input)
+
+        primary_layout.addWidget(QLabel("Mixing Time:"), row, 0)
+        primary_layout.addLayout(mixing_machine_layout, row, 1)
+        row += 1
+
+        # Qty Required and Qty Per Batch in one row
+        qty_layout = QHBoxLayout()
+        qty_layout.setSpacing(9)
+
+        self.qty_required_input = QLineEdit(objectName='required')
+        self.qty_required_input.setPlaceholderText("0.0000000")
+        self.qty_required_input.focusOutEvent = lambda event: format_to_float(self, event, self.qty_required_input)
+        qty_layout.addWidget(self.qty_required_input)
+
+        qty_batch_label = QLabel("Qty. Per Batch:")
+        qty_layout.addWidget(qty_batch_label)
+
+        self.qty_per_batch_input = QLineEdit(objectName='required')
+        self.qty_per_batch_input.setPlaceholderText("0.0000000")
+        self.qty_per_batch_input.focusOutEvent = lambda event: format_to_float(self, event, self.qty_per_batch_input)
+        qty_layout.addWidget(self.qty_per_batch_input)
+
+        primary_layout.addWidget(QLabel("Qty. Required:"), row, 0)
+        primary_layout.addLayout(qty_layout, row, 1)
+        row += 1
+
+        # Prepared By
+        self.prepared_by_input = QLineEdit(objectName='required')
+        self.prepared_by_input.setPlaceholderText("Enter preparer name")
+        primary_layout.addWidget(QLabel("Prepared By:"), row, 0)
+        primary_layout.addWidget(self.prepared_by_input, row, 1)
+        row += 1
+
+        # Notes
+        self.notes_input = QTextEdit()
+        self.notes_input.setPlaceholderText("Enter any notes...")
+        self.notes_input.setMinimumHeight(30)
+        self.notes_input.setMaximumHeight(50)
+        primary_layout.addWidget(QLabel("Notes:"), row, 0)
+        primary_layout.addWidget(self.notes_input, row, 1)
+        row += 1
+
+        self.qty_per_batch_input.editingFinished.connect(
+            lambda: add_batch_text(
+                self.qty_required_input.text(),
+                self.qty_per_batch_input.text(),
+                self.notes_input
+            )
+        )
+
+        left_column.addWidget(primary_card)
+        scroll_layout.addLayout(left_column, stretch=1)
+
+        # Right Column - Materials
+        right_column = QVBoxLayout()
+        right_column.setSpacing(4)
+
+        # Materials Card
+        material_card = QGroupBox("Material Composition")
+        material_layout = QVBoxLayout(material_card)
+        material_layout.setContentsMargins(8, 12, 8, 4)
+        material_layout.setSpacing(6)
+
+        # Material Type Selection (Radio-button behavior)
+        material_type_layout = QHBoxLayout()
+        material_type_layout.addWidget(QLabel("Material Used:"))
+        self.raw_material_check = QCheckBox("RAW MATERIAL")
+        self.raw_material_check.setObjectName("RawMaterialCheck")
+        self.raw_material_check.setChecked(True)
+        self.non_raw_material_check = QCheckBox("NON-RAW MATERIAL")
+        self.non_raw_material_check.setObjectName("NonRawMaterialCheck")
+
+        # Make checkboxes behave like radio buttons
+        self.raw_material_check.toggled.connect(lambda checked: self.on_material_type_changed(checked, True))
+        self.non_raw_material_check.toggled.connect(lambda checked: self.on_material_type_changed(checked, False))
+
+        material_type_layout.addWidget(self.raw_material_check)
+        material_type_layout.addWidget(self.non_raw_material_check)
+        material_type_layout.addStretch()
+        material_layout.addLayout(material_type_layout)
+
+        # Material Input Section
+        input_card = QFrame()
+        input_layout = QGridLayout(input_card)
+        input_layout.setSpacing(6)
+
+        # Material Code - Create both QComboBox and QLineEdit
+        self.material_code_combo = QComboBox()
+        self.material_code_combo.setEditable(True)
+        self.material_code_combo.setInsertPolicy(QComboBox.InsertPolicy.NoInsert)
+        self.material_code_combo.setPlaceholderText("Enter material code")
+        self.material_code_combo.setStyleSheet("background-color: #FDECCE;")
+        self.material_code_combo.lineEdit().editingFinished.connect(self.validate_rm_code)
+        self.setup_rm_code_completer()
+        self.material_code_combo.setCurrentIndex(0)
+
+        self.material_code_lineedit = QLineEdit()
+        self.material_code_lineedit.setPlaceholderText("Enter material code")
+        self.material_code_lineedit.setStyleSheet("background-color: #FDECCE;")
+        self.material_code_lineedit.setVisible(False)  # Hidden by default
+
+        btn_sync_rm = QPushButton("Sync")
+        btn_sync_rm.setObjectName("SuccessButton")
+        btn_sync_rm.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        btn_sync_rm.clicked.connect(self.sync_rm)
+
+        # Add label
+        input_layout.addWidget(QLabel("Material Code:"), 0, 0)
+        # Add both widgets to the same position (only one will be visible at a time)
+        input_layout.addWidget(self.material_code_combo, 0, 1, 1, 2)
+        input_layout.addWidget(self.material_code_lineedit, 0, 1, 1, 2)
+        input_layout.addWidget(btn_sync_rm, 0, 3)
+
+        # Large Scale
+        self.large_scale_input = QLineEdit()
+        self.large_scale_input.setPlaceholderText("0.0000000")
+        self.large_scale_input.setStyleSheet("background-color: #fff9c4;")
+        input_layout.addWidget(QLabel("Large Scale (KG):"), 1, 0)
+        input_layout.addWidget(self.large_scale_input, 1, 1, 1, 3)
+
+        # Small Scale
+        self.small_scale_input = QLineEdit()
+        self.small_scale_input.setPlaceholderText("0.0000000")
+        self.small_scale_input.setStyleSheet("background-color: #fff9c4;")
+        input_layout.addWidget(QLabel("Small Scale (G):"), 2, 0)
+        input_layout.addWidget(self.small_scale_input, 2, 1, 1, 3)
+
+        # Total Weight
+        self.total_weight_input = QLineEdit()
+        self.total_weight_input.setPlaceholderText("0.0000000")
+        self.total_weight_input.setStyleSheet("background-color: #fff9c4;")
+        self.total_weight_input.returnPressed.connect(self.add_material)
+        self.total_weight_input.installEventFilter(self)
+        input_layout.addWidget(QLabel("Total Weight (KG):"), 3, 0)
+        input_layout.addWidget(self.total_weight_input, 3, 1, 1, 3)
+
+        # Action Buttons
+        action_layout = QHBoxLayout()
+
+        btn_separator = QPushButton("Separator")
+        btn_separator.setObjectName("TertiaryButton")
+        btn_separator.clicked.connect(self.add_separator)
+        action_layout.addWidget(btn_separator)
+
+        action_layout.addStretch()
+
+        add_btn = QPushButton("Add")
+        add_btn.setObjectName("SuccessButton")
+        add_btn.clicked.connect(self.add_material)
+        action_layout.addWidget(add_btn)
+
+        remove_btn = QPushButton("Remove")
+        remove_btn.setObjectName("DangerButton")
+        remove_btn.clicked.connect(self.remove_material)
+        action_layout.addWidget(remove_btn)
+
+        clear_btn = QPushButton("Clear")
+        clear_btn.setObjectName("SecondaryButton")
+        clear_btn.clicked.connect(self.clear_material_table)
+        action_layout.addWidget(clear_btn)
+
+        remove_btn.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        clear_btn.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+
+        input_layout.addLayout(action_layout, 4, 0, 1, 4)
+        material_layout.addWidget(input_card)
+
+        # Materials Table
+        self.materials_table = QTableWidget()
+        self.materials_table.setColumnCount(4)
+        self.materials_table.setHorizontalHeaderLabels([
+            "Material Name", "Large Scale (KG)", "Small Scale (G)",
+            "Total Weight (KG)"
+        ])
+        self.materials_table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+        self.materials_table.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+        self.materials_table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.materials_table.verticalHeader().setVisible(False)
+        self.materials_table.setAlternatingRowColors(True)
+        self.materials_table.setMinimumHeight(200)
+        self.materials_table.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
+        self.materials_table.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
+        self.materials_table.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        material_layout.addWidget(self.materials_table)
+
+        # Totals Display
+        total_layout = QHBoxLayout()
+        total_layout.addWidget(QLabel("No. of Item(s):"))
+        self.no_items_label = QLabel("0")
+        self.no_items_label.setStyleSheet("font-weight: bold; color: #0078d4;")
+        total_layout.addWidget(self.no_items_label)
+        total_layout.addStretch()
+        total_layout.addWidget(QLabel("Total Weight:"))
+        self.total_weight_label = QLabel("0.0000000")
+        self.total_weight_label.setStyleSheet("font-weight: bold; color: #0078d4;")
+        total_layout.addWidget(self.total_weight_label)
+        material_layout.addLayout(total_layout)
+
+        # Encoding Information
+        encoding_layout = QGridLayout()
+        encoding_layout.setSpacing(6)
+
+        self.encoded_by_display = QLineEdit()
+        self.encoded_by_display.setReadOnly(True)
+        self.encoded_by_display.setText(self.work_station['u'])
+        self.encoded_by_display.setStyleSheet("background-color: #e9ecef;")
+
+        encoding_layout.addWidget(QLabel("Encoded By:"), 0, 0)
+        encoding_layout.addWidget(self.encoded_by_display, 0, 1)
+
+        self.production_confirmation_display = QLineEdit()
+        self.production_confirmation_display.setPlaceholderText("mm/dd/yyyy h:m:s")
+        self.production_confirmation_display.setStyleSheet("background-color: #fff9c4;")
+        self.production_confirmation_display.setReadOnly(True)
+        encoding_layout.addWidget(QLabel("Production Confirmation Encoded On:"), 1, 0)
+        encoding_layout.addWidget(self.production_confirmation_display, 1, 1)
+
+        self.production_encoded_display = QLineEdit()
+        self.production_encoded_display.setText(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+        self.production_encoded_display.setReadOnly(True)
+        self.production_encoded_display.setStyleSheet("background-color: #e9ecef;")
+        encoding_layout.addWidget(QLabel("Production Encoded On:"), 2, 0)
+        encoding_layout.addWidget(self.production_encoded_display, 2, 1)
+
+        material_layout.addLayout(encoding_layout)
+
+        right_column.addWidget(material_card)
+        scroll_layout.addLayout(right_column, stretch=1)
+
+        scroll.setWidget(scroll_widget)
+        main_layout.addWidget(scroll)
+
+        # Bottom Buttons
+        button_layout = QHBoxLayout()
+
+        self.btn_cancel = QPushButton("Cancel Record", objectName="DangerButton")
+        self.btn_cancel.setIcon(fa.icon('mdi6.text-box-remove', color='white'))
+        self.btn_cancel.clicked.connect(self.cancel_production)
+        button_layout.addWidget(self.btn_cancel)
+
+        button_layout.addStretch()
+
+        self.print_wip_btn = QPushButton("Print with WIP", objectName="SecondaryButton")
+        self.print_wip_btn.setIcon(fa.icon('fa5s.print', color='white'))
+        self.print_wip_btn.clicked.connect(lambda: self.print_production(with_wip=True))
+        button_layout.addWidget(self.print_wip_btn)
+
+        self.print_btn = QPushButton("Print", objectName="WarningButton")
+        self.print_btn.setIcon(fa.icon('fa5s.print', color='white'))
+        self.print_btn.clicked.connect(self.print_production)
+        button_layout.addWidget(self.print_btn)
+
+        self.new_btn = QPushButton("New", objectName="PrimaryButton")
+        self.new_btn.setIcon(fa.icon('fa5s.file', color='white'))
+        self.new_btn.clicked.connect(self.new_production)
+        button_layout.addWidget(self.new_btn)
+
+        self.save_btn = QPushButton("Save", objectName="InfoButton")
+        self.save_btn.setIcon(fa.icon('fa5s.save', color='white'))
+        # self.save_btn.clicked.connect(self.save_production)
+        button_layout.addWidget(self.save_btn)
+
+        main_layout.addLayout(button_layout)
+
+        self.lot_list = []
+        # call the auto completer
+        self.lot_list = setup_auto_completers(
+            customer_widget=self.customer_input,
+            product_widget=self.product_code_input,
+            order_widget=self.order_form_no_input,
+            lot_list=self.lot_list
+        )
+
+        if self.prod_id != 0:
+            try:
+                self.prod_results = get_single_production_data(self.prod_id)
+                self.prod_materials = get_single_production_details(self.prod_id)
+                if not self.prod_results:
+                    QMessageBox.warning(self, "Not Found",
+                                        f"Production {self.prod_id} not found.")
+                    return False
+                self.display_details()
+            except Exception as e:
+                QMessageBox.critical(self, "Error", f"Failed to load: {e}")
+                return False
+        else:
+            self.new_production()
+
+    def validate_lot_no(self, event):
+        product_code = self.product_code_input.text().strip()
+
+        is_mb_value = "-" not in product_code
+
+        if validate_lot_field(
+                parent=self,
+                widget=self.lot_no_input,
+                existing_list=self.lot_list,
+                event=event,
+                title="Duplicate Lot Number",
+                msg_body="Please enter a different lot number.",
+                is_mb=is_mb_value
+        ):
+            if hasattr(super(), 'focusOutEvent'):
+                super().focusOutEvent(event)
+
+    def on_material_type_changed(self, checked, is_raw):
+        """Handle material type selection like radio buttons and switch input fields."""
+        if is_raw:
+            if checked:
+                self.non_raw_material_check.setChecked(False)
+                self.material_code_combo.setVisible(True)
+                self.material_code_lineedit.setVisible(False)
+            else:
+                if not self.non_raw_material_check.isChecked():
+                    self.raw_material_check.setChecked(True)
+        else:
+            if checked:
+                self.raw_material_check.setChecked(False)
+                self.material_code_combo.setVisible(False)
+                self.material_code_lineedit.setVisible(True)
+            else:
+                if not self.raw_material_check.isChecked():
+                    self.non_raw_material_check.setChecked(True)
+
+    def display_details(self):
+        self.wip_no_input.setText(str(self.prod_results['index_no']))
+        self.production_id_input.setText(str(self.prod_results['prod_id']))
+        form_type_val = str(self.prod_results.get('form_type', '')).strip()
+        idx = self.form_type_combo.findText(form_type_val, Qt.MatchFlag.MatchFixedString)
+        if idx >= 0:
+            self.form_type_combo.setCurrentIndex(idx)
+        else:
+            self.form_type_combo.setCurrentIndex(0)
+        self.product_code_input.setText(str(self.prod_results['prod_code']))
+        self.product_color_input.setText(str(self.prod_results['prod_color']))
+        self.formula_input.setText(str(self.prod_results['form_id']))
+        self.sum_cons_input.setText(f"{self.prod_results['dosage']:.6f}")
+        self.dosage_input.setText(f"{self.prod_results['ld']:.6f}")
+        self.customer_input.setText(str(self.prod_results['customer']))
+        self.lot_no_input.setText(str(self.prod_results['lot_no']))
+        self.order_form_no_input.setText(str(self.prod_results['order_no']))
+        self.colormatch_no_input.setText(str(self.prod_results['colormatch_no']))
+        self.prepared_by_input.setText(str(self.prod_results['prepared_by']))
+        self.notes_input.setPlainText(str(self.prod_results['note']))
+
+        def _set_date(widget, date_obj):
+            if date_obj:
+                widget.setText(date_obj.strftime("%m/%d/%Y"))
+            else:
+                widget.clear()
+
+        qty_req = float(self.prod_results['quantity_req'])
+        qty_batch = float(self.prod_results['quantity_batch'])
+
+        _set_date(self.production_date_input, self.prod_results.get('prod_date'))
+        _set_date(self.confirmation_date_input, self.prod_results.get('inventory_c_date'))
+        _set_date(self.matched_date_input, self.prod_results.get('colormatch_date'))
+
+        self.mixing_time_input.setText(str(self.prod_results['mix_time']))
+        self.machine_no_input.setText(str(self.prod_results['machine_no']))
+        self.qty_required_input.setText(f"{qty_req:.6f}")
+        self.qty_per_batch_input.setText(f"{qty_batch:.6f}")
+        self.total_weight_label.setText(f"{self.prod_results['quantity_prod']:.7f}")
+
+        self.encoded_by_display.setText(str(self.prod_results['encoded_by']))
+        if self.prod_results.get('encoded_on'):
+            self.production_encoded_display.setText(
+                self.prod_results['encoded_on'].strftime("%m/%d/%Y %I:%M:%S %p"))
+        if self.prod_results.get('confirmation_encoded_on'):
+            self.production_confirmation_display.setText(
+                self.prod_results['confirmation_encoded_on'].strftime("%m/%d/%Y %I:%M:%S %p"))
+
+        self.materials_table.setRowCount(0)
+
+        for mat in self.prod_materials:
+            row_idx = self.materials_table.rowCount()
+            self.materials_table.insertRow(row_idx)
+
+            mat_code = str(mat[1]) if mat[1] else ""
+
+            # Logic for Empty vs. Data row
+            if mat_code.strip() == "":
+                # It's an empty row: Fill all columns with empty strings
+                for col in range(self.materials_table.columnCount()):
+                    self.materials_table.setItem(row_idx, col, QTableWidgetItem(""))
+            else:
+                # It's a data row: Fill with Material and Numeric values
+                try:
+                    large_scale = float(mat[2]) if mat[2] is not None else 0.0
+                    small_scale = float(mat[3]) if mat[3] is not None else 0.0
+                    total_weight = float(mat[4]) if mat[4] is not None else 0.0
+                except (ValueError, TypeError):
+                    large_scale = small_scale = total_weight = 0.0
+
+                # Set Column 0: Material Code
+                self.materials_table.setItem(row_idx, 0, QTableWidgetItem(mat_code))
+
+                # Set Column 1: Large Scale
+                item_large = NumericTableWidgetItem(large_scale, is_float=True)
+                item_large.setTextAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
+                self.materials_table.setItem(row_idx, 1, item_large)
+
+                # Set Column 2: Small Scale
+                item_small = NumericTableWidgetItem(small_scale, is_float=True)
+                item_small.setTextAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
+                self.materials_table.setItem(row_idx, 2, item_small)
+
+                # Set Column 3: Total Weight
+                item_total = NumericTableWidgetItem(total_weight, is_float=True)
+                item_total.setTextAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
+                self.materials_table.setItem(row_idx, 3, item_total)
+
+        # --- CHECK PRINTED STATUS AND DISABLE SAVE ---=
+        is_printed = self.prod_results.get('is_printed', False)
+
+        if is_printed:
+            self.save_btn.setToolTip("This record is locked because it has already been printed.")
+            self.apply_viewer_restrictions()
+            self.btn_cancel.setEnabled(True)
+            self.btn_cancel.setObjectName("DangerButton")
+            self.new_btn.setEnabled(True)
+            self.new_btn.setObjectName("PrimaryButton")
+            QTimer.singleShot(200, lambda: show_printed_locked_message(self))
+        else:
+            self.save_btn.setEnabled(True)
+            self.save_btn.setToolTip("")
+
+        self.save_btn.setText("Update")
+        item_count = self.materials_table.rowCount()
+        self.no_items_label.setText(str(item_count))
+        return True
+
+    def add_material(self):
+        """Add material to the table."""
+        material_code = self.get_material_code().strip()
+
+        if not self.qty_required_input.text() or not self.qty_per_batch_input:
+            QMessageBox.warning(self, "Missing Input", "Please enter the quantity requirements first.")
+            return
+
+        if not material_code:
+            QMessageBox.warning(self, "Missing Input", "Please enter a material code.")
+            return
+
+        if self.raw_material_check.isChecked():
+            if material_code not in self.rm_list:
+                QMessageBox.warning(self, "Invalid Material",
+                                    "Please select a valid raw material code from the list.")
+                return
+
+        large_scale_text = self.large_scale_input.text().strip()
+        small_scale_text = self.small_scale_input.text().strip()
+        total_weight_text = self.total_weight_input.text().strip()
+
+        if not total_weight_text:
+            QMessageBox.warning(self, "Missing Input", "Please fill in all scale and weight fields.")
+            return
+
+        if not large_scale_text or not small_scale_text:
+            large_scale_text = 0.000000
+            small_scale_text = 0.000000
+
+        try:
+            large_scale = float(large_scale_text)
+            small_scale = float(small_scale_text)
+            total_weight = float(total_weight_text)
+        except ValueError:
+            QMessageBox.warning(self, "Invalid Input", "Please enter valid numbers for scales and weight.")
+            return
+
+        row_position = self.materials_table.rowCount()
+        self.materials_table.insertRow(row_position)
+
+        self.materials_table.setItem(row_position, 0, QTableWidgetItem(material_code))
+        self.materials_table.setItem(row_position, 1, NumericTableWidgetItem(large_scale, is_float=True))
+        self.materials_table.setItem(row_position, 2, NumericTableWidgetItem(small_scale, is_float=True))
+        self.materials_table.setItem(row_position, 3, NumericTableWidgetItem(total_weight, is_float=True))
+
+        self.clear_material_inputs()
+        self.update_totals()
+        self.material_code_combo.setFocus()
+
+    def add_separator(self):
+        row_pos = self.materials_table.rowCount()
+        self.materials_table.insertRow(row_pos)
+
+        for col in range(self.materials_table.columnCount()):
+            self.materials_table.setItem(row_pos, col, QTableWidgetItem(""))
+
+    def remove_material(self):
+        current_row = self.materials_table.currentRow()
+        if current_row >= 0:
+            self.materials_table.removeRow(current_row)
+            self.update_totals()
+        else:
+            QMessageBox.warning(self, "No Selection", "Please select a material to remove.")
+
+    def cancel_production(self):
+        raw_id = self.production_id_input.text().strip()
+
+        # 1. Basic validation
+        if not raw_id or raw_id == "0":
+            QMessageBox.warning(self, "Selection Required", "Please select a production record from the table first.")
+            return
+
+        # 2. Convert to integer to match database type
+        try:
+            prod_id = int(raw_id)
+        except ValueError:
+            QMessageBox.warning(self, "Invalid ID", "Production ID must be a number.")
+            return
+
+        # 3. Efficient Database Check
+        if not check_production_exists(prod_id):
+            QMessageBox.warning(self, "Error", "Production ID does not exist or is already cancelled.")
+            return
+
+        # 4. Confirmation
+        msg = f"Are you sure you want to CANCEL Production ID: {prod_id}?\n\nThis action cannot be undone."
+        reply = QMessageBox.question(self, "Confirm Cancellation", msg,
+                                     QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                                     QMessageBox.StandardButton.No)
+
+        if reply == QMessageBox.StandardButton.No:
+            return
+
+        # 5. Database Operation
+        try:
+            success, message = cancel_production(prod_id)  # Call your DB update function
+
+            if success:
+                QMessageBox.information(self, "Success", f"Production {prod_id} has been successfully cancelled.")
+
+                # Clear cache
+                get_cancelled_production_data.cache_clear()
+
+                # Clear UI
+                self.new_production()
+
+                # Audit Log
+                audit_details = f"Prod ID: {prod_id} has been successfully CANCELLED"
+                log_audit_trail(self.work_station['m'], "DELETE", audit_details)
+
+            else:
+                QMessageBox.warning(self, "Cancellation Failed", f"Database Error: {message}")
+
+        except Exception as e:
+            QMessageBox.critical(self, "System Error", f"An unexpected error occurred: {str(e)}")
+
+    def save_production(self):
+        # 1. Validation
+        prod_id_raw = self.production_id_input.text().strip()
+        if not prod_id_raw or not self.product_code_input.text().strip():
+            QMessageBox.warning(self, "Validation Error", "Production ID and Product Code are required.")
+            return
+
+        if self.materials_table.rowCount() == 0:
+            QMessageBox.warning(self, "Validation Error", "Please add at least one material to the table.")
+            return
+
+        # 2. Determine Mode
+        is_update = (self.save_btn.text() == "Update")
+
+        # 3. Collect Data
+        try:
+            # Header Data
+            header = {
+                'prod_id': int(prod_id_raw),
+                'prod_date': self.production_date_input.text() or None,
+                'customer': self.customer_input.text().strip(),
+                'form_id': int(self.formula_input.text() or 0),
+                'index_no': self.wip_no_input.text().strip(),
+                'prod_code': self.product_code_input.text().strip(),
+                'prod_color': self.product_color_input.text().strip(),
+                'dosage': float(self.sum_cons_input.text() or 0),
+                'ld': float(self.dosage_input.text() or 0),
+                'lot_no': self.lot_no_input.text().strip(),
+                'order_no': self.order_form_no_input.text().strip(),
+                'mix_time': self.mixing_time_input.text().strip(),
+                'machine_no': self.machine_no_input.text().strip(),
+                'note': self.notes_input.toPlainText().strip(),
+                'user_id': self.work_station['u'],
+                'inventory_c_date': self.confirmation_date_input.text() or None,
+                'form_type': self.form_type_combo.currentText()
+            }
+
+            # Quantity Data
+            quantity = {
+                'req': float(self.qty_required_input.text() or 0),
+                'batch': float(self.qty_per_batch_input.text() or 0),
+                'prod': float(self.total_weight_label.text() or 0)
+            }
+
+            # Encode Data
+            encode = {
+                'prepared_by': self.prepared_by_input.text().strip(),
+                'encoded_by': self.work_station['u']
+            }
+
+            # Material List (Looping through Table)
+            materials = []
+            for row in range(self.materials_table.rowCount()):
+                mat_code = self.materials_table.item(row, 0).text()
+                if not mat_code.strip(): continue  # Skip empty rows/separators
+
+                large = float(self.materials_table.item(row, 1).text() or 0)
+                small = float(self.materials_table.item(row, 2).text() or 0)
+                total = float(self.materials_table.item(row, 3).text() or 0)
+
+                # Format: (prod_id, sequence_no, material_code, large, small, total)
+                materials.append((header['prod_id'], row + 1, mat_code, large, small, total))
+
+        except ValueError as e:
+            QMessageBox.critical(self, "Input Error", f"Please check your numeric fields. Error: {e}")
+            return
+
+        success, message = save_production_record(header, quantity, encode, materials, is_update)
+
+        if success:
+            action_verb = "updated" if is_update else "created"
+            QMessageBox.information(self, "Success",
+                                    f"Production record {header['prod_id']} has been {action_verb}.")
+
+            # 5. Audit Trail
+            log_audit_trail(
+                self.work_station['m'],
+                "UPDATE" if is_update else "CREATE",
+                f"Manual Production ID: {header['prod_id']} {action_verb} successfully."
+            )
+
+            # Optional: Refresh UI or stay on page
+            if not is_update:
+                self.new_production()
+            else:
+                # Reload to show new encoded_on dates if any
+                self.prod_results = get_single_production_data(header['prod_id'])
+                self.display_details()
+        else:
+            QMessageBox.critical(self, "Database Error", f"Failed to save record: {message}")
+
+    def new_production(self):
+        """Initialize a new production entry."""
+        self.current_production_id = None
+        try:
+            latest_prod = get_latest_prod_id()
+            self.production_id_input.setText(str(latest_prod + 1))
+        except Exception as e:
+            self.production_id_input.setText("1")
+
+        self.form_type_combo.setCurrentIndex(0)
+        self.product_code_input.clear()
+        self.product_color_input.clear()
+        self.formula_input.clear()
+        self.sum_cons_input.clear()
+        self.dosage_input.clear()
+        self.customer_input.clear()
+        self.lot_no_input.clear()
+        self.production_date_input.setText("")
+        self.confirmation_date_input.setText("")
+        self.order_form_no_input.clear()
+        self.colormatch_no_input.clear()
+        self.matched_date_input.setText("")
+        self.mixing_time_input.clear()
+        self.machine_no_input.clear()
+        self.qty_required_input.clear()
+        self.qty_per_batch_input.clear()
+        self.prepared_by_input.clear()
+        self.notes_input.clear()
+
+        self.encoded_by_display.setText(self.work_station['u'])
+        self.production_encoded_display.setText(datetime.now().strftime("%m/%d/%Y %I:%M:%S %p"))
+        self.production_confirmation_display.clear()
+
+        if self.prod_results:
+            self.prod_results = None
+
+        self.save_btn.setText("Save")
+        self.save_btn.setObjectName("InfoButton")
+        self.save_btn.style().unpolish(self.save_btn)
+        self.save_btn.style().polish(self.save_btn)
+
+        self.materials_table.setRowCount(0)
+        self.clear_material_inputs()
+        self.update_totals()
+
+    def print_production(self, with_wip=False):
+        if not self.production_id_input.text().strip():
+            QMessageBox.warning(self, "No Data", "Please create or load a production record first.")
+            return
+
+        try:
+            production_date = ''
+
+            # Check if self.result exists and contains the key
+            if self.prod_results and self.prod_results.get('prod_date'):
+                production_date = self.prod_results['prod_date'].strftime("%m/%d/%y")
+            else:
+                # Handle the case where it's missing or None
+                text_date = self.production_date_input.text().strip()
+
+                # Check if text_date is already in "MM/dd/yyyy" or "yyyy-MM-dd"
+                if "-" in text_date:
+                    production_date = datetime.strptime(text_date, "%Y-%m-%d").strftime("%m/%d/%y")
+                else:
+                    production_date = datetime.strptime(text_date, "%m/%d/%Y").strftime("%m/%d/%y")
+
+        except Exception as e:
+            print("Error:", e)
+            production_date = ""
+        # === Collect Data ===
+        production_data = {
+            'wip_no': self.wip_no_input.text().strip(),
+            'prod_id': self.production_id_input.text().strip(),
+            'form_type': self.form_type_combo.currentText(),
+            'production_date': production_date,
+            'order_form_no': self.order_form_no_input.text().strip(),
+            'formulation_id': self.formula_input.text().strip(),
+            'product_code': self.product_code_input.text().strip(),
+            'product_color': self.product_color_input.text().strip(),
+            'dosage': self.sum_cons_input.text().strip(),
+            'customer': self.customer_input.text().strip(),
+            'lot_number': self.lot_no_input.text().strip(),
+            'mixing_time': self.mixing_time_input.text().strip(),
+            'machine_no': self.machine_no_input.text().strip(),
+            'qty_required': self.qty_required_input.text().strip(),
+            'qty_per_batch': self.qty_per_batch_input.text().strip(),
+            'qty_produced': self.total_weight_label.text().strip(),
+            'prepared_by': self.prepared_by_input.text().strip(),
+            'notes': self.notes_input.toPlainText().strip(),
+            'approved_by': 'M. VERDE'
+        }
+
+        materials_data = []
+        for row in range(self.materials_table.rowCount()):
+            it0 = self.materials_table.item(row, 0)
+            it1 = self.materials_table.item(row, 1)
+            it2 = self.materials_table.item(row, 2)
+            it3 = self.materials_table.item(row, 3)
+
+            # If the first column is empty, we treat this as a blank separator row
+            m_code = it0.text().strip() if it0 else ""
+
+            materials_data.append({
+                'material_code': m_code,  # Keep it as "" if empty
+                'large_scale': it1.text().strip() if it1 else '0',
+                'small_scale': it2.text().strip() if it2 else '0',
+                'total_weight': it3.text().strip() if it3 else '0'
+            })
+
+        # === Open Preview with exec()===
+        if with_wip is True:
+            audit = {
+                "mac": self.work_station['m'],
+                "action": "PRINT - WIP",
+                "details": f"(Manual) Prod ID: {production_data['prod_id']} | Production Date: {production_data['production_date']}",
+            }
+            preview = ProductionPrintPreview(production_data, materials_data, wip_no=True, parent=self, audit=audit, role=self.user_role)
+        else:
+            audit = {
+                "mac": self.work_station['m'],
+                "action": "PRINT",
+                "details": f"(Manual) Prod ID: {production_data['prod_id']} | Production Date: {production_data['production_date']}",
+            }
+            preview = ProductionPrintPreview(production_data, materials_data, parent=self, audit=audit, role=self.user_role)
+
+        preview.show()
+
+    def clear_material_table(self):
+        self.materials_table.setRowCount(0)
+        self.clear_material_inputs()
+        self.update_totals()
+
+    def update_totals(self):
+        total_weight = 0.0
+        item_count = self.get_valid_row_count()
+
+        for row in range(self.materials_table.rowCount()):
+            item = self.materials_table.item(row, 3)  # Check column 3 (Weight)
+
+            if item:
+                if hasattr(item, 'value'):
+                    total_weight += float(item.value)
+                else:
+                    # skip if text is empty
+                    text_val = item.text().strip()
+                    if text_val:  # This avoids ValueError on empty strings ""
+                        try:
+                            # Remove commas if any exist (e.g., "1,200.00")
+                            clean_text = text_val.replace(',', '')
+                            total_weight += float(clean_text)
+                        except ValueError:
+                            pass
+
+        self.no_items_label.setText(str(item_count))
+        self.total_weight_label.setText(f"{total_weight:.7f}")
+
+    def get_valid_row_count(self):
+        valid_count = 0
+        for row in range(self.materials_table.rowCount()):
+            item = self.materials_table.item(row, 0)  # Check the first column
+            if item:  # check if may value ung first item, count if meron
+                if item.text().strip():
+                    valid_count += 1
+        return valid_count
+
+    def setup_rm_code_completer(self):
+        self.rm_list = get_rm_code_lists()
+        self.rm_list.insert(0, "")
+        self.material_code_combo.clear()
+        self.material_code_combo.addItems(self.rm_list)
+
+        rm_completer = QCompleter(self.rm_list, self.material_code_combo)
+        rm_completer.setCompletionMode(QCompleter.CompletionMode.PopupCompletion)
+        rm_completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
+        self.material_code_combo.setCompleter(rm_completer)
+
+    def validate_rm_code(self):
+        """Prevent invalid input."""
+        current_text = self.material_code_combo.currentText()
+        if current_text not in self.rm_list:
+            self.material_code_combo.setCurrentIndex(0)
+
+    def clear_material_inputs(self):
+        self.material_code_combo.setCurrentIndex(0)
+        self.material_code_lineedit.clear()
+        self.large_scale_input.clear()
+        self.small_scale_input.clear()
+        self.total_weight_input.clear()
+
+    def get_material_code(self):
+        if self.raw_material_check.isChecked():
+            return self.material_code_combo.currentText().strip()
+        else:
+            return self.material_code_lineedit.text().strip()
+
+    def apply_viewer_restrictions(self):
+        """Disables all input fields and action buttons for users with 'VIEWER' role."""
+
+        # 1. Handle LineEdits and TextEdits (Set to Read-Only so user can still scroll/copy text)
+        for widget in self.findChildren(QLineEdit):
+            widget.setReadOnly(True)
+            # Optional: change style to look disabled
+            widget.setStyleSheet("background-color: #f8f9fa; color: #6c757d;")
+
+        for widget in self.findChildren(QTextEdit):
+            widget.setReadOnly(True)
+            widget.setStyleSheet("background-color: #f8f9fa; color: #6c757d;")
+
+        # 2. Handle Selection Widgets (ComboBox, CheckBox, DateEdit)
+        # These must be setEnabled(False) because they don't have a 'read-only' mode
+        for widget in self.findChildren(QComboBox):
+            widget.setEnabled(False)
+
+        for widget in self.findChildren(QCheckBox):
+            widget.setEnabled(False)
+
+        # This targets your custom SmartDateEdit
+        for widget in self.findChildren(SmartDateEdit):
+            widget.setEnabled(False)
+
+        # 3. Handle Buttons
+        for btn in self.findChildren(QPushButton):
+            # We typically want to allow Viewers to still see the PRINT preview
+            # But we disable Save, New, Cancel, Add, Remove, Sync, and Separator
+            btn_text = btn.text().upper()
+
+            if "PRINT" in btn_text and "PRINTING" not in btn_text:
+                btn.setEnabled(True)  # Keep print enabled
+            else:
+                btn.setEnabled(False)  # Disable Save, New, Cancel, Add, Sync, etc.
+                btn.setObjectName("disabled_btn")
+
+        # 4. Special case: Disable Table interactions
+        self.materials_table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.materials_table.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
+
+    def eventFilter(self, watched, event):
+        # Check if the event is a key press and specifically the Tab key
+        if watched == self.total_weight_input and event.type() == event.Type.KeyPress:
+            if event.key() == Qt.Key.Key_Tab:
+                # Decide which Material widget to focus based on which is visible
+                if self.material_code_lineedit.isVisible():
+                    self.material_code_lineedit.setFocus()
+                else:
+                    # For editable combos, we focus the internal lineEdit
+                    self.material_code_combo.setFocus()
+                    self.material_code_combo.lineEdit().selectAll()
+
+                return True  # This "consumes" the event so focus doesn't move elsewhere
+
+        return super().eventFilter(watched, event)
+
+    def sync_rm(self):
+        thread = QThread()
+        worker = SyncRM()
+        worker.moveToThread(thread)
+
+        loading_dialog = LoadingDialog("Syncing Production Data", self)
+
+        worker.progress.connect(loading_dialog.update_progress)
+        worker.finished.connect(
+            lambda success, message: self.on_sync_finished(success, message, thread, loading_dialog)
+        )
+
+        thread.started.connect(worker.run)
+        worker.finished.connect(thread.quit)
+        thread.finished.connect(lambda: worker.deleteLater())
+        thread.finished.connect(thread.deleteLater)
+
+        thread.start()
+        loading_dialog.exec()
+
+    def on_sync_finished(self, success, message, thread, loading_dialog, sync_type=None):
+        try:
+            if loading_dialog.isVisible():
+                self.setup_rm_code_completer()
+                loading_dialog.accept()
+
+            if success:
+                QMessageBox.information(self, "Sync Complete", message)
+            else:
+                QMessageBox.critical(self, "Sync Error", message)
+
+        except Exception as e:
+            print(f"Error in on_sync_finished: {e}")

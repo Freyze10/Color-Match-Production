@@ -1,0 +1,70 @@
+from PyQt6.QtWidgets import QTableWidgetItem
+
+
+def get_last_valid_large_scale(table, break_col=0, sum_col=1):
+    """Find the most recent non-zero Large Scale value from the bottom."""
+    for row in range(table.rowCount() - 1, -1, -1):
+        # Stop at separator/empty row
+        break_item = table.item(row, break_col)
+        if not break_item or not break_item.text().strip():
+            break
+
+        scale_item = table.item(row, sum_col)
+        if not scale_item:
+            continue
+
+        try:
+            if hasattr(scale_item, 'value'):
+                value = float(scale_item.value)
+            else:
+                text = scale_item.text().replace(',', '').strip()
+                value = float(text) if text else 0.0
+        except (ValueError, TypeError):
+            continue
+
+        if value > 0.0:
+            return value
+
+    return 0.0
+
+
+def handle_batch_break_manual(table, weight: float, batches: float = 1.0, limit: float = 25.0,
+                              break_col: int = 0, sum_col: int = 1):
+    """
+    Modified logic:
+    - Do NOT insert break row if this will be the first real row in the table.
+    - Otherwise, check if (last_valid_scale + per_batch) > limit → insert empty row.
+    """
+    if weight <= 0 or batches <= 0:
+        return False
+
+    # IMPORTANT: Check if table is empty or only has separator rows
+    if table.rowCount() == 0:
+        return False  # First row → never insert break
+
+    # Check if all existing rows are empty/separator
+    has_real_data = False
+    for row in range(table.rowCount()):
+        break_item = table.item(row, break_col)
+        if break_item and break_item.text().strip():
+            has_real_data = True
+            break
+
+    if not has_real_data:
+        return False  # No real data yet → this is the first row
+
+    # Now do normal logic
+    last_valid = get_last_valid_large_scale(table, break_col, sum_col)
+    per_batch = weight / batches
+
+    if (last_valid + per_batch) > limit:
+        row_pos = table.rowCount()
+        table.insertRow(row_pos)
+
+        # Insert empty separator row
+        for col in range(table.columnCount()):
+            table.setItem(row_pos, col, QTableWidgetItem(""))
+
+        return True   # Break row was added
+
+    return False

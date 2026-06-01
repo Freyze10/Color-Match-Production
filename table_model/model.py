@@ -1,0 +1,141 @@
+from datetime import datetime
+
+from PyQt6.QtCore import Qt, QAbstractTableModel
+from PyQt6.QtGui import QBrush, QColor
+
+from css.styles import AppStyles
+
+
+class TableModel(QAbstractTableModel):
+    def __init__(self, data, headers):
+        super().__init__()
+        self._all_data = data or []
+        self._data = data
+        self._headers = headers
+
+    def rowCount(self, parent=None):
+        return len(self._data)
+
+    def columnCount(self, parent=None):
+        return len(self._headers)
+
+    def data(self, index, role=Qt.ItemDataRole.DisplayRole):
+        if not index.isValid():
+            return None
+
+        row = index.row()
+        col = index.column()
+
+        # --- 1. BACKGROUND COLOR LOGIC ---
+        if role == Qt.ItemDataRole.BackgroundRole:
+            # A. PRODUCTION RECORDS LOGIC (9 columns total, index 8 is is_printed)
+            if len(self._data[row]) > 8:
+                is_printed = self._data[row][8]
+                if is_printed is False:
+                    # Return Light Amber/Yellow for 'Not Printed'
+                    return QBrush(QColor("#FEF3C7"))  # Tailwind Amber 100
+
+            # B. AUDIT TRAIL LOGIC (Column index 2 is "Action")
+            # We add a guard to ensure it doesn't try to read col 2 if it's a tiny table
+            elif len(self._data[row]) > 2:
+                action_type = str(self._data[row][2]).strip().upper()
+                color_hex = AppStyles.ACTION_COLORS.get(action_type)
+                if color_hex:
+                    return QBrush(QColor(color_hex))
+
+            return None
+
+        # --- 2. TOOLTIP LOGIC ---
+        if role == Qt.ItemDataRole.ToolTipRole:
+            if len(self._data[row]) > 7:
+                wip_no = self._data[row][7]
+                if wip_no and str(wip_no).strip() not in ("", "None", "0"):
+                    return f"WIP Number: {wip_no}"
+
+        # --- 3. TEXT DISPLAY LOGIC ---
+        if role in (Qt.ItemDataRole.DisplayRole, Qt.ItemDataRole.EditRole):
+            return self._data[row][col]
+
+        return None
+
+    def headerData(self, section, orientation, role=Qt.ItemDataRole.DisplayRole):
+        if role == Qt.ItemDataRole.DisplayRole:
+            if orientation == Qt.Orientation.Horizontal:
+                return self._headers[section]
+            else:
+                return str(section+1)
+        return None
+
+
+    # ── Critical for sorting ──
+    def sort(self, column, order):
+        self.layoutAboutToBeChanged.emit()
+
+        def smart_sort_key(row):
+            val = str(row[column])
+
+            # 1. Try to sort as a Date (MM/DD/YYYY - your Production Date)
+            try:
+                return datetime.strptime(val, '%m/%d/%Y')
+            except (ValueError, TypeError):
+                pass
+
+            # 2. Try to sort as a Full Timestamp (Common in Audit Trails)
+            try:
+                return datetime.strptime(val, '%Y-%m-%d %H:%M:%S')
+            except (ValueError, TypeError):
+                pass
+
+            # 3. Try to sort as a Number (to avoid "10" coming before "2")
+            try:
+                # Clean string of currency symbols or commas if necessary
+                clean_val = val.replace('$', '').replace(',', '')
+                return float(clean_val)
+            except (ValueError, TypeError):
+                pass
+
+            # 4. Fallback to lowercase string
+            return val.lower()
+
+        # Apply the sort using the smart key
+        self._data.sort(
+            key=smart_sort_key,
+            reverse=(order == Qt.SortOrder.DescendingOrder)
+        )
+
+        self.layoutChanged.emit()
+
+    def set_data(self, data):
+        """Update the entire data and refresh the view"""
+        self.beginResetModel()
+        self._all_data = data
+        self._data = data[:]
+        self.endResetModel()
+
+    def filter_data(self, search_text, col_index=None):
+        """
+        Filter rows by search_text.
+        col_index=None  → search all columns
+        col_index=int   → search only that column
+        """
+        self.beginResetModel()
+        if not search_text or not search_text.strip():
+            self._data = self._all_data[:]
+        else:
+            kw = search_text.lower().strip()
+            self._data = []
+            for row in self._all_data:
+                if col_index is not None:
+                    # Guard: make sure the column index exists in the row
+                    match = col_index < len(row) and kw in str(row[col_index]).lower()
+                else:
+                    match = any(kw in str(cell).lower() for cell in row)
+                if match:
+                    self._data.append(row)
+        self.endResetModel()
+
+    def clear_data(self):
+        """Clear all data"""
+        self.beginResetModel()
+        self._data = [["0", "--", "0.00", "0.00", "0.00"]]
+        self.endResetModel()
