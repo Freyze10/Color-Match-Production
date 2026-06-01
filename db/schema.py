@@ -5,288 +5,282 @@ def create_table():
     con = get_connection()
     cursor = con.cursor()
 
-    # 1. Roles
+    # ==========================================
+    # 1. USER & ACCESS CONTROL MODULE
+    # ==========================================
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS tbl_role(
             role_id SERIAL PRIMARY KEY,
-            department VARCHAR(36) NOT NULL,
-            role VARCHAR(10) NOT NULL,
+            department VARCHAR(50) NOT NULL,
+            role VARCHAR(20) NOT NULL,
             UNIQUE(department, role)
-        )
-    """)
+        );
 
-    cursor.execute("""
-        INSERT INTO tbl_role (department, role) VALUES 
-            ('IT Department', 'ADMIN'),
-            ('Production Department', 'Editor'),
-            ('Laboratory Department', 'Viewer')
-        ON CONFLICT (department, role) DO NOTHING; 
-        CREATE INDEX IF NOT EXISTS idx_role_department ON tbl_role(department);
-    """)
-
-    # 2. Users
-    cursor.execute("""
         CREATE TABLE IF NOT EXISTS tbl_user(
             user_id SERIAL PRIMARY KEY,
-            role_id INT NOT NULL,
-            hostname VARCHAR(36) NOT NULL,
-            ip_address VARCHAR(32),
-            mac_address VARCHAR(32) UNIQUE,
+            hostname VARCHAR(50),
+            ipaddress VARCHAR(50),
+            mac VARCHAR(50) UNIQUE,
             username VARCHAR(50) NOT NULL,
-            password VARCHAR(36) NOT NULL, 
-            FOREIGN KEY (role_id) REFERENCES tbl_role(role_id)
-        )
-    """)
-    cursor.execute("CREATE INDEX IF NOT EXISTS idx_user_role_id ON tbl_user(role_id);")
-    cursor.execute("CREATE INDEX IF NOT EXISTS idx_user_hostname ON tbl_user(hostname);")
+            password VARCHAR(100) NOT NULL,
+            role_id INT REFERENCES tbl_role(role_id)
+        );
 
-    # 3. Formula Header (Converted to BOOLEAN)
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS tbl_formula01(
-            form_id SERIAL PRIMARY KEY,
-            index_no VARCHAR(22),
-            date DATE,
-            customer VARCHAR(62),
-            prod_code VARCHAR(22) NOT NULL,
-            prod_color VARCHAR(62),
-            dosage DECIMAL(12,6),
-            total_concentration DECIMAL(12,6),
-            ld DECIMAL(12,6),
-            mix_time VARCHAR(22),
-            resin VARCHAR(36),
-            application VARCHAR(36),
-            colormatch_no VARCHAR(8),
-            colormatch_date date,
-            notes VARCHAR(256),
-            date_time VARCHAR(32),
-            is_deleted BOOLEAN DEFAULT FALSE,
-            is_used BOOLEAN DEFAULT FALSE
-        )
-    """)
-    cursor.execute("CREATE INDEX IF NOT EXISTS idx_formula01_prod_code ON tbl_formula01(prod_code);")
-    cursor.execute("CREATE INDEX IF NOT EXISTS idx_formula01_customer ON tbl_formula01(customer);")
-    cursor.execute("CREATE INDEX IF NOT EXISTS idx_formula01_date ON tbl_formula01(date);")
-    cursor.execute("CREATE INDEX IF NOT EXISTS idx_formula01_colormatch_no ON tbl_formula01(colormatch_no);")
+        CREATE TABLE IF NOT EXISTS tbl_access_point(
+            access_id SERIAL PRIMARY KEY,
+            access_name VARCHAR(100) UNIQUE
+        );
 
-    # Partial Index for Booleans
-    cursor.execute("""
-            CREATE INDEX IF NOT EXISTS idx_formula01_active 
-            ON tbl_formula01(prod_code, customer, date) 
-            WHERE is_deleted = FALSE;
+        CREATE TABLE IF NOT EXISTS tbl_role_permissions(
+            permission_id SERIAL PRIMARY KEY,
+            role_id INT REFERENCES tbl_role(role_id) ON DELETE CASCADE,
+            access_id INT REFERENCES tbl_access_point(access_id) ON DELETE CASCADE,
+            is_enabled BOOLEAN DEFAULT FALSE
+        );
     """)
 
-    # 4. Formula Encode (Restored)
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS tbl_formula_encode(
-            encode_id SERIAL PRIMARY KEY,
-            form_id INT,
-            match_by VARCHAR(128),
-            encoded_by VARCHAR(128),
-            updated_by VARCHAR(128),
-            FOREIGN KEY (form_id) REFERENCES tbl_formula01(form_id)
-        )
-    """)
-    cursor.execute("CREATE INDEX IF NOT EXISTS idx_formula_encode_form_id ON tbl_formula_encode(form_id);")
-
-    # 5. Formula Details (Converted to BOOLEAN)
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS tbl_formula02(
-            id SERIAL PRIMARY KEY,
-            form_id INT,
-            sequence_no INT,
-            material_code VARCHAR(32),
-            concentration DECIMAL(12,6),
-            is_deleted BOOLEAN DEFAULT FALSE,
-            FOREIGN KEY (form_id) REFERENCES tbl_formula01(form_id)
-        )
-    """)
-    cursor.execute("CREATE INDEX IF NOT EXISTS idx_formula02_form_id ON tbl_formula02(form_id);")
-    cursor.execute("CREATE INDEX IF NOT EXISTS idx_formula02_material_code ON tbl_formula02(material_code);")
-    cursor.execute("CREATE INDEX IF NOT EXISTS idx_formula02_form_seq ON tbl_formula02(form_id, sequence_no);")
-
-    # 6. Production Header (Converted to BOOLEAN)
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS tbl_production01(
-            prod_id SERIAL PRIMARY KEY,
-            prod_date DATE,
-            customer VARCHAR(62),
-            form_id INT,
-            index_no VARCHAR(32),
-            prod_code VARCHAR(32),
-            prod_color VARCHAR(62),
-            dosage DECIMAL(12,6),
-            ld DECIMAL(12,6),
-            lot_no VARCHAR(128),
-            order_no VARCHAR(36),
-            colormatch_no VARCHAR(8),
-            colormatch_date date,
-            mix_time VARCHAR(32),
-            machine_no VARCHAR(32),
-            note VARCHAR(128),
-            user_id VARCHAR(62),
-            is_deleted BOOLEAN DEFAULT FALSE,
-            is_printed BOOLEAN DEFAULT FALSE,
-            inventory_c_date DATE,
-            form_type VARCHAR(16)   
-            )
-    """)
-    cursor.execute("CREATE INDEX IF NOT EXISTS idx_production01_prod_date ON tbl_production01(prod_date);")
-    cursor.execute("CREATE INDEX IF NOT EXISTS idx_production01_customer ON tbl_production01(customer);")
-    cursor.execute("CREATE INDEX IF NOT EXISTS idx_production01_prod_code ON tbl_production01(prod_code);")
-    cursor.execute("CREATE INDEX IF NOT EXISTS idx_production01_form_id ON tbl_production01(form_id);")
-    cursor.execute("CREATE INDEX IF NOT EXISTS idx_production01_lot_no ON tbl_production01(lot_no);")
-    cursor.execute("CREATE INDEX IF NOT EXISTS idx_production01_order_no ON tbl_production01(order_no);")
-
-    # Partial Index for Booleans
-    cursor.execute("""
-            CREATE INDEX IF NOT EXISTS idx_production01_date_customer 
-            ON tbl_production01(prod_date, customer) 
-            WHERE is_deleted = FALSE;
-        """)
-
-    # 7. Production Encoding
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS tbl_production_encode(
-            encode_id SERIAL PRIMARY KEY,
-            prod_id INT,
-            prepared_by VARCHAR(128),
-            encoded_by VARCHAR(128),
-            encoded_on TIMESTAMP, 
-            confirmation_encoded_on TIMESTAMP, 
-            FOREIGN KEY (prod_id) REFERENCES tbl_production01(prod_id)
-            )
-    """)
-    cursor.execute("CREATE INDEX IF NOT EXISTS idx_prod_encode_prod_id ON tbl_production_encode(prod_id);")
-    cursor.execute("CREATE INDEX IF NOT EXISTS idx_prod_encode_encoded_on ON tbl_production_encode(encoded_on);")
-
-    # 8. Production Quantity
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS tbl_production_quantity(
-            quantity_id SERIAL PRIMARY KEY,
-            prod_id INT,
-            quantity_req DECIMAL(12,6),
-            quantity_batch DECIMAL(12,6),
-            quantity_prod DECIMAL(12,6),
-            FOREIGN KEY (prod_id) REFERENCES tbl_production01(prod_id)
-        )
-    """)
-    cursor.execute("CREATE INDEX IF NOT EXISTS idx_prod_quantity_prod_id ON tbl_production_quantity(prod_id);")
-
-    # 9. Production Details (Converted to BOOLEAN)
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS tbl_production02(
-            id SERIAL PRIMARY KEY,
-            prod_id INT,
-            sequence_no INT,
-            material_code VARCHAR(32),
-            large_scale DECIMAL(12,6),
-            small_scale DECIMAL(12,6),
-            total_weight DECIMAL(12,6),
-            is_deleted BOOLEAN DEFAULT FALSE,
-            total_loss DECIMAL(12,6),
-            total_consumption DECIMAL(12,6),
-            FOREIGN KEY (prod_id) REFERENCES tbl_production01(prod_id)
-        )
-    """)
-    cursor.execute("CREATE INDEX IF NOT EXISTS idx_production02_prod_id ON tbl_production02(prod_id);")
-    cursor.execute("CREATE INDEX IF NOT EXISTS idx_production02_material_code ON tbl_production02(material_code);")
-    cursor.execute("CREATE INDEX IF NOT EXISTS idx_production02_prod_seq ON tbl_production02(prod_id, sequence_no);")
-
-    # 10. Audit Trail
+    # ==========================================
+    # 2. AUDIT TRAIL
+    # ==========================================
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS tbl_audit_trail(
             id SERIAL PRIMARY KEY,
-            timestamp TIMESTAMP,
-            user_id INT,
-            action_type VARCHAR(32),
-            details VARCHAR(255),
-            FOREIGN KEY (user_id) REFERENCES tbl_user(user_id)
-        )
-    """)
-    cursor.execute("CREATE INDEX IF NOT EXISTS idx_audit_timestamp ON tbl_audit_trail(timestamp DESC);")
-    cursor.execute("CREATE INDEX IF NOT EXISTS idx_audit_user_id ON tbl_audit_trail(user_id);")
-    cursor.execute("CREATE INDEX IF NOT EXISTS idx_audit_action_type ON tbl_audit_trail(action_type);")
-
-    # 11. Support Tables
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS tbl_raw_material_list(
-            id SERIAL PRIMARY KEY,
-            rm_code VARCHAR(50) UNIQUE
-        )
+            timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            user_id INT REFERENCES tbl_user(user_id),
+            action_type VARCHAR(50),
+            details TEXT
+        );
     """)
 
+    # ==========================================
+    # 3. CMF (COLOR MATCHING) MODULE
+    # ==========================================
     cursor.execute("""
-        CREATE TABLE IF NOT EXISTS tbl_rm_incoming (
-            id SERIAL PRIMARY KEY,
+        CREATE TABLE IF NOT EXISTS tbl_cmf_salesman(
+            sm_no SERIAL PRIMARY KEY,
+            name VARCHAR(100) NOT NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS tbl_cmf_color_req(
+            color_req_no SERIAL PRIMARY KEY,
+            name VARCHAR(100) NOT NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS tbl_cmf_process(
+            process_no SERIAL PRIMARY KEY,
+            name VARCHAR(100) NOT NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS tbl_cmf_add_info(
+            info_no SERIAL PRIMARY KEY,
+            information_details TEXT
+        );
+
+        CREATE TABLE IF NOT EXISTS tbl_cmf(
+            cm_no VARCHAR(20) PRIMARY KEY, -- Usually a formatted string like CMF-2024-001
+            matching_type VARCHAR(50),
+            sm_no INT REFERENCES tbl_cmf_salesman(sm_no),
+            primary_color VARCHAR(50),
+            color_desc TEXT,
+            color_req_id INT REFERENCES tbl_cmf_color_req(color_req_no),
+            qty_resin_testing VARCHAR(50),
+            is_resin_provided BOOLEAN DEFAULT FALSE,
+            mi_c_resin VARCHAR(50),
+            is_sample_available BOOLEAN DEFAULT FALSE,
+            colorant_type VARCHAR(50),
+            is_guide_to_return BOOLEAN DEFAULT FALSE,
+            specification TEXT,
+            temperature VARCHAR(20),
+            is_low_cost BOOLEAN DEFAULT FALSE,
+            remarks TEXT,
+            info_no INT REFERENCES tbl_cmf_add_info(info_no),
+            user_id INT REFERENCES tbl_user(user_id)
+        );
+
+        CREATE TABLE IF NOT EXISTS tbl_cmf_dates(
+            cm_dates_no SERIAL PRIMARY KEY,
+            date_submitted_form_made DATE,
+            date_required DATE,
+            date_received_lab DATE,
+            due_date_lab DATE,
+            cm_no VARCHAR(20) REFERENCES tbl_cmf(cm_no) ON DELETE CASCADE
+        );
+
+        CREATE TABLE IF NOT EXISTS tbl_cmf_pending(
+            pending_no SERIAL PRIMARY KEY,
+            cm_no VARCHAR(20) REFERENCES tbl_cmf(cm_no),
+            reason TEXT,
+            is_completed BOOLEAN DEFAULT FALSE
+        );
+
+        CREATE TABLE IF NOT EXISTS tbl_cmf_completed(
+            completed_no SERIAL PRIMARY KEY,
+            pending_no INT REFERENCES tbl_cmf_pending(pending_no),
+            code VARCHAR(50),
+            date_submitted TIMESTAMP
+        );
+    """)
+
+    # ==========================================
+    # 4. PRODUCT CODES MODULE
+    # ==========================================
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS tbl_internal_color_code(
+            in_code_no SERIAL PRIMARY KEY,
+            color VARCHAR(50),
+            code VARCHAR(50) UNIQUE
+        );
+
+        CREATE TABLE IF NOT EXISTS tbl_generated_prod_code(
+            code_no SERIAL PRIMARY KEY,
+            product_code VARCHAR(50) UNIQUE,
+            in_code_no INT REFERENCES tbl_internal_color_code(in_code_no)
+        );
+    """)
+
+    # ==========================================
+    # 5. EXTRUDER FORMULAS (MB & DC)
+    # ==========================================
+    cursor.execute("""
+        -- Master Batch (MB) Extruder
+        CREATE TABLE IF NOT EXISTS tbl_mb_extruder_formula(
+            mb_no SERIAL PRIMARY KEY,
             date DATE,
-            material_code VARCHAR(50) NOT NULL UNIQUE,
-            note TEXT
+            code_no INT REFERENCES tbl_generated_prod_code(code_no),
+            lot_no VARCHAR(50),
+            matched_by VARCHAR(100),
+            weighted_by VARCHAR(100),
+            encoded_by VARCHAR(100),
+            total_weight DECIMAL(12,4),
+            cm_no VARCHAR(20) REFERENCES tbl_cmf(cm_no)
         );
-    """)
 
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS tbl_mac_editor (
+        CREATE TABLE IF NOT EXISTS tbl_mb_extruder_formula02(
             id SERIAL PRIMARY KEY,
-            user_id INT NOT NULL UNIQUE,
-            FOREIGN KEY (user_id) REFERENCES tbl_user(user_id) ON DELETE CASCADE
+            mb_no INT REFERENCES tbl_mb_extruder_formula(mb_no) ON DELETE CASCADE,
+            material VARCHAR(100),
+            value DECIMAL(12,4),
+            weight DECIMAL(12,4)
+        );
+
+        -- Direct Color (DC) Extruder
+        CREATE TABLE IF NOT EXISTS tbl_dc_extruder_formula(
+            dc_no SERIAL PRIMARY KEY,
+            code_no INT REFERENCES tbl_generated_prod_code(code_no),
+            date DATE,
+            sample_size VARCHAR(50),
+            mixing_time VARCHAR(50),
+            notes TEXT,
+            matched_by VARCHAR(100),
+            weighted_by VARCHAR(100),
+            encoded_by VARCHAR(100),
+            total_weight DECIMAL(12,4),
+            cm_no VARCHAR(20) REFERENCES tbl_cmf(cm_no)
+        );
+
+        CREATE TABLE IF NOT EXISTS tbl_dc_extruder_formula02(
+            id SERIAL PRIMARY KEY,
+            dc_no INT REFERENCES tbl_dc_extruder_formula(dc_no) ON DELETE CASCADE,
+            material VARCHAR(100),
+            value DECIMAL(12,4),
+            weight DECIMAL(12,4)
         );
     """)
 
-    # 12. Permissions
+    # ==========================================
+    # 6. MASTER FORMULA & FORMULATION MODULE
+    # ==========================================
     cursor.execute("""
-        CREATE TABLE IF NOT EXISTS tbl_access_points (
-            access_id SERIAL PRIMARY KEY,
-            access_name VARCHAR(50) UNIQUE 
+        CREATE TABLE IF NOT EXISTS tbl_master_formula(
+            form_id SERIAL PRIMARY KEY,
+            index_no VARCHAR(50),
+            date DATE,
+            customer VARCHAR(100),
+            code_no_prod_code VARCHAR(50),
+            prod_color VARCHAR(100),
+            dosage DECIMAL(12,4),
+            total_concentration DECIMAL(12,4),
+            ld DECIMAL(12,4),
+            mix_time VARCHAR(50),
+            resin VARCHAR(100),
+            application VARCHAR(100),
+            cm_no VARCHAR(20) REFERENCES tbl_cmf(cm_no),
+            colormatch_date DATE,
+            notes TEXT,
+            date_time TIMESTAMP,
+            is_deleted BOOLEAN DEFAULT FALSE,
+            is_used BOOLEAN DEFAULT FALSE,
+            html_code_hex VARCHAR(7),
+            cyan DECIMAL(5,2),
+            magenta DECIMAL(5,2),
+            yellow DECIMAL(5,2),
+            black DECIMAL(5,2)
         );
 
-        CREATE TABLE IF NOT EXISTS tbl_role_permissions (
-            role_id INT REFERENCES tbl_role(role_id) ON DELETE CASCADE,
-            access_id INT REFERENCES tbl_access_points(access_id) ON DELETE CASCADE,
-            is_enabled BOOLEAN DEFAULT FALSE,
-            PRIMARY KEY (role_id, access_id)
+        CREATE TABLE IF NOT EXISTS tbl_master_formula_info(
+            id SERIAL PRIMARY KEY,
+            sequence_no INT,
+            material_code VARCHAR(50),
+            concentration DECIMAL(12,6),
+            is_deleted BOOLEAN DEFAULT FALSE,
+            form_id INT REFERENCES tbl_master_formula(form_id) ON DELETE CASCADE
+        );
+
+        CREATE TABLE IF NOT EXISTS tbl_master_formula_encode(
+            encode_id SERIAL PRIMARY KEY,
+            form_id INT REFERENCES tbl_master_formula(form_id) ON DELETE CASCADE,
+            match_by VARCHAR(100),
+            encoded_by VARCHAR(100),
+            updated_by VARCHAR(100)
+        );
+
+        -- Daily Formulation (Active working table)
+        CREATE TABLE IF NOT EXISTS tbl_formulation(
+            form_id SERIAL PRIMARY KEY,
+            index_no VARCHAR(50),
+            date DATE,
+            customer VARCHAR(100),
+            code_no_prod_code VARCHAR(50),
+            prod_color VARCHAR(100),
+            dosage DECIMAL(12,4),
+            total_concentration DECIMAL(12,4),
+            ld DECIMAL(12,4),
+            mix_time VARCHAR(50),
+            resin VARCHAR(100),
+            application VARCHAR(100),
+            cm_no VARCHAR(20),
+            colormatch_date DATE,
+            notes TEXT,
+            date_time TIMESTAMP,
+            is_deleted BOOLEAN DEFAULT FALSE,
+            is_used BOOLEAN DEFAULT FALSE
+        );
+
+        CREATE TABLE IF NOT EXISTS tbl_formulation_info(
+            id SERIAL PRIMARY KEY,
+            sequence_no INT,
+            material_code VARCHAR(50),
+            concentration DECIMAL(12,6),
+            is_deleted BOOLEAN DEFAULT FALSE,
+            form_id INT REFERENCES tbl_formulation(form_id) ON DELETE CASCADE
+        );
+
+        CREATE TABLE IF NOT EXISTS tbl_formulation_encode(
+            encode_id SERIAL PRIMARY KEY,
+            form_id INT REFERENCES tbl_formulation(form_id) ON DELETE CASCADE,
+            match_by VARCHAR(100),
+            encoded_by VARCHAR(100),
+            updated_by VARCHAR(100)
         );
     """)
 
-    # Data Initialization
+    # ==========================================
+    # 7. INDEXES FOR PERFORMANCE
+    # ==========================================
     cursor.execute("""
-            INSERT INTO tbl_access_points (access_name) VALUES 
-                ('Production Records'), ('Manual Entry'), ('Auto Entry - MB'),
-                ('Auto Entry - DC'), ('Audit Trail'), ('Permission Access')
-            ON CONFLICT (access_name) DO NOTHING;
-        """)
-
-    cursor.execute("""
-            INSERT INTO tbl_role_permissions (role_id, access_id, is_enabled)
-            SELECT r.role_id, a.access_id, TRUE
-            FROM tbl_role r, tbl_access_points a
-            WHERE r.role = 'ADMIN'
-            ON CONFLICT (role_id, access_id) DO NOTHING;
-        """)
-
-    # 13. Trigger logic
-    cursor.execute("""
-        CREATE OR REPLACE FUNCTION fn_sync_editor_list()
-        RETURNS TRIGGER AS $$
-        BEGIN
-            IF NEW.role_id IN (1, 2) THEN
-                INSERT INTO tbl_mac_editor (user_id)
-                VALUES (NEW.user_id)
-                ON CONFLICT (user_id) DO NOTHING;
-            ELSE
-                DELETE FROM tbl_mac_editor WHERE user_id = NEW.user_id;
-            END IF;
-            RETURN NEW;
-        END;
-        $$ LANGUAGE plpgsql;
-    """)
-
-    cursor.execute("DROP TRIGGER IF EXISTS trg_after_user_update ON tbl_user;")
-    cursor.execute("""
-        CREATE TRIGGER trg_after_user_update
-        AFTER UPDATE ON tbl_user
-        FOR EACH ROW
-        WHEN (OLD.role_id IS DISTINCT FROM NEW.role_id)
-        EXECUTE FUNCTION fn_sync_editor_list();
+        CREATE INDEX IF NOT EXISTS idx_cmf_no ON tbl_cmf(cm_no);
+        CREATE INDEX IF NOT EXISTS idx_master_formula_code ON tbl_master_formula(code_no_prod_code);
+        CREATE INDEX IF NOT EXISTS idx_audit_ts ON tbl_audit_trail(timestamp DESC);
     """)
 
     con.commit()
