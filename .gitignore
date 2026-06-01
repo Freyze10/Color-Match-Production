@@ -1,0 +1,19 @@
+# Virtual Environment
+.venv/
+
+# IDE
+.idea/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Sensitive files - DO NOT upload
+db/connection.py
+.env
+*.env
+
+# OS files
+.DS_Store
+Thumbs.db
