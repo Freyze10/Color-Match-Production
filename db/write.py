@@ -10,7 +10,7 @@ def create_current_user(workstation):
     ip_address = workstation['i']
     mac_address = workstation['m']
     username = "User"
-    role_id = 3
+    role_id = 6
     password = "mbpi"
 
     cursor.execute("""

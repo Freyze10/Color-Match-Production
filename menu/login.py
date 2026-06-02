@@ -24,7 +24,7 @@ class LoginWindow(QDialog):
         create_table()
         self.init_ui()
 
-        # self.create_acccount()
+        self.create_acccount()
 
     def init_ui(self):
         # Translucent container to allow for the shadow effect in CSS
