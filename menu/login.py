@@ -11,7 +11,7 @@ from db.write import create_current_user, update_user_workstation
 # from db.read import authenticate_user
 
 class LoginWindow(QDialog):
-    login_success = pyqtSignal(str, str)  # Sends (username, role)
+    login_success = pyqtSignal(str, str, str)  # Sends (username, role)
 
     def __init__(self, workstation_info):
         super().__init__()
@@ -131,10 +131,10 @@ class LoginWindow(QDialog):
             return
 
         # Perform authentication
-        success, role = authenticate_user(actual_username, pw)
+        success, role, department = authenticate_user(actual_username, pw)
 
         if success:
-            self.login_success.emit(actual_username, role)
+            self.login_success.emit(actual_username, role, department)
             self.accept()
         else:
             self.status_label.setText("Invalid username or password")

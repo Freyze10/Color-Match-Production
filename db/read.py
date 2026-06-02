@@ -150,7 +150,7 @@ def check_mac_role(mac):
         with get_connection() as conn:
             with conn.cursor() as cur:
                 cur.execute("""
-                    SELECT r.role 
+                    SELECT r.role, r.department
                     FROM tbl_user u
                     JOIN tbl_role r ON u.role_id = r.role_id
                     WHERE u.mac_address = %s
@@ -158,10 +158,15 @@ def check_mac_role(mac):
                 """, (mac,))
 
                 result = cur.fetchone()
-                return result[0] if result else None
+
+                if result:
+                    return result[0], result[1]
+
+                return None, None
+
     except Exception as e:
-        print(f"Database error in get_role_by_mac: {e}")
-        return None
+        print(f"Database error in check_mac_role: {e}")
+        return None, None
 
 
 def check_production_exists(prod_id):
@@ -443,7 +448,7 @@ def authenticate_user(username, password):
         cur = conn.cursor()
 
         cur.execute("""
-            SELECT r.role
+            SELECT r.role, r.department
             FROM tbl_user u
             JOIN tbl_role r ON u.role_id = r.role_id
             WHERE u.username = %s AND u.password = %s
@@ -456,13 +461,13 @@ def authenticate_user(username, password):
         conn.close()
 
         if record:
-            return True, record[0]  # success, role
+            return True, record[0], record[1]  # success, role, department
         else:
-            return False, None
+            return False, None, None
 
     except Exception as e:
         print(f"Auth Error: {e}")
-        return False, None
+        return False, None, None
 
 
 def get_all_roles():
@@ -511,7 +516,7 @@ def get_permission_matrix():
         return {}
 
 
-def get_allowed_access_points(role_name):
+def get_allowed_access_points(role_name, department):
     """Returns a list of access_names that are enabled for this role."""
     try:
         conn = get_connection()
@@ -521,9 +526,9 @@ def get_allowed_access_points(role_name):
             FROM tbl_role_permissions p
             JOIN tbl_role r ON p.role_id = r.role_id
             JOIN tbl_access_points a ON p.access_id = a.access_id
-            WHERE r.role = %s AND p.is_enabled = TRUE
+            WHERE r.role = %s AND r.department = %s AND p.is_enabled = TRUE
         """
-        cur.execute(query, (role_name,))
+        cur.execute(query, (role_name, department,))
         allowed = [row[0] for row in cur.fetchall()]
         cur.close()
         conn.close()

@@ -45,18 +45,23 @@ class AppController:
 class MainWindow(QMainWindow):
     logout_requested = pyqtSignal()  # Add this signal
 
-    def __init__(self, username, user_role):
+    def __init__(self, username, user_role, department):
         super().__init__()
         self.workstation_info = _get_workstation_info()
         self.username = username
         self.user_role = user_role
-        self.mac_role = check_mac_role(self.workstation_info['m'])
+        self.user_department = department
+        self.mac_role, self.mac_department = check_mac_role(self.workstation_info['m'])
 
         self.icon_db_ok, self.icon_db_fail = (fa.icon('fa5s.check-circle', color='#4CAF50'),
                                               fa.icon('fa5s.times-circle', color='#D32F2F'))
-        window_title = "Production Entry"
-        if not self.mac_role:
-            window_title = "Production Entry  -  This PC is for VIEWING ONLY"
+        window_title = "MBPI System"
+        if self.mac_department == "Production":
+            window_title = "Production Entry"
+        if self.mac_department == "Laboratory":
+            window_title = "Color Matching"
+        if self.mac_role == "VIEWER":
+            window_title = "This PC is for VIEWING ONLY"
 
         self.setWindowTitle(window_title)
         icon_path = resource_path("css/img/production_icon.ico")
@@ -71,7 +76,7 @@ class MainWindow(QMainWindow):
         self.audit_trail = None
         self.user_management = None
 
-        self.allowed_access = get_allowed_access_points(self.user_role)
+        self.allowed_access = get_allowed_access_points(self.user_role, self.user_department)
 
         self.init_ui()
         # self.log_audit_trail()
