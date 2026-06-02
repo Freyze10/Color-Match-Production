@@ -1,6 +1,5 @@
 from db.connection import get_connection
 
-
 def create_table():
     con = get_connection()
     cursor = con.cursor()
@@ -11,14 +10,13 @@ def create_table():
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS tbl_role(
             role_id SERIAL PRIMARY KEY,
-            department VARCHAR(50) NOT NULL,
-            role VARCHAR(20) NOT NULL,
-            UNIQUE(department, role)
+            department VARCHAR(100),
+            role VARCHAR(50)
         );
 
         CREATE TABLE IF NOT EXISTS tbl_user(
             user_id SERIAL PRIMARY KEY,
-            hostname VARCHAR(50),
+            hostname VARCHAR(100),
             ipaddress VARCHAR(50),
             mac VARCHAR(50) UNIQUE,
             username VARCHAR(50) NOT NULL,
@@ -33,16 +31,11 @@ def create_table():
 
         CREATE TABLE IF NOT EXISTS tbl_role_permissions(
             permission_id SERIAL PRIMARY KEY,
-            role_id INT REFERENCES tbl_role(role_id) ON DELETE CASCADE,
             access_id INT REFERENCES tbl_access_point(access_id) ON DELETE CASCADE,
-            is_enabled BOOLEAN DEFAULT FALSE
+            is_enabled BOOLEAN DEFAULT FALSE,
+            role_id INT REFERENCES tbl_role(role_id) ON DELETE CASCADE
         );
-    """)
 
-    # ==========================================
-    # 2. AUDIT TRAIL
-    # ==========================================
-    cursor.execute("""
         CREATE TABLE IF NOT EXISTS tbl_audit_trail(
             id SERIAL PRIMARY KEY,
             timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -53,22 +46,27 @@ def create_table():
     """)
 
     # ==========================================
-    # 3. CMF (COLOR MATCHING) MODULE
+    # 2. CMF (COLOR MATCHING) MODULE
     # ==========================================
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS tbl_cmf_salesman(
             sm_no SERIAL PRIMARY KEY,
-            name VARCHAR(100) NOT NULL
+            name VARCHAR(100)
         );
 
         CREATE TABLE IF NOT EXISTS tbl_cmf_color_req(
             color_req_no SERIAL PRIMARY KEY,
-            name VARCHAR(100) NOT NULL
+            name VARCHAR(100)
         );
 
         CREATE TABLE IF NOT EXISTS tbl_cmf_process(
             process_no SERIAL PRIMARY KEY,
-            name VARCHAR(100) NOT NULL
+            name VARCHAR(100)
+        );
+        
+        CREATE TABLE IF NOT EXISTS tbl_cmf_specification(
+            spec_no SERIAL PRIMARY KEY,
+            name VARCHAR(100)
         );
 
         CREATE TABLE IF NOT EXISTS tbl_cmf_add_info(
@@ -77,24 +75,40 @@ def create_table():
         );
 
         CREATE TABLE IF NOT EXISTS tbl_cmf(
-            cm_no VARCHAR(20) PRIMARY KEY, -- Usually a formatted string like CMF-2024-001
-            matching_type VARCHAR(50),
+            id SERIAL PRIMARY KEY,
+            cm_no VARCHAR(50) UNIQUE NOT NULL,
+            matching_type VARCHAR(100),
             sm_no INT REFERENCES tbl_cmf_salesman(sm_no),
-            primary_color VARCHAR(50),
+            primary_color VARCHAR(100),
             color_desc TEXT,
-            color_req_id INT REFERENCES tbl_cmf_color_req(color_req_no),
-            qty_resin_testing VARCHAR(50),
-            is_resin_provided BOOLEAN DEFAULT FALSE,
-            mi_c_resin VARCHAR(50),
-            is_sample_available BOOLEAN DEFAULT FALSE,
-            colorant_type VARCHAR(50),
-            is_guide_to_return BOOLEAN DEFAULT FALSE,
-            specification TEXT,
-            temperature VARCHAR(20),
-            is_low_cost BOOLEAN DEFAULT FALSE,
+            qty_resin_testing VARCHAR(100),
+            is_resin_provided BOOLEAN,
+            mi_c_resin VARCHAR(100),
+            is_sample_available BOOLEAN,
+            colorant_type VARCHAR(100),
+            is_guide_to_return BOOLEAN,
+            temperature VARCHAR(50),
+            is_low_cost BOOLEAN,
             remarks TEXT,
             info_no INT REFERENCES tbl_cmf_add_info(info_no),
             user_id INT REFERENCES tbl_user(user_id)
+        );
+
+        -- Many-to-Many: CMF to Color Requirements
+        CREATE TABLE IF NOT EXISTS tbl_cmf_color_req02(
+            chosen_color_req_no SERIAL PRIMARY KEY,
+            cm_no VARCHAR(50) REFERENCES tbl_cmf(cm_no) ON DELETE CASCADE,
+            color_req_no INT REFERENCES tbl_cmf_color_req(color_req_no)
+        );
+
+        CREATE TABLE IF NOT EXISTS tbl_cmf_attachments (
+            file_id SERIAL PRIMARY KEY,
+            cm_no VARCHAR(50) REFERENCES tbl_cmf(cm_no) ON DELETE CASCADE,
+            file_name VARCHAR(255) NOT NULL,        -- Example: "test_result.pdf"
+            file_type VARCHAR(50),                 -- Example: "application/pdf"
+            file_data BYTEA NOT NULL,               -- THE ACTUAL FILE
+            uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            uploaded_by INT REFERENCES tbl_user(user_id)
         );
 
         CREATE TABLE IF NOT EXISTS tbl_cmf_dates(
@@ -103,12 +117,35 @@ def create_table():
             date_required DATE,
             date_received_lab DATE,
             due_date_lab DATE,
-            cm_no VARCHAR(20) REFERENCES tbl_cmf(cm_no) ON DELETE CASCADE
+            cm_no VARCHAR(50) REFERENCES tbl_cmf(cm_no) ON DELETE CASCADE
+        );
+
+        CREATE TABLE IF NOT EXISTS tbl_cmf_formula(
+            cmf_formula_no SERIAL PRIMARY KEY,
+            customer VARCHAR(150),
+            finished_product VARCHAR(150),
+            resin VARCHAR(100),
+            dosage DECIMAL(12,6),
+            cm_no VARCHAR(50) REFERENCES tbl_cmf(cm_no) ON DELETE CASCADE
+        );
+
+        -- Many-to-Many: CMF Formula to Process
+        CREATE TABLE IF NOT EXISTS tbl_cmf_process02(
+            chosen_process_no SERIAL PRIMARY KEY,
+            cmf_formula_no INT REFERENCES tbl_cmf_formula(cmf_formula_no) ON DELETE CASCADE,
+            process_no INT REFERENCES tbl_cmf_process(process_no)
+        );
+        
+        -- Many-to-Many: CMF Formula to Process
+        CREATE TABLE IF NOT EXISTS tbl_cmf_specification02(
+            chosen_spec_no SERIAL PRIMARY KEY,
+            cm_no VARCHAR(50) REFERENCES tbl_cmf(cm_no) ON DELETE CASCADE,
+            spec_no INT REFERENCES tbl_cmf_specification(spec_no)
         );
 
         CREATE TABLE IF NOT EXISTS tbl_cmf_pending(
             pending_no SERIAL PRIMARY KEY,
-            cm_no VARCHAR(20) REFERENCES tbl_cmf(cm_no),
+            cm_no VARCHAR(50) REFERENCES tbl_cmf(cm_no),
             reason TEXT,
             is_completed BOOLEAN DEFAULT FALSE
         );
@@ -116,111 +153,117 @@ def create_table():
         CREATE TABLE IF NOT EXISTS tbl_cmf_completed(
             completed_no SERIAL PRIMARY KEY,
             pending_no INT REFERENCES tbl_cmf_pending(pending_no),
-            code VARCHAR(50),
-            date_submitted TIMESTAMP
+            code VARCHAR(100),
+            date_submitted DATE
+        );
+
+        CREATE TABLE IF NOT EXISTS tbl_feedback(
+            feedbackk_no SERIAL PRIMARY KEY,
+            cm_no VARCHAR(50) REFERENCES tbl_cmf(cm_no),
+            feedback TEXT
         );
     """)
 
     # ==========================================
-    # 4. PRODUCT CODES MODULE
+    # 3. PRODUCT CODE MODULE
     # ==========================================
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS tbl_internal_color_code(
             in_code_no SERIAL PRIMARY KEY,
-            color VARCHAR(50),
-            code VARCHAR(50) UNIQUE
+            color VARCHAR(100),
+            code VARCHAR(100) UNIQUE
         );
 
         CREATE TABLE IF NOT EXISTS tbl_generated_prod_code(
             code_no SERIAL PRIMARY KEY,
-            product_code VARCHAR(50) UNIQUE,
+            product_code VARCHAR(100) UNIQUE,
             in_code_no INT REFERENCES tbl_internal_color_code(in_code_no)
         );
     """)
 
     # ==========================================
-    # 5. EXTRUDER FORMULAS (MB & DC)
+    # 4. EXTRUDER FORMULAS (MB & DC)
     # ==========================================
     cursor.execute("""
-        -- Master Batch (MB) Extruder
+        -- Master Batch Extruder
         CREATE TABLE IF NOT EXISTS tbl_mb_extruder_formula(
             mb_no SERIAL PRIMARY KEY,
             date DATE,
             code_no INT REFERENCES tbl_generated_prod_code(code_no),
-            lot_no VARCHAR(50),
+            lot_no VARCHAR(100),
             matched_by VARCHAR(100),
             weighted_by VARCHAR(100),
             encoded_by VARCHAR(100),
             total_weight DECIMAL(12,4),
-            cm_no VARCHAR(20) REFERENCES tbl_cmf(cm_no)
+            cm_no VARCHAR(50) REFERENCES tbl_cmf(cm_no)
         );
 
         CREATE TABLE IF NOT EXISTS tbl_mb_extruder_formula02(
             id SERIAL PRIMARY KEY,
             mb_no INT REFERENCES tbl_mb_extruder_formula(mb_no) ON DELETE CASCADE,
-            material VARCHAR(100),
-            value DECIMAL(12,4),
-            weight DECIMAL(12,4)
+            material VARCHAR(150),
+            value DECIMAL(12,6),
+            weight DECIMAL(12,6)
         );
 
-        -- Direct Color (DC) Extruder
+        -- Direct Color Extruder
         CREATE TABLE IF NOT EXISTS tbl_dc_extruder_formula(
             dc_no SERIAL PRIMARY KEY,
             code_no INT REFERENCES tbl_generated_prod_code(code_no),
             date DATE,
-            sample_size VARCHAR(50),
-            mixing_time VARCHAR(50),
+            sample_size VARCHAR(100),
+            mixing_time VARCHAR(100),
             notes TEXT,
             matched_by VARCHAR(100),
             weighted_by VARCHAR(100),
             encoded_by VARCHAR(100),
             total_weight DECIMAL(12,4),
-            cm_no VARCHAR(20) REFERENCES tbl_cmf(cm_no)
+            cm_no VARCHAR(50) REFERENCES tbl_cmf(cm_no)
         );
 
         CREATE TABLE IF NOT EXISTS tbl_dc_extruder_formula02(
             id SERIAL PRIMARY KEY,
             dc_no INT REFERENCES tbl_dc_extruder_formula(dc_no) ON DELETE CASCADE,
-            material VARCHAR(100),
-            value DECIMAL(12,4),
-            weight DECIMAL(12,4)
+            material VARCHAR(150),
+            value DECIMAL(12,6),
+            weight DECIMAL(12,6)
         );
     """)
 
     # ==========================================
-    # 6. MASTER FORMULA & FORMULATION MODULE
+    # 5. MASTER FORMULA MODULE
     # ==========================================
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS tbl_master_formula(
             form_id SERIAL PRIMARY KEY,
-            index_no VARCHAR(50),
+            index_no VARCHAR(100),
             date DATE,
-            customer VARCHAR(100),
-            code_no_prod_code VARCHAR(50),
-            prod_color VARCHAR(100),
-            dosage DECIMAL(12,4),
-            total_concentration DECIMAL(12,4),
-            ld DECIMAL(12,4),
-            mix_time VARCHAR(50),
-            resin VARCHAR(100),
-            application VARCHAR(100),
-            cm_no VARCHAR(20) REFERENCES tbl_cmf(cm_no),
+            customer VARCHAR(150),
+            code_no_prod_code VARCHAR(100),
+            prod_color VARCHAR(150),
+            dosage DECIMAL(12,6),
+            total_concentration DECIMAL(12,6),
+            ld DECIMAL(12,6),
+            mix_time VARCHAR(100),
+            resin VARCHAR(150),
+            application VARCHAR(150),
+            cm_no VARCHAR(50),
             colormatch_date DATE,
             notes TEXT,
             date_time TIMESTAMP,
             is_deleted BOOLEAN DEFAULT FALSE,
             is_used BOOLEAN DEFAULT FALSE,
-            html_code_hex VARCHAR(7),
-            cyan DECIMAL(5,2),
-            magenta DECIMAL(5,2),
-            yellow DECIMAL(5,2),
-            black DECIMAL(5,2)
+            html_code_hex VARCHAR(10),
+            cyan DECIMAL(12,6),
+            magenta DECIMAL(12,6),
+            yellow DECIMAL(12,6),
+            black DECIMAL(12,6)
         );
 
         CREATE TABLE IF NOT EXISTS tbl_master_formula_info(
             id SERIAL PRIMARY KEY,
             sequence_no INT,
-            material_code VARCHAR(50),
+            material_code VARCHAR(100),
             concentration DECIMAL(12,6),
             is_deleted BOOLEAN DEFAULT FALSE,
             form_id INT REFERENCES tbl_master_formula(form_id) ON DELETE CASCADE
@@ -233,22 +276,26 @@ def create_table():
             encoded_by VARCHAR(100),
             updated_by VARCHAR(100)
         );
+    """)
 
-        -- Daily Formulation (Active working table)
+    # ==========================================
+    # 6. DAILY FORMULATION MODULE
+    # ==========================================
+    cursor.execute("""
         CREATE TABLE IF NOT EXISTS tbl_formulation(
             form_id SERIAL PRIMARY KEY,
-            index_no VARCHAR(50),
+            index_no VARCHAR(100),
             date DATE,
-            customer VARCHAR(100),
-            code_no_prod_code VARCHAR(50),
-            prod_color VARCHAR(100),
-            dosage DECIMAL(12,4),
-            total_concentration DECIMAL(12,4),
-            ld DECIMAL(12,4),
-            mix_time VARCHAR(50),
-            resin VARCHAR(100),
-            application VARCHAR(100),
-            cm_no VARCHAR(20),
+            customer VARCHAR(150),
+            code_no_prod_code VARCHAR(100),
+            prod_color VARCHAR(150),
+            dosage DECIMAL(12,6),
+            total_concentration DECIMAL(12,6),
+            ld DECIMAL(12,6),
+            mix_time VARCHAR(100),
+            resin VARCHAR(150),
+            application VARCHAR(150),
+            cm_no VARCHAR(50),
             colormatch_date DATE,
             notes TEXT,
             date_time TIMESTAMP,
@@ -259,28 +306,19 @@ def create_table():
         CREATE TABLE IF NOT EXISTS tbl_formulation_info(
             id SERIAL PRIMARY KEY,
             sequence_no INT,
-            material_code VARCHAR(50),
+            material_code VARCHAR(100),
             concentration DECIMAL(12,6),
             is_deleted BOOLEAN DEFAULT FALSE,
             form_id INT REFERENCES tbl_formulation(form_id) ON DELETE CASCADE
         );
 
-        CREATE TABLE IF NOT EXISTS tbl_formulation_encode(
+        CREATE TABLE IF NOT EXISTS tbl_formula_encode(
             encode_id SERIAL PRIMARY KEY,
             form_id INT REFERENCES tbl_formulation(form_id) ON DELETE CASCADE,
             match_by VARCHAR(100),
             encoded_by VARCHAR(100),
             updated_by VARCHAR(100)
         );
-    """)
-
-    # ==========================================
-    # 7. INDEXES FOR PERFORMANCE
-    # ==========================================
-    cursor.execute("""
-        CREATE INDEX IF NOT EXISTS idx_cmf_no ON tbl_cmf(cm_no);
-        CREATE INDEX IF NOT EXISTS idx_master_formula_code ON tbl_master_formula(code_no_prod_code);
-        CREATE INDEX IF NOT EXISTS idx_audit_ts ON tbl_audit_trail(timestamp DESC);
     """)
 
     con.commit()
