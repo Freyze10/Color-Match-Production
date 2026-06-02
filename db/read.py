@@ -145,25 +145,23 @@ def get_rm_code_lists():
         return []
 
 
-def check_mac_enabled(mac):
-    """Returns True if the ID exists and is NOT deleted."""
+def check_mac_role(mac):
     try:
-        conn = get_connection()
-        cur = conn.cursor()
-        cur.execute("""
-            SELECT EXISTS (
-            SELECT 1 
-            FROM tbl_user b
-            JOIN tbl_mac_editor a ON b.user_id = a.user_id 
-            WHERE b.mac_address = %s
-        );""", (mac,))
+        with get_connection() as conn:
+            with conn.cursor() as cur:
+                cur.execute("""
+                    SELECT r.role 
+                    FROM tbl_user u
+                    JOIN tbl_role r ON u.role_id = r.role_id
+                    WHERE u.mac_address = %s
+                    LIMIT 1;
+                """, (mac,))
 
-        exists = cur.fetchone()[0]
-        cur.close()
-        conn.close()
-        return exists
-    except:
-        return False
+                result = cur.fetchone()
+                return result[0] if result else None
+    except Exception as e:
+        print(f"Database error in get_role_by_mac: {e}")
+        return None
 
 
 def check_production_exists(prod_id):

@@ -153,7 +153,15 @@
       <option name="project" value="LOCAL" />
       <updated>1780383373159</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="updated the database for log in to handdle logins">
+      <option name="closed" value="true" />
+      <created>1780384919791</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1780384919791</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -161,6 +169,7 @@
     <MESSAGE value="updated requirements" />
     <MESSAGE value="updated the database schema" />
     <MESSAGE value="updated table schema" />
-    <option name="LAST_COMMIT_MESSAGE" value="updated table schema" />
+    <MESSAGE value="updated the database for log in to handdle logins" />
+    <option name="LAST_COMMIT_MESSAGE" value="updated the database for log in to handdle logins" />
   </component>
 </project>

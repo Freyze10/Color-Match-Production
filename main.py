@@ -8,7 +8,7 @@ from PyQt6.QtWidgets import QMainWindow, QWidget, QHBoxLayout, QApplication, QVB
     QStackedWidget, QStatusBar, QMessageBox
 
 from css.styles import AppStyles
-from db.read import check_mac_enabled, get_allowed_access_points, get_latest_prod_id
+from db.read import check_mac_role, get_allowed_access_points, get_latest_prod_id
 from db.write import create_current_user, log_audit_trail
 from menu.audit_trail import AuditTrail
 from menu.dc_auto_entry import DCAutoEntry
@@ -50,12 +50,12 @@ class MainWindow(QMainWindow):
         self.workstation_info = _get_workstation_info()
         self.username = username
         self.user_role = user_role
-        self.is_mac_enabled = check_mac_enabled(self.workstation_info['m'])
+        self.mac_role = check_mac_role(self.workstation_info['m'])
 
         self.icon_db_ok, self.icon_db_fail = (fa.icon('fa5s.check-circle', color='#4CAF50'),
                                               fa.icon('fa5s.times-circle', color='#D32F2F'))
         window_title = "Production Entry"
-        if not self.is_mac_enabled:
+        if not self.mac_role:
             window_title = "Production Entry  -  This PC is for VIEWING ONLY"
 
         self.setWindowTitle(window_title)
@@ -102,21 +102,21 @@ class MainWindow(QMainWindow):
         self.btn_production_records.setChecked(True)
 
     def switch_to_manual_entry(self, prod_id: int):
-        self.mb_manual_entry = MBManualEntry(self.is_mac_enabled, self.user_role, prod_id)  # Pass prod_id in constructor
+        self.mb_manual_entry = MBManualEntry(self.mac_role, self.user_role, prod_id)  # Pass prod_id in constructor
         self.stacked_widget.removeWidget(self.stacked_widget.widget(1))  # remove old one
         self.stacked_widget.insertWidget(1, self.mb_manual_entry)  # add new one with same index
         self.btn_manual_entry.setChecked(True)
         self.stacked_widget.setCurrentIndex(1)
 
     def switch_to_auto_entry(self, prod_id: int):
-        self.mb_auto_entry = MBAutoEntry(self.is_mac_enabled, self.user_role, prod_id)  # Pass prod_id in constructor
+        self.mb_auto_entry = MBAutoEntry(self.mac_role, self.user_role, prod_id)  # Pass prod_id in constructor
         self.stacked_widget.removeWidget(self.stacked_widget.widget(2))  # remove old one
         self.stacked_widget.insertWidget(2, self.mb_auto_entry)  # add new one with same index
         self.btn_auto_entry.setChecked(True)
         self.stacked_widget.setCurrentIndex(2)
 
     def switch_to_dc_auto(self, prod_id: int):
-        self.dc_auto_entry = DCAutoEntry(self.is_mac_enabled, self.user_role, prod_id)  # Pass prod_id in constructor
+        self.dc_auto_entry = DCAutoEntry(self.mac_role, self.user_role, prod_id)  # Pass prod_id in constructor
         self.stacked_widget.removeWidget(self.stacked_widget.widget(3))  # remove old one
         self.stacked_widget.insertWidget(3, self.dc_auto_entry)  # add new one with same index
         self.btn_auto_entry_dc.setChecked(True)
@@ -187,7 +187,7 @@ class MainWindow(QMainWindow):
         show_audit = "Audit Trail" in self.allowed_access
         show_perms = "Permission Access" in self.allowed_access
 
-        if show_audit or show_perms and self.is_mac_enabled:
+        if show_audit or show_perms and self.mac_role:
             layout.addWidget(QLabel("System", objectName="MenuLabel"))
             if show_audit:
                 layout.addWidget(self.btn_audit_trail)
@@ -242,15 +242,15 @@ class MainWindow(QMainWindow):
                 new_widget = self.production_records
 
             elif index == 1:
-                self.mb_manual_entry = MBManualEntry(self.is_mac_enabled, self.user_role)
+                self.mb_manual_entry = MBManualEntry(self.mac_role, self.user_role)
                 new_widget = self.mb_manual_entry
 
             elif index == 2:
-                self.mb_auto_entry = MBAutoEntry(self.is_mac_enabled, self.user_role)
+                self.mb_auto_entry = MBAutoEntry(self.mac_role, self.user_role)
                 new_widget = self.mb_auto_entry
 
             elif index == 3:
-                self.dc_auto_entry = DCAutoEntry(self.is_mac_enabled, self.user_role)
+                self.dc_auto_entry = DCAutoEntry(self.mac_role, self.user_role)
                 new_widget = self.dc_auto_entry
 
             elif index == 4:
