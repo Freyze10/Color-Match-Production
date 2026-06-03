@@ -399,20 +399,25 @@ def get_audit_date_bounds():
 
 
 def get_user_management_list():
-    conn = get_connection()
-    cur = conn.cursor()
-
-    cur.execute("""
-            SELECT u.user_id, u.hostname, u.username, u.ip_address, u.mac_address, r.role, r.department, u.password, u.role_id
+    """Returns: user_id, hostname, username, ip, mac, role, department, password"""
+    try:
+        conn = get_connection()
+        cur = conn.cursor()
+        query = """
+            SELECT u.user_id, u.hostname, u.username, u.ip_address, u.mac_address,
+                   r.role, r.department, u.password
             FROM tbl_user u
-            JOIN tbl_role r ON u.role_id = r.role_id
-            ORDER BY u.user_id ASC
-        """)
-    records = cur.fetchall()
-
-    cur.close()
-    conn.close()
-    return records
+            LEFT JOIN tbl_role r ON u.role_id = r.role_id
+            ORDER BY u.user_id
+        """
+        cur.execute(query)
+        rows = cur.fetchall()
+        cur.close()
+        conn.close()
+        return rows
+    except Exception as e:
+        print(f"Error get_user_management_list: {e}")
+        return []
 
 
 def get_material_note(material_code):
@@ -471,14 +476,20 @@ def authenticate_user(username, password):
 
 
 def get_all_roles():
+    """Returns: role_id, role, department (as display label)"""
     try:
         conn = get_connection()
         cur = conn.cursor()
-        cur.execute("SELECT role_id, role FROM tbl_role ORDER BY role_id ASC")
-        records = cur.fetchall()
+        query = """
+            SELECT role_id, role || ' - ' || department AS label, department, role
+            FROM tbl_role
+            ORDER BY department, role
+        """
+        cur.execute(query)
+        rows = cur.fetchall()
         cur.close()
         conn.close()
-        return records
+        return rows  # [(role_id, "ADMIN - Information Technology", department, role), ...]
     except Exception as e:
         print(f"Error get_all_roles: {e}")
         return []
@@ -499,18 +510,15 @@ def get_access_points():
 
 
 def get_permission_matrix():
+    """Returns dict: {(role_id, access_id): is_enabled}"""
     try:
         conn = get_connection()
         cur = conn.cursor()
-        # Fetches native BOOLEAN
         cur.execute("SELECT role_id, access_id, is_enabled FROM tbl_role_permissions")
-        records = cur.fetchall()
+        rows = cur.fetchall()
         cur.close()
         conn.close()
-
-        # Convert list to dictionary for high-speed lookup in Python
-        # row[2] will be a Python True/False object
-        return {(row[0], row[1]): row[2] for row in records}
+        return {(r[0], r[1]): r[2] for r in rows}
     except Exception as e:
         print(f"Error get_permission_matrix: {e}")
         return {}

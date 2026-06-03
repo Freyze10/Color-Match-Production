@@ -16,9 +16,10 @@ from util.debounce import finished_typing
 
 class AuditTrail(QWidget):
 
-    def __init__(self):
+    def __init__(self, user_department):
         super().__init__()
         self.rows = []
+        self.user_department = user_department
         self.setup_ui()
         self.refresh_records()
 

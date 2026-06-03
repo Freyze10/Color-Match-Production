@@ -119,14 +119,11 @@ def log_audit_trail(mac_address: str, action_type: str, details: str):
 
 
 def add_new_role(name, dept):
-    """Adds a new row to the tbl_role table."""
     try:
         conn = get_connection()
         cur = conn.cursor()
-
-        query = "INSERT INTO tbl_role (role, department) VALUES (%s, %s)"
-        cur.execute(query, (name.upper(), dept))
-
+        query = "INSERT INTO tbl_role (role, department) VALUES (%s, %s) ON CONFLICT (department, role) DO NOTHING"
+        cur.execute(query, (name.upper(), dept.strip()))
         conn.commit()
         cur.close()
         conn.close()

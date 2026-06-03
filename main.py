@@ -268,7 +268,7 @@ class MainWindow(QMainWindow):
                 new_widget = self.dc_auto_entry
 
             elif index == 4:
-                self.audit_trail = AuditTrail()
+                self.audit_trail = AuditTrail(self.user_department)
                 new_widget = self.audit_trail
 
             elif index == 5:
