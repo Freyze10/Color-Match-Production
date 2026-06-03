@@ -56,7 +56,7 @@ def create_table():
         INSERT INTO tbl_role_permissions (role_id, access_id, is_enabled)
             SELECT r.role_id, a.access_id, TRUE
             FROM tbl_role r, tbl_access_point a
-            WHERE r.role = 'ADMIN' AND r.department = 'Information Technology'
+            WHERE r.role = 'ADMIN' AND r.department = 'Information Technology' OR r.department = 'No Department'
             ON CONFLICT (role_id, access_id) DO NOTHING;
 
         CREATE TABLE IF NOT EXISTS tbl_audit_trail(

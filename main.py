@@ -35,8 +35,8 @@ class AppController:
         self.login_window.login_success.connect(self.show_main)
         self.login_window.show()
 
-    def show_main(self, username, role):
-        self.main_window = MainWindow(username, role)
+    def show_main(self, username, role, department):
+        self.main_window = MainWindow(username, role, department)
         # Connect the logout button signal
         self.main_window.logout_requested.connect(self.show_login)
         self.main_window.show()
@@ -61,7 +61,7 @@ class MainWindow(QMainWindow):
         if self.mac_department == "Laboratory":
             window_title = "Color Matching"
         if self.mac_role == "VIEWER":
-            window_title = "This PC is for VIEWING ONLY"
+            window_title = "MBPI System  -  This PC is for VIEWING ONLY"
 
         self.setWindowTitle(window_title)
         icon_path = resource_path("css/img/production_icon.ico")
@@ -108,21 +108,30 @@ class MainWindow(QMainWindow):
 
     def switch_to_manual_entry(self, prod_id: int):
         self.mb_manual_entry = MBManualEntry(self.mac_role, self.user_role, prod_id)  # Pass prod_id in constructor
-        self.stacked_widget.removeWidget(self.stacked_widget.widget(1))  # remove old one
+        old_widget = self.stacked_widget.widget(1)
+        if old_widget:
+            self.stacked_widget.removeWidget(old_widget)
+            old_widget.deleteLater()  # remove old one
         self.stacked_widget.insertWidget(1, self.mb_manual_entry)  # add new one with same index
         self.btn_manual_entry.setChecked(True)
         self.stacked_widget.setCurrentIndex(1)
 
     def switch_to_auto_entry(self, prod_id: int):
         self.mb_auto_entry = MBAutoEntry(self.mac_role, self.user_role, prod_id)  # Pass prod_id in constructor
-        self.stacked_widget.removeWidget(self.stacked_widget.widget(2))  # remove old one
+        old_widget = self.stacked_widget.widget(2)
+        if old_widget:
+            self.stacked_widget.removeWidget(old_widget)
+            old_widget.deleteLater()  # remove old one
         self.stacked_widget.insertWidget(2, self.mb_auto_entry)  # add new one with same index
         self.btn_auto_entry.setChecked(True)
         self.stacked_widget.setCurrentIndex(2)
 
     def switch_to_dc_auto(self, prod_id: int):
         self.dc_auto_entry = DCAutoEntry(self.mac_role, self.user_role, prod_id)  # Pass prod_id in constructor
-        self.stacked_widget.removeWidget(self.stacked_widget.widget(3))  # remove old one
+        old_widget = self.stacked_widget.widget(3)
+        if old_widget:
+            self.stacked_widget.removeWidget(old_widget)
+            old_widget.deleteLater()  # remove old one
         self.stacked_widget.insertWidget(3, self.dc_auto_entry)  # add new one with same index
         self.btn_auto_entry_dc.setChecked(True)
         self.stacked_widget.setCurrentIndex(3)
@@ -192,7 +201,7 @@ class MainWindow(QMainWindow):
         show_audit = "Audit Trail" in self.allowed_access
         show_perms = "Permission Access" in self.allowed_access
 
-        if show_audit or show_perms and self.mac_role:
+        if (show_audit or show_perms) and self.mac_role:
             layout.addWidget(QLabel("System", objectName="MenuLabel"))
             if show_audit:
                 layout.addWidget(self.btn_audit_trail)

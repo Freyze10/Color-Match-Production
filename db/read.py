@@ -525,7 +525,7 @@ def get_allowed_access_points(role_name, department):
             SELECT a.access_name
             FROM tbl_role_permissions p
             JOIN tbl_role r ON p.role_id = r.role_id
-            JOIN tbl_access_points a ON p.access_id = a.access_id
+            JOIN tbl_access_point a ON p.access_id = a.access_id
             WHERE r.role = %s AND r.department = %s AND p.is_enabled = TRUE
         """
         cur.execute(query, (role_name, department,))
