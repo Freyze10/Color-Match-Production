@@ -95,11 +95,7 @@ class MainWindow(QMainWindow):
 
         self.setCentralWidget(main_widget)
         self.set_status_bar()
-        print("reached")
-        try:
-            self._init_pages()
-        except Exception as e:
-            print(e)
+        self._init_pages()
 
     def _init_pages(self):
         for _ in range(6):
@@ -111,7 +107,7 @@ class MainWindow(QMainWindow):
         self.btn_production_records.setChecked(True)
 
     def switch_to_manual_entry(self, prod_id: int):
-        self.mb_manual_entry = MBManualEntry(self.mac_role, self.user_role, prod_id)  # Pass prod_id in constructor
+        self.mb_manual_entry = MBManualEntry(self.mac_department, self.user_role, self.mac_department, prod_id)  # Pass prod_id in constructor
         old_widget = self.stacked_widget.widget(1)
         if old_widget:
             self.stacked_widget.removeWidget(old_widget)

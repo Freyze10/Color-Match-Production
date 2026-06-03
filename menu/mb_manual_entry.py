@@ -21,21 +21,25 @@ from workstation.workstation_details import _get_workstation_info
 
 
 class MBManualEntry(QWidget):
-    def __init__(self, is_mac_enabled, user_role, prod_id=0):
+    def __init__(self, mac_department, user_role, user_department, prod_id=0):
         super().__init__()
         self.prod_id = prod_id
         self.prod_results = None
         self.prod_materials = None
         self.work_station = _get_workstation_info()
-        self.is_mac_enabled = is_mac_enabled
+        self.mac_department = mac_department
         self.user_role = user_role
+        self.user_department = user_department
         # Track current production for edit/view
         self.current_production_id = None
 
         self.setup_ui()
 
-        if str(self.user_role).upper() == "VIEWER" or not self.is_mac_enabled:
+        allowed = {"Production", "Information Technology"}
+
+        if self.mac_department not in allowed or self.user_department not in allowed:
             self.apply_viewer_restrictions()
+
     def setup_ui(self):
 
         main_layout = QVBoxLayout(self)
