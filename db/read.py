@@ -399,13 +399,13 @@ def get_audit_date_bounds():
 
 
 def get_user_management_list():
-    """Returns: user_id, hostname, username, ip, mac, role, department, password"""
+    """Returns: user_id, hostname, username, ip, mac, role, department, password, role_id"""
     try:
         conn = get_connection()
         cur = conn.cursor()
         query = """
             SELECT u.user_id, u.hostname, u.username, u.ip_address, u.mac_address,
-                   r.role, r.department, u.password
+                   r.role, r.department, u.password, u.role_id
             FROM tbl_user u
             LEFT JOIN tbl_role r ON u.role_id = r.role_id
             ORDER BY u.user_id
@@ -476,12 +476,17 @@ def authenticate_user(username, password):
 
 
 def get_all_roles():
-    """Returns: role_id, role, department (as display label)"""
     try:
         conn = get_connection()
         cur = conn.cursor()
         query = """
-            SELECT role_id, role || ' - ' || department AS label, department, role
+            SELECT role_id, 
+                   CASE 
+                       WHEN department IN ('Laboratory', 'Production') 
+                       THEN role || ' - ' || department
+                       ELSE role
+                   END AS label,
+                   department, role
             FROM tbl_role
             ORDER BY department, role
         """
@@ -489,7 +494,7 @@ def get_all_roles():
         rows = cur.fetchall()
         cur.close()
         conn.close()
-        return rows  # [(role_id, "ADMIN - Information Technology", department, role), ...]
+        return rows
     except Exception as e:
         print(f"Error get_all_roles: {e}")
         return []

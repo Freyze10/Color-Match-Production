@@ -233,7 +233,15 @@
       <option name="project" value="LOCAL" />
       <updated>1780470493170</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="fix the user management and permission access">
+      <option name="closed" value="true" />
+      <created>1780471737781</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1780471737781</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -251,7 +259,8 @@
     <MESSAGE value="updated print production to only accessible in production department only" />
     <MESSAGE value="updated the calling of production mb/dc with passing of mac access and user access" />
     <MESSAGE value="updated the displaying of production audit trail and the admin permission access" />
-    <option name="LAST_COMMIT_MESSAGE" value="updated the displaying of production audit trail and the admin permission access" />
+    <MESSAGE value="fix the user management and permission access" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix the user management and permission access" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

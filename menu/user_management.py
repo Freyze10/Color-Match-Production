@@ -224,8 +224,12 @@ class PermissionsManager(QWidget):
         self.users_raw_data = get_user_management_list()
         self.table_model.set_data([row[:7] for row in self.users_raw_data])
         roles = get_all_roles()
+        self._roles_cache = roles  # Cache needed for role_id lookup
+
+        self.role_combo.blockSignals(True)
         self.role_combo.clear()
         self.role_combo.addItems([r[1] for r in roles])
+        self.role_combo.blockSignals(False)
 
     def filter_table(self):
         self.table_model.filter_data(self.search_input.text().lower())
@@ -234,14 +238,22 @@ class PermissionsManager(QWidget):
         row_idx = index.row()
         user_id = self.table_model.data(self.table_model.index(row_idx, 0))
         user_data = next((u for u in self.users_raw_data if u[0] == user_id), None)
-        if user_data:
-            self.selected_user_id = user_data[0]
-            self.edit_username.setText(user_data[2])
-            self.edit_hostname.setText(user_data[1])
-            self.edit_ip.setText(user_data[3])
-            self.edit_mac.setText(user_data[4])
-            self.edit_password.setText(user_data[7])
-            self.role_combo.setCurrentText(user_data[5])
+        if not user_data:
+            return
+
+        self.selected_user_id = user_data[0]
+        self.edit_username.setText(user_data[2])
+        self.edit_hostname.setText(user_data[1])
+        self.edit_ip.setText(user_data[3])
+        self.edit_mac.setText(user_data[4])
+        self.edit_password.setText(user_data[7])
+
+        # Match by role_id (index 8) instead of role name string
+        user_role_id = user_data[8]
+        for i, role in enumerate(self._roles_cache):
+            if role[0] == user_role_id:
+                self.role_combo.setCurrentIndex(i)
+                break
 
     def save_data(self):
         if not self.selected_user_id: return
