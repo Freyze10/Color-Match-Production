@@ -107,7 +107,7 @@ class MainWindow(QMainWindow):
         self.btn_production_records.setChecked(True)
 
     def switch_to_manual_entry(self, prod_id: int):
-        self.mb_manual_entry = MBManualEntry(self.mac_department, self.user_role, self.mac_department, prod_id)  # Pass prod_id in constructor
+        self.mb_manual_entry = MBManualEntry(self.mac_department, self.mac_department, prod_id)  # Pass prod_id in constructor
         old_widget = self.stacked_widget.widget(1)
         if old_widget:
             self.stacked_widget.removeWidget(old_widget)
@@ -117,7 +117,7 @@ class MainWindow(QMainWindow):
         self.stacked_widget.setCurrentIndex(1)
 
     def switch_to_auto_entry(self, prod_id: int):
-        self.mb_auto_entry = MBAutoEntry(self.mac_role, self.user_role, prod_id)  # Pass prod_id in constructor
+        self.mb_auto_entry = MBAutoEntry(self.mac_department, self.mac_department, prod_id)  # Pass prod_id in constructor
         old_widget = self.stacked_widget.widget(2)
         if old_widget:
             self.stacked_widget.removeWidget(old_widget)

@@ -21,14 +21,13 @@ from workstation.workstation_details import _get_workstation_info
 
 
 class MBManualEntry(QWidget):
-    def __init__(self, mac_department, user_role, user_department, prod_id=0):
+    def __init__(self, mac_department, user_department, prod_id=0):
         super().__init__()
         self.prod_id = prod_id
         self.prod_results = None
         self.prod_materials = None
         self.work_station = _get_workstation_info()
         self.mac_department = mac_department
-        self.user_role = user_role
         self.user_department = user_department
         # Track current production for edit/view
         self.current_production_id = None
@@ -948,14 +947,14 @@ class MBManualEntry(QWidget):
                 "action": "PRINT - WIP",
                 "details": f"(Manual) Prod ID: {production_data['prod_id']} | Production Date: {production_data['production_date']}",
             }
-            preview = ProductionPrintPreview(production_data, materials_data, wip_no=True, parent=self, audit=audit, role=self.user_role)
+            preview = ProductionPrintPreview(production_data, materials_data, wip_no=True, parent=self, audit=audit, user_department=self.user_department)
         else:
             audit = {
                 "mac": self.work_station['m'],
                 "action": "PRINT",
                 "details": f"(Manual) Prod ID: {production_data['prod_id']} | Production Date: {production_data['production_date']}",
             }
-            preview = ProductionPrintPreview(production_data, materials_data, parent=self, audit=audit, role=self.user_role)
+            preview = ProductionPrintPreview(production_data, materials_data, parent=self, audit=audit, user_department=self.user_department)
 
         preview.show()
 

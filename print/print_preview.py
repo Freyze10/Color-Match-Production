@@ -15,13 +15,13 @@ class ProductionPrintPreview(QWidget):
     printed = pyqtSignal(str)
 
     def __init__(self, production_data: dict, materials_data: list, wip_no=False, parent=None, audit=None,
-                 role="Editor"):
+                 user_department="Production"):
         super().__init__(parent)
         self.data = production_data or {}
         self.mats = materials_data or []
         self.wip_no = wip_no
         self.audit = audit
-        self.user_role = role
+        self.user_department = user_department
         # INCREASED FONT SIZE BY 1
         self.default_font_size = 11
 
@@ -39,7 +39,7 @@ class ProductionPrintPreview(QWidget):
         self.setup_ui()
         self.refresh_preview()
 
-        if str(self.user_role).upper() == "VIEWER":
+        if self.user_department not in {"Production", "Information Technology"}:
             self.btn_print.setEnabled(False)
             self.btn_print.setObjectName("disabled_btn")
 
