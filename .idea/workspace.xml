@@ -241,7 +241,15 @@
       <option name="project" value="LOCAL" />
       <updated>1780471737781</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="updated the updating of combo box in user management">
+      <option name="closed" value="true" />
+      <created>1780472959063</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1780472959063</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -260,7 +268,8 @@
     <MESSAGE value="updated the calling of production mb/dc with passing of mac access and user access" />
     <MESSAGE value="updated the displaying of production audit trail and the admin permission access" />
     <MESSAGE value="fix the user management and permission access" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix the user management and permission access" />
+    <MESSAGE value="updated the updating of combo box in user management" />
+    <option name="LAST_COMMIT_MESSAGE" value="updated the updating of combo box in user management" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

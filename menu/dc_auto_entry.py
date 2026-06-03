@@ -38,7 +38,6 @@ class DCAutoEntry(QWidget):
 
         self.setup_ui()
         allowed = {"Production", "Information Technology"}
-
         if self.mac_department not in allowed or self.user_department not in allowed:
             self.apply_viewer_restrictions()
 
