@@ -39,13 +39,25 @@ def create_table():
             access_id SERIAL PRIMARY KEY,
             access_name VARCHAR(100) UNIQUE
         );
+        
+        INSERT INTO tbl_access_point (access_name) VALUES 
+                ('Production Records'), ('Manual Entry'), ('Auto Entry - MB'),
+                ('Auto Entry - DC'), ('Audit Trail'), ('Permission Access')
+            ON CONFLICT (access_name) DO NOTHING;
 
         CREATE TABLE IF NOT EXISTS tbl_role_permissions(
             permission_id SERIAL PRIMARY KEY,
             access_id INT REFERENCES tbl_access_point(access_id) ON DELETE CASCADE,
             is_enabled BOOLEAN DEFAULT FALSE,
-            role_id INT REFERENCES tbl_role(role_id) ON DELETE CASCADE
+            role_id INT REFERENCES tbl_role(role_id) ON DELETE CASCADE,
+            UNIQUE(role_id, access_id)
         );
+        
+        INSERT INTO tbl_role_permissions (role_id, access_id, is_enabled)
+            SELECT r.role_id, a.access_id, TRUE
+            FROM tbl_role r, tbl_access_point a
+            WHERE r.role = 'ADMIN' AND r.department = 'Information Technology'
+            ON CONFLICT (role_id, access_id) DO NOTHING;
 
         CREATE TABLE IF NOT EXISTS tbl_audit_trail(
             id SERIAL PRIMARY KEY,
