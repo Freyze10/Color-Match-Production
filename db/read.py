@@ -488,7 +488,7 @@ def get_access_points():
     try:
         conn = get_connection()
         cur = conn.cursor()
-        cur.execute("SELECT access_id, access_name FROM tbl_access_points ORDER BY access_id ASC")
+        cur.execute("SELECT access_id, access_name FROM tbl_access_point ORDER BY access_id ASC")
         records = cur.fetchall()
         cur.close()
         conn.close()

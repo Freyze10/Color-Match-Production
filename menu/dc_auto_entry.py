@@ -24,20 +24,22 @@ from workstation.workstation_details import _get_workstation_info
 
 
 class DCAutoEntry(QWidget):
-    def __init__(self, is_mac_enabled, user_role, prod_id=0):
+    def __init__(self, mac_department, user_department, prod_id=0):
         super().__init__()
         self.prod_id = prod_id
         self.prod_results = None
         self.prod_materials = None
         self.work_station = _get_workstation_info()
-        self.is_mac_enabled = is_mac_enabled
-        self.user_role = user_role
+        self.mac_department = mac_department
+        self.user_department = user_department
         # Track current production for edit/view
         self.current_production_id = None
         self.formulation_details = None
 
         self.setup_ui()
-        if str(self.user_role).upper() == "VIEWER" or not self.is_mac_enabled:
+        allowed = {"Production", "Information Technology"}
+
+        if self.mac_department not in allowed or self.user_department not in allowed:
             self.apply_viewer_restrictions()
 
     def setup_ui(self):
@@ -1025,7 +1027,7 @@ class DCAutoEntry(QWidget):
             "action": "PRINT",
             "details": f"(DC - Auto) Prod ID: {production_data['prod_id']} | Production Date: {production_data['production_date']}",
         }
-        preview = ProductionPrintPreview(production_data, materials_data, parent=self, audit=audit, role=self.user_role)
+        preview = ProductionPrintPreview(production_data, materials_data, parent=self, audit=audit, user_department=self.user_department)
 
         preview.show()
 

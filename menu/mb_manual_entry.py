@@ -33,7 +33,6 @@ class MBManualEntry(QWidget):
         self.current_production_id = None
 
         self.setup_ui()
-
         allowed = {"Production", "Information Technology"}
 
         if self.mac_department not in allowed or self.user_department not in allowed:
