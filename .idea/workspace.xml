@@ -185,7 +185,15 @@
       <option name="project" value="LOCAL" />
       <updated>1780448935118</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="modifying main page">
+      <option name="closed" value="true" />
+      <created>1780455793839</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1780455793839</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -197,6 +205,7 @@
     <MESSAGE value="updated the getting of mac addrress role" />
     <MESSAGE value="added department in accessing the access points for more accuracy" />
     <MESSAGE value="added unique constraint to add initial data only once" />
-    <option name="LAST_COMMIT_MESSAGE" value="added unique constraint to add initial data only once" />
+    <MESSAGE value="modifying main page" />
+    <option name="LAST_COMMIT_MESSAGE" value="modifying main page" />
   </component>
 </project>

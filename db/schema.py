@@ -305,42 +305,123 @@ def create_table():
     # 6. DAILY FORMULATION MODULE
     # ==========================================
     cursor.execute("""
-        CREATE TABLE IF NOT EXISTS tbl_formulation(
+        CREATE TABLE IF NOT EXISTS tbl_formula01(
             form_id SERIAL PRIMARY KEY,
-            index_no VARCHAR(100),
+            index_no VARCHAR(22),
             date DATE,
-            customer VARCHAR(150),
-            code_no_prod_code VARCHAR(100),
-            prod_color VARCHAR(150),
+            customer VARCHAR(62),
+            prod_code VARCHAR(22) NOT NULL,
+            prod_color VARCHAR(62),
             dosage DECIMAL(12,6),
             total_concentration DECIMAL(12,6),
             ld DECIMAL(12,6),
-            mix_time VARCHAR(100),
-            resin VARCHAR(150),
-            application VARCHAR(150),
-            cm_no VARCHAR(50),
-            colormatch_date DATE,
-            notes TEXT,
-            date_time TIMESTAMP,
+            mix_time VARCHAR(22),
+            resin VARCHAR(36),
+            application VARCHAR(36),
+            colormatch_no VARCHAR(8),
+            colormatch_date date,
+            notes VARCHAR(256),
+            date_time VARCHAR(32),
             is_deleted BOOLEAN DEFAULT FALSE,
             is_used BOOLEAN DEFAULT FALSE
         );
 
-        CREATE TABLE IF NOT EXISTS tbl_formulation_info(
+        CREATE TABLE IF NOT EXISTS tbl_formula02(
             id SERIAL PRIMARY KEY,
+            form_id INT,
             sequence_no INT,
-            material_code VARCHAR(100),
+            material_code VARCHAR(32),
             concentration DECIMAL(12,6),
             is_deleted BOOLEAN DEFAULT FALSE,
-            form_id INT REFERENCES tbl_formulation(form_id) ON DELETE CASCADE
+            FOREIGN KEY (form_id) REFERENCES tbl_formula01(form_id)
         );
 
         CREATE TABLE IF NOT EXISTS tbl_formula_encode(
             encode_id SERIAL PRIMARY KEY,
-            form_id INT REFERENCES tbl_formulation(form_id) ON DELETE CASCADE,
-            match_by VARCHAR(100),
-            encoded_by VARCHAR(100),
-            updated_by VARCHAR(100)
+            form_id INT,
+            match_by VARCHAR(128),
+            encoded_by VARCHAR(128),
+            updated_by VARCHAR(128),
+            FOREIGN KEY (form_id) REFERENCES tbl_formula01(form_id)
+        );
+    """)
+
+    # ==========================================
+    # 7. DAILY Production
+    # ==========================================
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS tbl_production01(
+            prod_id SERIAL PRIMARY KEY,
+            prod_date DATE,
+            customer VARCHAR(62),
+            form_id INT,
+            index_no VARCHAR(32),
+            prod_code VARCHAR(32),
+            prod_color VARCHAR(62),
+            dosage DECIMAL(12,6),
+            ld DECIMAL(12,6),
+            lot_no VARCHAR(128),
+            order_no VARCHAR(36),
+            colormatch_no VARCHAR(8),
+            colormatch_date date,
+            mix_time VARCHAR(32),
+            machine_no VARCHAR(32),
+            note VARCHAR(128),
+            user_id VARCHAR(62),
+            is_deleted BOOLEAN DEFAULT FALSE,
+            is_printed BOOLEAN DEFAULT FALSE,
+            inventory_c_date DATE,
+            form_type VARCHAR(16)   
+        );
+        
+        CREATE TABLE IF NOT EXISTS tbl_production_encode(
+            encode_id SERIAL PRIMARY KEY,
+            prod_id INT,
+            prepared_by VARCHAR(128),
+            encoded_by VARCHAR(128),
+            encoded_on TIMESTAMP, 
+            confirmation_encoded_on TIMESTAMP, 
+            FOREIGN KEY (prod_id) REFERENCES tbl_production01(prod_id)
+        );
+        
+        CREATE TABLE IF NOT EXISTS tbl_production_quantity(
+            quantity_id SERIAL PRIMARY KEY,
+            prod_id INT,
+            quantity_req DECIMAL(12,6),
+            quantity_batch DECIMAL(12,6),
+            quantity_prod DECIMAL(12,6),
+            FOREIGN KEY (prod_id) REFERENCES tbl_production01(prod_id)
+        );
+        
+        CREATE TABLE IF NOT EXISTS tbl_production02(
+            id SERIAL PRIMARY KEY,
+            prod_id INT,
+            sequence_no INT,
+            material_code VARCHAR(32),
+            large_scale DECIMAL(12,6),
+            small_scale DECIMAL(12,6),
+            total_weight DECIMAL(12,6),
+            is_deleted BOOLEAN DEFAULT FALSE,
+            total_loss DECIMAL(12,6),
+            total_consumption DECIMAL(12,6),
+            FOREIGN KEY (prod_id) REFERENCES tbl_production01(prod_id)
+        );
+    """)
+
+    # ==========================================
+    # 8. RM list
+    # ==========================================
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS tbl_raw_material_list(
+            id SERIAL PRIMARY KEY,
+            rm_code VARCHAR(50) UNIQUE
+        );
+        
+        CREATE TABLE IF NOT EXISTS tbl_rm_incoming (
+            id SERIAL PRIMARY KEY,
+            date DATE,
+            material_code VARCHAR(50) NOT NULL UNIQUE,
+            note TEXT
         );
     """)
 

@@ -95,7 +95,11 @@ class MainWindow(QMainWindow):
 
         self.setCentralWidget(main_widget)
         self.set_status_bar()
-        self._init_pages()
+        print("reached")
+        try:
+            self._init_pages()
+        except Exception as e:
+            print(e)
 
     def _init_pages(self):
         for _ in range(6):
