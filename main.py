@@ -201,7 +201,7 @@ class MainWindow(QMainWindow):
         show_audit = "Audit Trail" in self.allowed_access
         show_perms = "Permission Access" in self.allowed_access
 
-        if (show_audit or show_perms) and self.mac_role:
+        if (show_audit or show_perms) and self.user_department == self.mac_department:
             layout.addWidget(QLabel("System", objectName="MenuLabel"))
             if show_audit:
                 layout.addWidget(self.btn_audit_trail)
