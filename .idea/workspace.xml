@@ -257,7 +257,23 @@
       <option name="project" value="LOCAL" />
       <updated>1780474134512</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="added dashboard in the main menu">
+      <option name="closed" value="true" />
+      <created>1780544091149</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1780544091149</updated>
+    </task>
+    <task id="LOCAL-00021" summary="created a simple base template for dashboard">
+      <option name="closed" value="true" />
+      <created>1780544333653</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1780544333653</updated>
+    </task>
+    <option name="localTasksCounter" value="22" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -289,7 +305,9 @@
     <MESSAGE value="fix the user management and permission access" />
     <MESSAGE value="updated the updating of combo box in user management" />
     <MESSAGE value="updated the dc access" />
-    <option name="LAST_COMMIT_MESSAGE" value="updated the dc access" />
+    <MESSAGE value="added dashboard in the main menu" />
+    <MESSAGE value="created a simple base template for dashboard" />
+    <option name="LAST_COMMIT_MESSAGE" value="created a simple base template for dashboard" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
