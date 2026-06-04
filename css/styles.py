@@ -566,3 +566,72 @@ class AppStyles:
         "PRINT - WIP": "#faaac6",  # Violet 100 (Output Action)
         "DELETE": "#FFEDD5",  # Orange 100 (Destructive Action)
     }
+
+    # ── Dashboard stylesheet (extends MAIN_WINDOW_STYLESHEET) ────────────────────
+    DASHBOARD_STYLESHEET = f"""
+        /* ── Dashboard card (white surface, slate border) ──────────────────── */
+        QFrame#DashboardCard {{
+            background: white;
+            border: 1px solid {SLATE_200};
+            border-radius: 12px;
+            padding: 16px;
+        }}
+
+        /* ── Section title inside cards ─────────────────────────────────────── */
+        QLabel#DashTitle {{
+            font-size: 11px;
+            font-weight: 700;
+            color: {SLATE_400};
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }}
+
+        /* ── Big KPI number ─────────────────────────────────────────────────── */
+        QLabel#DashValue {{
+            font-size: 36px;
+            font-weight: 700;
+            color: {TEXT_PRIMARY};
+        }}
+
+        /* ── Smaller supporting text beside KPI ─────────────────────────────── */
+        QLabel#DashSubText {{
+            font-size: 14px;
+            color: {TEXT_SECONDARY};
+        }}
+
+        /* ── Trend badge ("↑ 12% …") ────────────────────────────────────────── */
+        QLabel#DashTrend {{
+            font-size: 13px;
+            font-weight: 600;
+            color: {EMERALD_600};
+            background: #F0FDF4;
+            border: 1px solid #BBF7D0;
+            border-radius: 8px;
+            padding: 3px 10px;
+        }}
+
+        /* ── Dashboard table — inherits QTableView base, overrides for dash ── */
+        QTableView#DashTable {{
+            border: 1px solid {BG_GRAY};
+            border-radius: 8px;
+            gridline-color: {BG_BASE};
+            background-color: {SLATE_200};
+            alternate-background-color: {BG_BASE};
+            font-size: 13px;
+        }}
+
+        QTableView#DashTable::item {{
+            padding-left: 5px;
+            border: none;
+            color: {TEXT_PRIMARY};
+        }}
+
+        QTableView#DashTable::item:selected {{
+            background-color: {TEAL_400};
+            color: {SLATE_900};
+        }}
+
+        QTableView#DashTable::item:hover {{
+            background-color: rgba(20, 184, 166, 0.07);
+        }}
+    """

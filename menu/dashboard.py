@@ -37,82 +37,11 @@ class MplCanvas(FigureCanvas):
 
         super().__init__(self.fig)
 
-
-# ── Dashboard stylesheet (extends MAIN_WINDOW_STYLESHEET) ────────────────────
-DASHBOARD_STYLESHEET = f"""
-    /* ── Dashboard card (white surface, slate border) ──────────────────── */
-    QFrame#DashboardCard {{
-        background: white;
-        border: 1px solid {AppStyles.SLATE_200};
-        border-radius: 12px;
-        padding: 16px;
-    }}
-
-    /* ── Section title inside cards ─────────────────────────────────────── */
-    QLabel#DashTitle {{
-        font-size: 11px;
-        font-weight: 700;
-        color: {AppStyles.SLATE_400};
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-    }}
-
-    /* ── Big KPI number ─────────────────────────────────────────────────── */
-    QLabel#DashValue {{
-        font-size: 36px;
-        font-weight: 700;
-        color: {AppStyles.TEXT_PRIMARY};
-    }}
-
-    /* ── Smaller supporting text beside KPI ─────────────────────────────── */
-    QLabel#DashSubText {{
-        font-size: 14px;
-        color: {AppStyles.TEXT_SECONDARY};
-    }}
-
-    /* ── Trend badge ("↑ 12% …") ────────────────────────────────────────── */
-    QLabel#DashTrend {{
-        font-size: 13px;
-        font-weight: 600;
-        color: {AppStyles.EMERALD_600};
-        background: #F0FDF4;
-        border: 1px solid #BBF7D0;
-        border-radius: 8px;
-        padding: 3px 10px;
-    }}
-
-    /* ── Dashboard table — inherits QTableView base, overrides for dash ── */
-    QTableView#DashTable {{
-        border: 1px solid {AppStyles.BG_GRAY};
-        border-radius: 8px;
-        gridline-color: {AppStyles.BG_BASE};
-        background-color: {AppStyles.SLATE_200};
-        alternate-background-color: {AppStyles.BG_BASE};
-        font-size: 13px;
-    }}
-
-    QTableView#DashTable::item {{
-        padding-left: 5px;
-        border: none;
-        color: {AppStyles.TEXT_PRIMARY};
-    }}
-
-    QTableView#DashTable::item:selected {{
-        background-color: {AppStyles.TEAL_400};
-        color: {AppStyles.SLATE_900};
-    }}
-
-    QTableView#DashTable::item:hover {{
-        background-color: rgba(20, 184, 166, 0.07);
-    }}
-"""
-
-
 class Dashboard(QWidget):
     def __init__(self):
         super().__init__()
         # Apply dashboard-specific styles on top of the main window stylesheet
-        self.setStyleSheet(DASHBOARD_STYLESHEET)
+        self.setStyleSheet(AppStyles.DASHBOARD_STYLESHEET)
         self.init_ui()
 
     def init_ui(self):

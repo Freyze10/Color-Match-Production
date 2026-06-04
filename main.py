@@ -11,6 +11,7 @@ from css.styles import AppStyles
 from db.read import check_mac_role, get_allowed_access_points, get_latest_prod_id
 from db.write import create_current_user, log_audit_trail
 from menu.audit_trail import AuditTrail
+from menu.dashboard import Dashboard
 from menu.dc_auto_entry import DCAutoEntry
 from menu.login import LoginWindow
 from menu.mb_auto_entry import MBAutoEntry
@@ -99,7 +100,7 @@ class MainWindow(QMainWindow):
         self._init_pages()
 
     def _init_pages(self):
-        for _ in range(6):
+        for _ in range(7):
             self.stacked_widget.addWidget(QWidget())
 
         self.latest_production = get_latest_prod_id()
@@ -227,73 +228,55 @@ class MainWindow(QMainWindow):
     def show_page(self, index):
         new_prod_id = get_latest_prod_id()
 
-        #  Automatically Reload the production page if a new row is added to the database
-        if index == 0 and self.latest_production != new_prod_id:
-            # 1. Get the existing widget at index 0
+        # 1. Handle Refresh logic for Production Records (Index 0)
+        if index == 0 and (self.production_records is None or self.latest_production != new_prod_id):
             old_widget = self.stacked_widget.widget(0)
-
-            # 2. Remove and delete it to free memory
             if old_widget:
                 self.stacked_widget.removeWidget(old_widget)
                 old_widget.deleteLater()
 
-            # 3. Re-create the widget from scratch
             self.production_records = ProductionRecords(self.workstation_info['m'])
-
-            # 4. Re-connect the signals (Crucial: since the object is new)
             self.production_records.go_to_manual_entry.connect(self.switch_to_manual_entry)
             self.production_records.go_to_auto_entry.connect(self.switch_to_auto_entry)
             self.production_records.go_to_dc_auto.connect(self.switch_to_dc_auto)
 
-            # 5. Insert it back at index 0 and show it
             self.stacked_widget.insertWidget(0, self.production_records)
-            self.stacked_widget.setCurrentIndex(0)
-            # update the latest id
             self.latest_production = new_prod_id
-            return  # Exit early
+            self.stacked_widget.setCurrentIndex(0)
+            return
 
-        # Check if the page is already loaded
-        current_widget = self.stacked_widget.widget(index)
+        # 2. Lazy Load other pages if they haven't been created yet
+        target_widget = self.stacked_widget.widget(index)
 
-        # If it's a plain QWidget, it hasn't been initialized yet
-        if type(current_widget) == QWidget:
-            if index == 0:
-                self.production_records = ProductionRecords(self.workstation_info['m'])
-                # Connect the signals for the first page
-                self.production_records.go_to_manual_entry.connect(self.switch_to_manual_entry)
-                self.production_records.go_to_auto_entry.connect(self.switch_to_auto_entry)
-                self.production_records.go_to_dc_auto.connect(self.switch_to_dc_auto)
-                new_widget = self.production_records
+        # If the widget at this index is just the placeholder QWidget
+        if type(target_widget) == QWidget:
+            new_widget = None
 
-            elif index == 1:
+            if index == 1:
                 self.mb_manual_entry = MBManualEntry(self.mac_department, self.user_department)
                 new_widget = self.mb_manual_entry
-
             elif index == 2:
                 self.mb_auto_entry = MBAutoEntry(self.mac_department, self.user_department)
                 new_widget = self.mb_auto_entry
-
             elif index == 3:
                 self.dc_auto_entry = DCAutoEntry(self.mac_department, self.user_department)
                 new_widget = self.dc_auto_entry
-
             elif index == 4:
                 self.audit_trail = AuditTrail(self.user_department)
                 new_widget = self.audit_trail
-
             elif index == 5:
                 self.user_management = PermissionsManager()
                 new_widget = self.user_management
-
             elif index == 6:
                 self.dashboard = Dashboard()
                 new_widget = self.dashboard
 
-            # Replace the placeholder with the actual loaded page
-            self.stacked_widget.removeWidget(current_widget)
-            self.stacked_widget.insertWidget(index, new_widget)
+            if new_widget:
+                # Remove the placeholder and insert the real widget
+                self.stacked_widget.removeWidget(target_widget)
+                target_widget.deleteLater()
+                self.stacked_widget.insertWidget(index, new_widget)
 
-        # Now show the page
         self.stacked_widget.setCurrentIndex(index)
 
     def set_status_bar(self):
