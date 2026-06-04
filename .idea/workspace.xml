@@ -249,8 +249,27 @@
       <option name="project" value="LOCAL" />
       <updated>1780472959063</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="updated the dc access">
+      <option name="closed" value="true" />
+      <created>1780474134512</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1780474134512</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="git init, copied production" />
@@ -269,7 +288,8 @@
     <MESSAGE value="updated the displaying of production audit trail and the admin permission access" />
     <MESSAGE value="fix the user management and permission access" />
     <MESSAGE value="updated the updating of combo box in user management" />
-    <option name="LAST_COMMIT_MESSAGE" value="updated the updating of combo box in user management" />
+    <MESSAGE value="updated the dc access" />
+    <option name="LAST_COMMIT_MESSAGE" value="updated the dc access" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
