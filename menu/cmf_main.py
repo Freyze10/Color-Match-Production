@@ -3,10 +3,10 @@ from PyQt6.QtWidgets import QWidget, QVBoxLayout, QTabWidget
 from PyQt6.QtCore import Qt
 
 # Import your sub-widgets from their respective files
-from menu.cmf_form import CMFForm
-from menu.mb_formula import MBFormula
-from menu.dc_formula import DCFormula
 from css.styles import AppStyles
+from sub_menu_cmf.cmf_form import CMFForm
+from sub_menu_cmf.dc_formula import DCFormula
+from sub_menu_cmf.mb_formula import MBFormula
 
 
 class CMFModule(QWidget):
