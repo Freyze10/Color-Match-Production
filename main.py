@@ -11,6 +11,7 @@ from css.styles import AppStyles
 from db.read import check_mac_role, get_allowed_access_points, get_latest_prod_id
 from db.write import create_current_user, log_audit_trail
 from menu.audit_trail import AuditTrail
+from menu.cmf_main import CMFModule
 from menu.dashboard import Dashboard
 from menu.dc_auto_entry import DCAutoEntry
 from menu.login import LoginWindow
@@ -77,6 +78,7 @@ class MainWindow(QMainWindow):
         self.audit_trail = None
         self.user_management = None
         self.dashboard = None
+        self.cmf_module = None
 
         self.allowed_access = get_allowed_access_points(self.user_role, self.user_department)
 
@@ -100,7 +102,7 @@ class MainWindow(QMainWindow):
         self._init_pages()
 
     def _init_pages(self):
-        for _ in range(7):
+        for _ in range(8):
             self.stacked_widget.addWidget(QWidget())
 
         self.latest_production = get_latest_prod_id()
@@ -179,6 +181,7 @@ class MainWindow(QMainWindow):
         self.btn_user_mamagement = self.create_menu_button("  Permission Access", 'ri.user-settings-fill', 5)
 
         self.btn_dashboard = self.create_menu_button("  Dashboard", 'mdi.monitor-dashboard', 6)
+        self.btn_cmf = self.create_menu_button("  CMF", 'fa6s.prescription-bottle', 7)
 
         self.btn_logout = QPushButton("  Logout", icon=fa.icon('fa5s.sign-out-alt', color=AppStyles.RED_500))
         self.btn_logout.setStyleSheet(f"""QPushButton {{ color: {AppStyles.RED_500};}}""")
@@ -189,6 +192,7 @@ class MainWindow(QMainWindow):
         layout.addWidget(QLabel("Color Match", objectName="MenuLabel"))
         lab_button_mapping = [
             (self.btn_dashboard, "Dashboard"),
+            (self.btn_cmf, "CMF")
         ]
         for btn, access_name in lab_button_mapping:
             if access_name in self.allowed_access:
@@ -270,6 +274,9 @@ class MainWindow(QMainWindow):
             elif index == 6:
                 self.dashboard = Dashboard()
                 new_widget = self.dashboard
+            elif index == 7:  # Assuming 7 is your new index for CMF
+                self.cmf_module = CMFModule(self.mac_role, self.user_role)
+                new_widget = self.cmf_module
 
             if new_widget:
                 # Remove the placeholder and insert the real widget

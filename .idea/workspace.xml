@@ -336,7 +336,23 @@
       <option name="project" value="LOCAL" />
       <updated>1780555227992</updated>
     </task>
-    <option name="localTasksCounter" value="29" />
+    <task id="LOCAL-00029" summary="added dc formula">
+      <option name="closed" value="true" />
+      <created>1780555297639</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1780555297639</updated>
+    </task>
+    <task id="LOCAL-00030" summary="fixed the naming of the directory to import the desired pages">
+      <option name="closed" value="true" />
+      <created>1780555523010</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1780555523010</updated>
+    </task>
+    <option name="localTasksCounter" value="31" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -351,8 +367,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="updated requirements" />
-    <MESSAGE value="updated the database schema" />
     <MESSAGE value="updated table schema" />
     <MESSAGE value="updated the database for log in to handdle logins" />
     <MESSAGE value="updated the getting of mac addrress role" />
@@ -376,7 +390,9 @@
     <MESSAGE value="added a cmf module to hold different widgets" />
     <MESSAGE value="added a new directory for cmf form, and formula" />
     <MESSAGE value="added mb formula" />
-    <option name="LAST_COMMIT_MESSAGE" value="added mb formula" />
+    <MESSAGE value="added dc formula" />
+    <MESSAGE value="fixed the naming of the directory to import the desired pages" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed the naming of the directory to import the desired pages" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
