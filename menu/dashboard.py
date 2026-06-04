@@ -19,7 +19,7 @@ from table_model.model import TableModel
 # Charts sit inside a white card (BG_SURFACE = "white"), so backgrounds match.
 _CARD_BG     = "#FFFFFF"          # AppStyles.BG_SURFACE
 _CHART_CYAN  = AppStyles.TEAL_500  # #14B8A6  — primary bar/fill color
-_CHART_DARK  = AppStyles.SLATE_700 # #334155  — secondary donut slice
+_CHART_DARK  = AppStyles.SLATE_500 # #334155  — secondary donut slice
 _TEXT_LIGHT  = AppStyles.SLATE_400 # #94A3B8  — axis labels / tick text
 _TEXT_BODY   = AppStyles.TEXT_PRIMARY   # #0F172A
 
@@ -34,6 +34,8 @@ class MplCanvas(FigureCanvas):
         # Match the white DashboardCard background
         self.fig.patch.set_facecolor(_CARD_BG)
         self.axes.set_facecolor(_CARD_BG)
+
+        self.fig.set_tight_layout(True)
 
         super().__init__(self.fig)
 

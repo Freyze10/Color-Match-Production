@@ -288,7 +288,15 @@
       <option name="project" value="LOCAL" />
       <updated>1780544470121</updated>
     </task>
-    <option name="localTasksCounter" value="23" />
+    <task id="LOCAL-00023" summary="updatd the logic for showing pages">
+      <option name="closed" value="true" />
+      <created>1780545068954</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1780545068954</updated>
+    </task>
+    <option name="localTasksCounter" value="24" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -323,7 +331,8 @@
     <MESSAGE value="added dashboard in the main menu" />
     <MESSAGE value="created a simple base template for dashboard" />
     <MESSAGE value="added the dashboard in the access poimt" />
-    <option name="LAST_COMMIT_MESSAGE" value="added the dashboard in the access poimt" />
+    <MESSAGE value="updatd the logic for showing pages" />
+    <option name="LAST_COMMIT_MESSAGE" value="updatd the logic for showing pages" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
