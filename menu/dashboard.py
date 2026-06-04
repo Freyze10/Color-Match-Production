@@ -35,8 +35,6 @@ class MplCanvas(FigureCanvas):
         self.fig.patch.set_facecolor(_CARD_BG)
         self.axes.set_facecolor(_CARD_BG)
 
-        self.fig.set_tight_layout(True)
-
         super().__init__(self.fig)
 
 class Dashboard(QWidget):
@@ -82,7 +80,8 @@ class Dashboard(QWidget):
         top_layout.addLayout(v_box)
         top_layout.addStretch()
 
-        trend_label = QLabel("↑ 12% from last week")
+        self.indicator_percent = 12
+        trend_label = QLabel(f"↑ {self.indicator_percent}% from last week")
         trend_label.setObjectName("DashTrend")
         top_layout.addWidget(trend_label, alignment=Qt.AlignmentFlag.AlignTop)
 
@@ -160,7 +159,7 @@ class Dashboard(QWidget):
         card = QFrame()
         card.setObjectName("DashboardCard")
         layout = QVBoxLayout(card)
-        layout.setContentsMargins(16, 16, 16, 16)
+        layout.setContentsMargins(8, 8, 8, 8)
         layout.setSpacing(10)
 
         lbl = QLabel(title)
