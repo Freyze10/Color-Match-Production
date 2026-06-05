@@ -2,7 +2,7 @@ import qtawesome as fa
 from PyQt6.QtWidgets import (QWidget, QLabel, QVBoxLayout, QHBoxLayout, QLineEdit,
                              QDateEdit, QRadioButton, QCheckBox, QPushButton,
                              QScrollArea, QFrame, QGroupBox, QFormLayout, QTextEdit,
-                             QButtonGroup, QGridLayout)
+                             QButtonGroup, QGridLayout, QSizePolicy, QComboBox)
 from PyQt6.QtCore import Qt, QDate
 from css.styles import AppStyles
 
@@ -16,31 +16,33 @@ class CMFForm(QWidget):
         self.init_ui()
 
     def init_ui(self):
-        # Main Layout
+        # 1. Main Layout
         self.main_layout = QVBoxLayout(self)
-        self.main_layout.setContentsMargins(15, 15, 15, 15)
+        self.main_layout.setContentsMargins(20, 20, 20, 20)
         self.main_layout.setSpacing(10)
 
-        # Scroll area for safety, though 2-column should fit most screens
+        # 2. Scroll Area
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
         scroll.setFrameShape(QFrame.Shape.NoFrame)
 
         container = QWidget()
-        # The split: Left Column and Right Column
-        self.columns_layout = QHBoxLayout(container)
-        self.columns_layout.setSpacing(20)
-        self.columns_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
+        self.container_layout = QVBoxLayout(container)
+        self.container_layout.setSpacing(10)
 
-        # ==========================================
-        # LEFT COLUMN: General & Color Specs
-        # ==========================================
+        # =========================================================================
+        # TOP PART: TWO COLUMNS
+        # =========================================================================
+        columns_layout = QHBoxLayout()
+        columns_layout.setSpacing(20)
+
+        # --- LEFT COLUMN (Stretch 3) ---
         left_col = QVBoxLayout()
 
-        # Section: Basic Info
         gen_group = QGroupBox("General Information")
         gen_form = QFormLayout(gen_group)
-        gen_form.setFieldGrowthPolicy(QFormLayout.FieldGrowthPolicy.AllNonFixedFieldsGrow)
+        gen_form.setLabelAlignment(Qt.AlignmentFlag.AlignLeft)
+        gen_form.setSpacing(12)
 
         self.txt_cm_no = QLineEdit()
         self.txt_customer = QLineEdit()
@@ -53,9 +55,14 @@ class CMFForm(QWidget):
         self.rad_new.setChecked(True)
         type_lay.addWidget(self.rad_new)
         type_lay.addWidget(self.rad_rematch)
+        type_lay.addStretch()
 
         self.txt_sales_person = QLineEdit()
         self.txt_finished_product = QLineEdit()
+
+        self.cmb_primary_color = QComboBox()
+        self.cmb_primary_color.addItems(
+            ["", "Red", "Blue", "Yellow", "Green", "Orange", "Purple", "Brown", "Black", "White", "Grey"])
         self.txt_color_desc = QLineEdit()
 
         gen_form.addRow("Color Matching No:", self.txt_cm_no)
@@ -65,55 +72,50 @@ class CMFForm(QWidget):
         gen_form.addRow("Matching Type:", type_lay)
         gen_form.addRow("Sales Person:", self.txt_sales_person)
         gen_form.addRow("Finished Product:", self.txt_finished_product)
+        gen_form.addRow("Primary Color:", self.cmb_primary_color)
         gen_form.addRow("Color Description:", self.txt_color_desc)
 
-        # Section: Color Requirement (Radio Buttons as requested)
         color_group = QGroupBox("Color Requirement")
         color_grid = QGridLayout(color_group)
         self.color_bg = QButtonGroup(self)
-
         requirements = ["Transparent", "Opaque", "Translucent", "Metallic", "Fluorescent", "Pearlescent"]
         for i, name in enumerate(requirements):
             rad = QRadioButton(name)
             self.color_bg.addButton(rad)
-            color_grid.addWidget(rad, i // 2, i % 2)  # 2 columns inside the groupbox
+            color_grid.addWidget(rad, i // 3, i % 3)
 
         self.rad_col_others = QRadioButton("Others:")
         self.color_bg.addButton(self.rad_col_others)
         self.txt_col_req_others = QLineEdit()
-        color_grid.addWidget(self.rad_col_others, 3, 0)
-        color_grid.addWidget(self.txt_col_req_others, 3, 1)
+        color_grid.addWidget(self.rad_col_others, 2, 0)
+        color_grid.addWidget(self.txt_col_req_others, 2, 1, 1, 2)
 
         left_col.addWidget(gen_group)
         left_col.addWidget(color_group)
-        left_col.addStretch()
 
-        # ==========================================
-        # RIGHT COLUMN: Process & Technical
-        # ==========================================
+        # --- RIGHT COLUMN (Stretch 2) ---
         right_col = QVBoxLayout()
-
         tech_group = QGroupBox("Process & Technical Specifications")
         tech_form = QFormLayout(tech_group)
+        tech_form.setSpacing(10)
 
+        # 1. Resin and Process
         self.txt_resin = QLineEdit()
-
-        # Process Selection
         proc_grid = QGridLayout()
-        self.chk_inj = QCheckBox("Injection")
+        self.chk_inj = QCheckBox("Injection");
         self.chk_blow = QCheckBox("Blow-Molding")
-        self.chk_film = QCheckBox("Film")
+        self.chk_film = QCheckBox("Film");
         self.chk_pipe = QCheckBox("Pipe Extrusion")
         proc_grid.addWidget(self.chk_inj, 0, 0);
         proc_grid.addWidget(self.chk_blow, 0, 1)
         proc_grid.addWidget(self.chk_film, 1, 0);
         proc_grid.addWidget(self.chk_pipe, 1, 1)
 
-        self.txt_qty_resin = QLineEdit()
+        # 2. Qty and Resin Provided
+        self.txt_qty_resin = QLineEdit()  # NEW
 
-        # Yes/No Helper
         def yes_no_layout():
-            lay = QHBoxLayout()
+            lay = QHBoxLayout();
             bg = QButtonGroup(self)
             y, n = QRadioButton("Yes"), QRadioButton("No")
             bg.addButton(y);
@@ -124,86 +126,120 @@ class CMFForm(QWidget):
             return lay, y, n
 
         res_lay, self.res_y, self.res_n = yes_no_layout()
+        self.txt_mi = QLineEdit()
         samp_lay, self.samp_y, self.samp_n = yes_no_layout()
+
+        # 3. Type of Colorant (Radio Group + Others)
+        colorant_lay = QHBoxLayout()
+        self.colorant_bg = QButtonGroup(self)
+        self.rad_mb = QRadioButton("MB")
+        self.rad_dc = QRadioButton("DC")
+        self.rad_colorant_others = QRadioButton("Others:")
+        self.colorant_bg.addButton(self.rad_mb);
+        self.colorant_bg.addButton(self.rad_dc);
+        self.colorant_bg.addButton(self.rad_colorant_others)
+        self.txt_colorant_others = QLineEdit()
+        colorant_lay.addWidget(self.rad_mb);
+        colorant_lay.addWidget(self.rad_dc);
+        colorant_lay.addWidget(self.rad_colorant_others);
+        colorant_lay.addWidget(self.txt_colorant_others)
+
+        self.txt_dosage = QLineEdit()
+
+        # 4. Other Specifications (Checkboxes)
+        spec_lay = QHBoxLayout()
+        self.chk_food = QCheckBox("Food Contact")
+        self.chk_sunlight = QCheckBox("Sunlight Exposure")
+        self.chk_spec_others = QCheckBox("Others:")
+        self.txt_spec_others = QLineEdit()
+        spec_lay.addWidget(self.chk_food);
+        spec_lay.addWidget(self.chk_sunlight);
+        spec_lay.addWidget(self.chk_spec_others);
+        spec_lay.addWidget(self.txt_spec_others)
+
         guide_lay, self.guide_y, self.guide_n = yes_no_layout()
+        self.txt_temp = QLineEdit()
         low_lay, self.low_y, self.low_n = yes_no_layout()
 
-        self.txt_mi = QLineEdit()
-        self.txt_dosage = QLineEdit()
-        self.txt_temp = QLineEdit()
-
-        tech_form.addRow("Resin:", self.txt_resin)
+        tech_form.addRow("Resin Type:", self.txt_resin)
         tech_form.addRow("Process:", proc_grid)
-        tech_form.addRow("Qty Resin for Testing:", self.txt_qty_resin)
-        tech_form.addRow("Customer Provided Resin:", res_lay)
-        tech_form.addRow("MI Customer's Resin:", self.txt_mi)
-        tech_form.addRow("Sample Colorant Avail:", samp_lay)
-        tech_form.addRow("Dosage:", self.txt_dosage)
-        tech_form.addRow("Return Color Guide:", guide_lay)
-        tech_form.addRow("Processing Temp:", self.txt_temp)
-        tech_form.addRow("Low Cost Requirement:", low_lay)
+        tech_form.addRow("Qty Resin for Test:", self.txt_qty_resin)  # Added
+        tech_form.addRow("Resin Provided:", res_lay)
+        tech_form.addRow("MI Value:", self.txt_mi)
+        tech_form.addRow("Sample Avail:", samp_lay)
+        tech_form.addRow("Type of Colorant:", colorant_lay)  # Added
+        tech_form.addRow("Target Dosage:", self.txt_dosage)
+        tech_form.addRow("Other Specs:", spec_lay)  # Added
+        tech_form.addRow("Return Guide:", guide_lay)
+        tech_form.addRow("Operating Temp:", self.txt_temp)
+        tech_form.addRow("Low Cost Req:", low_lay)
 
         right_col.addWidget(tech_group)
-        right_col.addStretch()
 
-        # Add columns to main split
-        self.columns_layout.addLayout(left_col, 1)
-        self.columns_layout.addLayout(right_col, 1)
+        columns_layout.addLayout(left_col, 3)
+        columns_layout.addLayout(right_col, 2)
 
-        # ==========================================
-        # BOTTOM: Remarks & Additional Information
-        # ==========================================
-        bottom_info_layout = QVBoxLayout()
+        # =========================================================================
+        # BOTTOM PART: NOTES & REMARKS
+        # =========================================================================
+        notes_group = QGroupBox("Notes & Observations")
+        notes_group.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        notes_layout = QVBoxLayout(notes_group)
 
+        notes_layout.addWidget(QLabel("<b>Remarks:</b>"))
         self.txt_remarks = QTextEdit()
-        self.txt_remarks.setPlaceholderText("Enter remarks here...")
-        self.txt_remarks.setMaximumHeight(60)
+        self.txt_remarks.setPlaceholderText("General notes or observations...")
+        self.txt_remarks.setMinimumHeight(70)
+        notes_layout.addWidget(self.txt_remarks)
 
+        notes_layout.addWidget(QLabel("<b>Additional Information:</b>"))
         self.txt_additional_info = QTextEdit()
-        self.txt_additional_info.setPlaceholderText("Enter any additional information beyond what's stated above...")
-        self.txt_additional_info.setMinimumHeight(100)  # Big text box as requested
+        self.txt_additional_info.setPlaceholderText("Detailed technical info, special instructions, etc...")
+        self.txt_additional_info.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        self.txt_additional_info.setMinimumHeight(200)
+        notes_layout.addWidget(self.txt_additional_info)
 
-        bottom_info_layout.addWidget(QLabel("<b>Remarks:</b>"))
-        bottom_info_layout.addWidget(self.txt_remarks)
-        bottom_info_layout.addWidget(QLabel("<b>Additional Information:</b>"))
-        bottom_info_layout.addWidget(self.txt_additional_info)
+        self.container_layout.addLayout(columns_layout, 0)
+        self.container_layout.addWidget(notes_group, 1)  # This forces the notes to take all vertical space
 
-        # Product Code Footer
-        footer_lay = QHBoxLayout()
+        # Footer
+        footer_info = QHBoxLayout()
         self.txt_prod_code = QLineEdit()
-        self.txt_prod_code.setFixedWidth(250)
-        footer_lay.addStretch()
-        footer_lay.addWidget(QLabel("<b>PRODUCT CODE:</b>"))
-        footer_lay.addWidget(self.txt_prod_code)
-
-        # Add everything to the scrollable container
-        self.form_layout = QVBoxLayout(container)  # Redefining form_layout to hold columns + bottom
-        self.form_layout.addLayout(self.columns_layout)
-        self.form_layout.addLayout(bottom_info_layout)
-        self.form_layout.addLayout(footer_lay)
+        self.txt_prod_code.setFixedWidth(300)
+        footer_info.addStretch()
+        footer_info.addWidget(QLabel("<b>PRODUCT CODE:</b>"))
+        footer_info.addWidget(self.txt_prod_code)
+        self.container_layout.addLayout(footer_info)
 
         scroll.setWidget(container)
         self.main_layout.addWidget(scroll)
 
-        # --- BUTTONS ---
+        # =========================================================================
+        # BUTTON BAR
+        # =========================================================================
         button_layout = QHBoxLayout()
+        button_layout.setContentsMargins(0, 0, 0, 0)
 
-        self.btn_cancel = QPushButton("Cancel", objectName="DangerButton")
+        self.btn_cancel = QPushButton(" Cancel", objectName="DangerButton")
         self.btn_cancel.setIcon(fa.icon('mdi6.text-box-remove', color='white'))
+        self.btn_cancel.setMinimumSize(120, 40)
+
+        self.btn_print = QPushButton(" Print", objectName="SecondaryButton")
+        self.btn_print.setIcon(fa.icon('fa5s.print', color='white'))
+        self.btn_print.setMinimumSize(120, 40)
+
+        self.btn_new = QPushButton(" New", objectName="InfoButton")
+        self.btn_new.setIcon(fa.icon('fa5s.file', color='white'))
+        self.btn_new.setMinimumSize(120, 40)
+
+        self.btn_save = QPushButton(" Save", objectName="SuccessButton")
+        self.btn_save.setIcon(fa.icon('fa5s.save', color='white'))
+        self.btn_save.setMinimumSize(120, 40)
+
         button_layout.addWidget(self.btn_cancel)
-
         button_layout.addStretch()
-
-        print_btn = QPushButton("Print", objectName="SecondaryButton")
-        print_btn.setIcon(fa.icon('fa5s.print', color='white'))
-        button_layout.addWidget(print_btn)
-
-        self.new_btn = QPushButton("New", objectName="InfoButton")
-        self.new_btn.setIcon(fa.icon('fa5s.file', color='white'))
-        button_layout.addWidget(self.new_btn)
-
-        self.save_btn = QPushButton("Save", objectName="SuccessButton")
-        self.save_btn.setIcon(fa.icon('fa5s.save', color='white'))
-        button_layout.addWidget(self.save_btn)
+        button_layout.addWidget(self.btn_print)
+        button_layout.addWidget(self.btn_new)
+        button_layout.addWidget(self.btn_save)
 
         self.main_layout.addLayout(button_layout)
