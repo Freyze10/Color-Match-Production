@@ -186,15 +186,14 @@ def check_production_exists(prod_id):
 
 def get_latest_prod_id():
     conn = get_connection()
-    cur = conn.cursor()
-
-    cur.execute("""SELECT COALESCE(MAX(prod_id), 0)
-                    FROM tbl_production01""")
-    record = cur.fetchone()
-
-    cur.close()
-    conn.close()
-    return record[0]
+    try:
+        with conn.cursor() as cur:
+            # This is the fastest query plan in Postgres for an indexed column
+            cur.execute("SELECT MAX(prod_id) FROM tbl_production01")
+            val = cur.fetchone()[0]
+            return val if val is not None else 0
+    finally:
+        conn.close()
 
 
 def get_unprinted_reminders():
