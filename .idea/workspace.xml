@@ -392,7 +392,15 @@
       <option name="project" value="LOCAL" />
       <updated>1780626329018</updated>
     </task>
-    <option name="localTasksCounter" value="36" />
+    <task id="LOCAL-00036" summary="updated the missing fields">
+      <option name="closed" value="true" />
+      <created>1780639153348</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1780639153348</updated>
+    </task>
+    <option name="localTasksCounter" value="37" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -407,7 +415,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="added unique constraint to add initial data only once" />
     <MESSAGE value="modifying main page" />
     <MESSAGE value="updated database schema for production records holdewr" />
     <MESSAGE value="adjusted production access control with otherr user" />
@@ -432,7 +439,8 @@
     <MESSAGE value="adjusted the getting of lastest prod id for more faster query" />
     <MESSAGE value="added a simple entry for cmf" />
     <MESSAGE value="updated new cmf" />
-    <option name="LAST_COMMIT_MESSAGE" value="updated new cmf" />
+    <MESSAGE value="updated the missing fields" />
+    <option name="LAST_COMMIT_MESSAGE" value="updated the missing fields" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

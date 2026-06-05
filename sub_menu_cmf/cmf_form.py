@@ -18,7 +18,7 @@ class CMFForm(QWidget):
     def init_ui(self):
         # 1. Main Layout
         self.main_layout = QVBoxLayout(self)
-        self.main_layout.setContentsMargins(20, 20, 20, 20)
+        self.main_layout.setContentsMargins(20, 20, 20, 0)
         self.main_layout.setSpacing(10)
 
         # 2. Scroll Area
@@ -161,6 +161,10 @@ class CMFForm(QWidget):
         self.txt_temp = QLineEdit()
         low_lay, self.low_y, self.low_n = yes_no_layout()
 
+        self.txt_remarks = QTextEdit()
+        self.txt_remarks.setPlaceholderText("Remarks...")
+        self.txt_remarks.setMaximumHeight(40)
+
         tech_form.addRow("Resin Type:", self.txt_resin)
         tech_form.addRow("Process:", proc_grid)
         tech_form.addRow("Qty Resin for Test:", self.txt_qty_resin)  # Added
@@ -173,6 +177,7 @@ class CMFForm(QWidget):
         tech_form.addRow("Return Guide:", guide_lay)
         tech_form.addRow("Operating Temp:", self.txt_temp)
         tech_form.addRow("Low Cost Req:", low_lay)
+        tech_form.addRow("Remarks:", self.txt_remarks)
 
         right_col.addWidget(tech_group)
 
@@ -180,19 +185,12 @@ class CMFForm(QWidget):
         columns_layout.addLayout(right_col, 2)
 
         # =========================================================================
-        # BOTTOM PART: NOTES & REMARKS
+        # BOTTOM PART: NOTES
         # =========================================================================
-        notes_group = QGroupBox("Notes & Observations")
+        notes_group = QGroupBox("Additional Information")
         notes_group.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         notes_layout = QVBoxLayout(notes_group)
 
-        notes_layout.addWidget(QLabel("<b>Remarks:</b>"))
-        self.txt_remarks = QTextEdit()
-        self.txt_remarks.setPlaceholderText("General notes or observations...")
-        self.txt_remarks.setMinimumHeight(70)
-        notes_layout.addWidget(self.txt_remarks)
-
-        notes_layout.addWidget(QLabel("<b>Additional Information:</b>"))
         self.txt_additional_info = QTextEdit()
         self.txt_additional_info.setPlaceholderText("Detailed technical info, special instructions, etc...")
         self.txt_additional_info.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
@@ -205,8 +203,7 @@ class CMFForm(QWidget):
         # Footer
         footer_info = QHBoxLayout()
         self.txt_prod_code = QLineEdit()
-        self.txt_prod_code.setFixedWidth(300)
-        footer_info.addStretch()
+        # self.txt_prod_code.setFixedWidth(300)
         footer_info.addWidget(QLabel("<b>PRODUCT CODE:</b>"))
         footer_info.addWidget(self.txt_prod_code)
         self.container_layout.addLayout(footer_info)
@@ -218,7 +215,7 @@ class CMFForm(QWidget):
         # BUTTON BAR
         # =========================================================================
         button_layout = QHBoxLayout()
-        button_layout.setContentsMargins(0, 0, 0, 0)
+        button_layout.setContentsMargins(0, 10, 0, 0)
 
         self.btn_cancel = QPushButton(" Cancel", objectName="DangerButton")
         self.btn_cancel.setIcon(fa.icon('mdi6.text-box-remove', color='white'))
