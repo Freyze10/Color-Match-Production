@@ -16,12 +16,11 @@ from table_model.model import TableModel
 
 
 # ── Resolved color constants ─────────────────────────────────────────────────
-# Charts sit inside a white card (BG_SURFACE = "white"), so backgrounds match.
-_CARD_BG     = "#FFFFFF"          # AppStyles.BG_SURFACE
-_CHART_CYAN  = AppStyles.TEAL_500  # #14B8A6  — primary bar/fill color
-_CHART_DARK  = AppStyles.SLATE_500 # #334155  — secondary donut slice
-_TEXT_LIGHT  = AppStyles.SLATE_400 # #94A3B8  — axis labels / tick text
-_TEXT_BODY   = AppStyles.TEXT_PRIMARY   # #0F172A
+_CARD_BG    = "#FFFFFF"
+_CHART_CYAN = AppStyles.TEAL_500   # #14B8A6
+_CHART_DARK = AppStyles.SLATE_500  # #64748B
+_TEXT_LIGHT = AppStyles.SLATE_400  # #94A3B8
+_TEXT_BODY  = AppStyles.TEXT_PRIMARY  # #0F172A
 
 
 class MplCanvas(FigureCanvas):
@@ -31,16 +30,15 @@ class MplCanvas(FigureCanvas):
         self.fig = Figure(figsize=(width, height), dpi=dpi)
         self.axes = self.fig.add_subplot(111)
 
-        # Match the white DashboardCard background
         self.fig.patch.set_facecolor(_CARD_BG)
         self.axes.set_facecolor(_CARD_BG)
 
         super().__init__(self.fig)
 
+
 class Dashboard(QWidget):
     def __init__(self):
         super().__init__()
-        # Apply dashboard-specific styles on top of the main window stylesheet
         self.setStyleSheet(AppStyles.DASHBOARD_STYLESHEET)
         self.init_ui()
 
@@ -87,17 +85,15 @@ class Dashboard(QWidget):
 
         self.main_layout.addWidget(top_card)
 
-        # ── MIDDLE SECTION: ANALYTICS (MATPLOTLIB + SEABORN) ────────────────
+        # ── MIDDLE SECTION: ANALYTICS ────────────────────────────────────────
         charts_layout = QHBoxLayout()
         charts_layout.setSpacing(15)
 
-        # 1. Horizontal Bar Chart
         rematch_container = self._create_card("Monthly Rematches")
         self.bar_canvas = MplCanvas(self)
         rematch_container.layout().addWidget(self.bar_canvas)
         self.plot_horizontal_bar()
 
-        # 2. Donut Chart
         donut_container = self._create_card("Sample vs Order Generated")
         self.donut_canvas = MplCanvas(self)
         donut_container.layout().addWidget(self.donut_canvas)
@@ -107,11 +103,10 @@ class Dashboard(QWidget):
         charts_layout.addWidget(donut_container, stretch=1)
         self.main_layout.addLayout(charts_layout, stretch=3)
 
-        # ── BOTTOM SECTION: TABLE & STATS ───────────────────────────────────
+        # ── BOTTOM SECTION: TABLE & STATS ────────────────────────────────────
         bottom_layout = QHBoxLayout()
         bottom_layout.setSpacing(15)
 
-        # Table card
         table_card = self._create_card("Recent Matches Record")
         self.table_headers = ["Employee", "Matched", "Rematches", "Success %"]
         self.table_data = [
@@ -128,17 +123,14 @@ class Dashboard(QWidget):
         self.table_view.horizontalHeader().setSectionResizeMode(
             QHeaderView.ResizeMode.Stretch)
         self.table_view.verticalHeader().setVisible(False)
-        self.table_view.setSelectionBehavior(
-            QTableView.SelectionBehavior.SelectRows)
-        self.table_view.setSelectionMode(
-            QTableView.SelectionMode.SingleSelection)
+        self.table_view.setSelectionBehavior(QTableView.SelectionBehavior.SelectRows)
+        self.table_view.setSelectionMode(QTableView.SelectionMode.SingleSelection)
         self.table_view.setAlternatingRowColors(True)
         self.table_view.setShowGrid(False)
 
         table_card.layout().addWidget(self.table_view)
         bottom_layout.addWidget(table_card, stretch=3)
 
-        # Stat sidebar
         sidebar = QVBoxLayout()
         sidebar.setSpacing(15)
         self.pending_card, self.lbl_pending_val = self._create_stat_card(
@@ -152,23 +144,20 @@ class Dashboard(QWidget):
 
         self.main_layout.addLayout(bottom_layout, stretch=2)
 
-    # ── HELPERS ─────────────────────────────────────────────────────────────
+    # ── HELPERS ──────────────────────────────────────────────────────────────
 
     def _create_card(self, title: str) -> QFrame:
-        """White DashboardCard with an uppercase section title."""
         card = QFrame()
         card.setObjectName("DashboardCard")
         layout = QVBoxLayout(card)
         layout.setContentsMargins(8, 8, 8, 8)
         layout.setSpacing(10)
-
         lbl = QLabel(title)
         lbl.setObjectName("DashTitle")
         layout.addWidget(lbl)
         return card
 
     def _create_stat_card(self, title: str, val: str, icon_name: str):
-        """Stat card with a large KPI value and a teal icon."""
         card = self._create_card(title)
         row = QHBoxLayout()
         row.setSpacing(8)
@@ -188,7 +177,7 @@ class Dashboard(QWidget):
         card.layout().addLayout(row)
         return card, value_lbl
 
-    # ── PLOTTING ────────────────────────────────────────────────────────────
+    # ── PLOTTING ─────────────────────────────────────────────────────────────
 
     def plot_horizontal_bar(self):
         df = pd.DataFrame({
@@ -214,31 +203,62 @@ class Dashboard(QWidget):
         self.bar_canvas.draw()
 
     def plot_donut_chart(self):
-        labels = ["Samples", "Orders"]
-        sizes  = [25, 75]
-        colors = [_CHART_CYAN, _CHART_DARK]
+        # Data: (label, value, color)
+        self._donut_data = [
+            ("Samples", 65.7, _CHART_CYAN),
+            ("Orders",  34.3, _CHART_DARK),
+        ]
+        sizes  = [d[1] for d in self._donut_data]
+        colors = [d[2] for d in self._donut_data]
 
         ax = self.donut_canvas.axes
         ax.clear()
 
-        wedges, texts, autotexts = ax.pie(
+        # Reserve space at the bottom for the legend row
+        self.donut_canvas.fig.subplots_adjust(
+            top=0.92, bottom=0.24, left=0.05, right=0.95)
+
+        ax.pie(
             sizes,
-            labels=labels,
-            autopct="%1.1f%%",
             startangle=90,
             colors=colors,
-            pctdistance=0.75,
-            textprops={"color": _TEXT_BODY, "fontsize": 10},
+            wedgeprops={"width": 0.42, "edgecolor": _CARD_BG, "linewidth": 2},
         )
 
-        # Donut hole — must match the card background
-        centre_circle = plt.Circle((0, 0), 0.60, fc=_CARD_BG)
-        ax.add_artist(centre_circle)
+        # Center text: percentage + label of the primary slice
+        ax.text(0,  0.10, f"{sizes[0]:.1f}%",
+                ha="center", va="center",
+                fontsize=13, fontweight="bold", color=_TEXT_BODY)
+        ax.text(0, -0.16, self._donut_data[0][0],
+                ha="center", va="center",
+                fontsize=9, color=_TEXT_LIGHT)
 
         ax.axis("equal")
+
+        # ── Bottom legend: stacked vertically, right-aligned ────────────────
+        # dot_x / text_x in figure coords (0=left, 1=right)
+        dot_x  = 0.10   # dot sits ~10% across — leaves a tight left margin
+        text_x = 0.15   # label text starts just right of the dot
+        y_top  = 0.17   # y of first item
+        y_step = 0.09   # gap between items
+
+        for i, (lbl, pct, clr) in enumerate(self._donut_data):
+            y = y_top - i * y_step
+
+            self.donut_canvas.fig.text(
+                dot_x, y, "●",
+                ha="center", va="center",
+                fontsize=10, color=clr,
+            )
+            self.donut_canvas.fig.text(
+                text_x, y, f"{lbl} — {pct:.1f}%",
+                ha="left", va="center",
+                fontsize=9, color=_TEXT_BODY,
+            )
+
         self.donut_canvas.draw()
 
-    # ── PUBLIC API ───────────────────────────────────────────────────────────
+    # ── PUBLIC API ────────────────────────────────────────────────────────────
 
     def refresh_stats(self, pending_val, conversion_val):
         """Update sidebar KPI values dynamically."""
