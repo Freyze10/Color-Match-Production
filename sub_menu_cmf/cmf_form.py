@@ -219,19 +219,18 @@ class CMFForm(QWidget):
 
         self.btn_cancel = QPushButton(" Cancel", objectName="DangerButton")
         self.btn_cancel.setIcon(fa.icon('mdi6.text-box-remove', color='white'))
-        self.btn_cancel.setMinimumSize(120, 40)
 
         self.btn_print = QPushButton(" Print", objectName="SecondaryButton")
         self.btn_print.setIcon(fa.icon('fa5s.print', color='white'))
-        self.btn_print.setMinimumSize(120, 40)
 
         self.btn_new = QPushButton(" New", objectName="InfoButton")
         self.btn_new.setIcon(fa.icon('fa5s.file', color='white'))
-        self.btn_new.setMinimumSize(120, 40)
 
         self.btn_save = QPushButton(" Save", objectName="SuccessButton")
         self.btn_save.setIcon(fa.icon('fa5s.save', color='white'))
-        self.btn_save.setMinimumSize(120, 40)
+
+        for btn in [self.btn_cancel, self.btn_print, self.btn_new, self.btn_save]:
+            btn.setMinimumHeight(40)
 
         button_layout.addWidget(self.btn_cancel)
         button_layout.addStretch()

@@ -464,7 +464,15 @@
       <option name="project" value="LOCAL" />
       <updated>1780726604029</updated>
     </task>
-    <option name="localTasksCounter" value="45" />
+    <task id="LOCAL-00045" summary="updated the mb formula">
+      <option name="closed" value="true" />
+      <created>1780727638665</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1780727638665</updated>
+    </task>
+    <option name="localTasksCounter" value="46" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -479,7 +487,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="updated the updating of combo box in user management" />
     <MESSAGE value="updated the dc access" />
     <MESSAGE value="added dashboard in the main menu" />
     <MESSAGE value="created a simple base template for dashboard" />
@@ -504,7 +511,8 @@
     <MESSAGE value="changed the style of the md formula page" />
     <MESSAGE value="adjusted the groups spacing" />
     <MESSAGE value="modify the stretch of the group" />
-    <option name="LAST_COMMIT_MESSAGE" value="modify the stretch of the group" />
+    <MESSAGE value="updated the mb formula" />
+    <option name="LAST_COMMIT_MESSAGE" value="updated the mb formula" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
