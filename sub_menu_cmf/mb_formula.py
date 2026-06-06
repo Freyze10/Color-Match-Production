@@ -11,8 +11,6 @@ class MBFormula(QWidget):
         super().__init__()
         self.mac_role = mac_role
         self.user_role = user_role
-
-        # No setStyleSheet here anymore! It now inherits from the parent/main window.
         self.init_ui()
 
     def init_ui(self):
@@ -23,11 +21,9 @@ class MBFormula(QWidget):
         # --- TOP HEADER ---
         title_frame = QFrame()
         title_layout = QHBoxLayout(title_frame)
-
         header_label = QLabel("EXTRUDER COLOR MATCHING FORM")
-        header_label.setStyleSheet("font-size: 22px; font-weight: bold;")  # Minor inline override
+        header_label.setStyleSheet("font-size: 22px; font-weight: bold;")
         title_layout.addWidget(header_label)
-
         title_layout.addStretch()
         title_layout.addWidget(QLabel("<b>FM00006D</b>"))
         self.main_layout.addWidget(title_frame)
@@ -48,15 +44,14 @@ class MBFormula(QWidget):
         left_cont_layout = QVBoxLayout(left_container)
         left_cont_layout.setContentsMargins(0, 0, 0, 0)
 
-        # Wrap fields in the "FormCard" styled frame
         field_card = QFrame(objectName="FormCard")
         field_card_layout = QVBoxLayout(field_card)
         field_card_layout.setSpacing(10)
 
-        # Use Standard QGroupBox (Already styled in MAIN_WINDOW_STYLESHEET)
+        # Group Boxes
         gen_group = QGroupBox("General Information")
         gen_form = QFormLayout(gen_group)
-        gen_form.setContentsMargins(0, 25, 0, 0)
+        gen_form.setContentsMargins(10, 25, 10, 10)
         self.txt_date = QLineEdit();
         self.txt_cm_form_no = QLineEdit()
         gen_form.addRow("Date:", self.txt_date);
@@ -64,7 +59,7 @@ class MBFormula(QWidget):
 
         form_group = QGroupBox("Formulation Details")
         f_details = QFormLayout(form_group)
-        f_details.setContentsMargins(0, 25, 0, 0)
+        f_details.setContentsMargins(10, 25, 10, 10)
         self.txt_prod_code = QLineEdit();
         self.txt_resin_used = QLineEdit()
         self.txt_customer = QLineEdit();
@@ -85,7 +80,7 @@ class MBFormula(QWidget):
 
         person_group = QGroupBox("Personnel")
         p_form = QFormLayout(person_group)
-        p_form.setContentsMargins(0, 25, 0, 0)
+        p_form.setContentsMargins(10, 25, 10, 10)
         self.txt_matched_by = QLineEdit();
         self.txt_weighed_by = QLineEdit();
         self.txt_encoded_by = QLineEdit()
@@ -97,7 +92,7 @@ class MBFormula(QWidget):
         field_card_layout.addWidget(form_group, stretch=2)
         field_card_layout.addWidget(person_group, stretch=1)
 
-        left_cont_layout.addWidget(field_card, stretch=1)
+        left_cont_layout.addWidget(field_card)
         left_scroll.setWidget(left_container)
 
         # --- RIGHT PANEL: TABLE ---
@@ -109,9 +104,16 @@ class MBFormula(QWidget):
         self.table.setColumnCount(3)
         self.table.setRowCount(16)
         self.table.setHorizontalHeaderLabels(["Material", "Final %", "Total Weight"])
+
+        # ADJUST COLUMNS TO STRETCH
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+
+        # ADJUST ROWS TO STRETCH AND FILL THE SPACE
+        self.table.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+
         self.table.verticalHeader().setVisible(False)
         self.table.setAlternatingRowColors(True)
+        self.table.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
 
         right_card_layout.addWidget(self.table)
 
@@ -128,14 +130,13 @@ class MBFormula(QWidget):
         right_card_layout.addLayout(total_layout)
 
         body_layout.addWidget(left_scroll)
-        body_layout.addWidget(right_card, 1)
+        body_layout.addWidget(right_card, 1)  # Stretch factor 1 ensures it fills height
         self.main_layout.addLayout(body_layout)
 
         # =========================================================================
-        # BUTTON BAR (Will now pick up SuccessButton, DangerButton, etc properly)
+        # BUTTON BAR
         # =========================================================================
         button_layout = QHBoxLayout()
-
         self.btn_cancel = QPushButton(" Cancel", objectName="DangerButton")
         self.btn_cancel.setIcon(fa.icon('mdi6.text-box-remove', color='white'))
 

@@ -448,7 +448,23 @@
       <option name="project" value="LOCAL" />
       <updated>1780725505647</updated>
     </task>
-    <option name="localTasksCounter" value="43" />
+    <task id="LOCAL-00043" summary="adjusted the groups spacing">
+      <option name="closed" value="true" />
+      <created>1780726550449</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1780726550449</updated>
+    </task>
+    <task id="LOCAL-00044" summary="modify the stretch of the group">
+      <option name="closed" value="true" />
+      <created>1780726604029</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1780726604029</updated>
+    </task>
+    <option name="localTasksCounter" value="45" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -463,8 +479,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="updated the displaying of production audit trail and the admin permission access" />
-    <MESSAGE value="fix the user management and permission access" />
     <MESSAGE value="updated the updating of combo box in user management" />
     <MESSAGE value="updated the dc access" />
     <MESSAGE value="added dashboard in the main menu" />
@@ -488,7 +502,9 @@
     <MESSAGE value="modified the mb extruder matching" />
     <MESSAGE value="added a style for formula page" />
     <MESSAGE value="changed the style of the md formula page" />
-    <option name="LAST_COMMIT_MESSAGE" value="changed the style of the md formula page" />
+    <MESSAGE value="adjusted the groups spacing" />
+    <MESSAGE value="modify the stretch of the group" />
+    <option name="LAST_COMMIT_MESSAGE" value="modify the stretch of the group" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
