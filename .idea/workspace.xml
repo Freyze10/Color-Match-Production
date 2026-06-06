@@ -112,14 +112,6 @@
       <option name="presentableId" value="Default" />
       <updated>1780293734655</updated>
     </task>
-    <task id="LOCAL-00001" summary="git init, copied production">
-      <option name="closed" value="true" />
-      <created>1780293974109</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1780293974109</updated>
-    </task>
     <task id="LOCAL-00002" summary="git init, copied production">
       <option name="closed" value="true" />
       <created>1780294712861</created>
@@ -504,7 +496,15 @@
       <option name="project" value="LOCAL" />
       <updated>1780729273060</updated>
     </task>
-    <option name="localTasksCounter" value="50" />
+    <task id="LOCAL-00050" summary="removed the minimun height foir the header">
+      <option name="closed" value="true" />
+      <created>1780729372796</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1780729372796</updated>
+    </task>
+    <option name="localTasksCounter" value="51" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -519,7 +519,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="updatd the logic for showing pages" />
     <MESSAGE value="added tight layout in the canvas to occupy the white sppaces" />
     <MESSAGE value="make the indicator to be globally editable" />
     <MESSAGE value="added a cmf module to hold different widgets" />
@@ -544,7 +543,8 @@
     <MESSAGE value="updated the form number" />
     <MESSAGE value="updated the button in the cmf" />
     <MESSAGE value="added finished product" />
-    <option name="LAST_COMMIT_MESSAGE" value="added finished product" />
+    <MESSAGE value="removed the minimun height foir the header" />
+    <option name="LAST_COMMIT_MESSAGE" value="removed the minimun height foir the header" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
