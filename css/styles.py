@@ -437,6 +437,31 @@ class AppStyles:
             border-right: none; 
         }}
         
+        QFrame#FormCard {{
+            background-color: white;
+            border: 1px solid {SLATE_200};
+            border-radius: 12px;
+        }}
+
+        /* Override Table Header to be Dark Slate for better readability */
+        QTableWidget QHeaderView::section {{
+            background-color: {SLATE_900};
+            color: white;
+            padding: 10px;
+            font-weight: bold;
+            font-size: 13px;
+            border: none;
+        }}
+
+        #TotalWeightField {{
+            font-weight: bold;
+            font-size: 18px;
+            color: white;
+            background-color: {SLATE_800};
+            border-radius: 6px;
+            min-height: 40px;
+        }}
+        
         /* ── Tabs ──────────────────────────────────────────────────────────── */
         QTabWidget::pane {{
             border: 1px solid {SLATE_200};
@@ -635,62 +660,3 @@ class AppStyles:
             background-color: rgba(20, 184, 166, 0.07);
         }}
     """
-
-    FORMULA_STYLESHEET = """
-            QWidget { font-size: 15px; }
-
-            #PageHeader { font-size: 22px; font-weight: bold; color: #0f172a; }
-            #FormCodeLabel { font-size: 16px; color: #64748b; }
-
-            #FormCard { 
-                background-color: #ffffff; 
-                border: 1px solid #e2e8f0; 
-                border-radius: 8px; 
-            }
-
-            QGroupBox { 
-                font-weight: bold; 
-                color: #1e293b; 
-                margin-top: 15px;
-                border: 1px solid #f1f5f9;
-                border-radius: 5px;
-                padding-top: 15px;
-            }
-
-            QLineEdit { 
-                min-height: 35px; 
-                border: 1px solid #cbd5e1; 
-                border-radius: 4px; 
-                padding-left: 10px; 
-                background-color: #fcfcfc;
-            }
-
-            /* --- TABLE STYLING --- */
-            QTableWidget { 
-                background-color: #ffffff;
-                gridline-color: #cbd5e1; 
-                border: 1px solid #cbd5e1;
-                font-size: 15px;
-                outline: none;
-            }
-
-            /* DARK HEADER STYLING */
-            QHeaderView::section {
-                background-color: #0f172a; /* Darkest Slate for readability */
-                color: #ffffff;            /* Pure white text */
-                padding: 10px;
-                border: 1px solid #020617;
-                font-weight: bold;
-                font-size: 16px;
-            }
-
-            QTableWidget::item { padding: 5px; }
-
-            #TotalWeightField {
-                font-weight: bold; 
-                font-size: 18px; 
-                color: #ffffff; 
-                background-color: #1e293b; /* Dark background for total box */
-                border-radius: 4px;
-            }
-        """

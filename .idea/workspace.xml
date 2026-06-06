@@ -432,7 +432,15 @@
       <option name="project" value="LOCAL" />
       <updated>1780649276050</updated>
     </task>
-    <option name="localTasksCounter" value="41" />
+    <task id="LOCAL-00041" summary="added a style for formula page">
+      <option name="closed" value="true" />
+      <created>1780723990490</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1780723990490</updated>
+    </task>
+    <option name="localTasksCounter" value="42" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -447,7 +455,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="updated print production to only accessible in production department only" />
     <MESSAGE value="updated the calling of production mb/dc with passing of mac access and user access" />
     <MESSAGE value="updated the displaying of production audit trail and the admin permission access" />
     <MESSAGE value="fix the user management and permission access" />
@@ -472,7 +479,8 @@
     <MESSAGE value="updated the cmf fields" />
     <MESSAGE value="added inital fields and table for mb extruder" />
     <MESSAGE value="modified the mb extruder matching" />
-    <option name="LAST_COMMIT_MESSAGE" value="modified the mb extruder matching" />
+    <MESSAGE value="added a style for formula page" />
+    <option name="LAST_COMMIT_MESSAGE" value="added a style for formula page" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
