@@ -496,7 +496,15 @@
       <option name="project" value="LOCAL" />
       <updated>1780729033283</updated>
     </task>
-    <option name="localTasksCounter" value="49" />
+    <task id="LOCAL-00049" summary="added finished product">
+      <option name="closed" value="true" />
+      <created>1780729273060</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1780729273060</updated>
+    </task>
+    <option name="localTasksCounter" value="50" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -511,7 +519,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="added the dashboard in the access poimt" />
     <MESSAGE value="updatd the logic for showing pages" />
     <MESSAGE value="added tight layout in the canvas to occupy the white sppaces" />
     <MESSAGE value="make the indicator to be globally editable" />
@@ -536,7 +543,8 @@
     <MESSAGE value="addded dc formulation" />
     <MESSAGE value="updated the form number" />
     <MESSAGE value="updated the button in the cmf" />
-    <option name="LAST_COMMIT_MESSAGE" value="updated the button in the cmf" />
+    <MESSAGE value="added finished product" />
+    <option name="LAST_COMMIT_MESSAGE" value="added finished product" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

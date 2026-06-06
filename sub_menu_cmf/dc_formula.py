@@ -116,7 +116,6 @@ class DCFormula(QWidget):
 
         # Table Configuration
         header = self.table.horizontalHeader()
-        header.setMinimumHeight(50)
         header.setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
 
         # Rows stretch to fill height
