@@ -26,7 +26,7 @@ class DCFormula(QWidget):
         title_layout.addWidget(header_label)
 
         title_layout.addStretch()
-        title_layout.addWidget(QLabel("<b>FM25-00001</b>"))
+        title_layout.addWidget(QLabel("<b>FM00006D</b>"))
         self.main_layout.addWidget(title_frame)
 
         # =========================================================================
@@ -97,7 +97,6 @@ class DCFormula(QWidget):
         field_card_layout.addWidget(person_group)
 
         left_cont_layout.addWidget(field_card)
-        left_cont_layout.addStretch()
         left_scroll.setWidget(left_container)
 
         # --- RIGHT PANEL: TABLE ---
