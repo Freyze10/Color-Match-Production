@@ -46,15 +46,17 @@ class MBFormula(QWidget):
 
         left_container = QWidget()
         left_cont_layout = QVBoxLayout(left_container)
-        left_cont_layout.setContentsMargins(0, 0, 10, 0)
+        left_cont_layout.setContentsMargins(0, 0, 0, 0)
 
         # Wrap fields in the "FormCard" styled frame
         field_card = QFrame(objectName="FormCard")
         field_card_layout = QVBoxLayout(field_card)
+        field_card_layout.setSpacing(10)
 
         # Use Standard QGroupBox (Already styled in MAIN_WINDOW_STYLESHEET)
         gen_group = QGroupBox("General Information")
         gen_form = QFormLayout(gen_group)
+        gen_form.setContentsMargins(0, 25, 0, 0)
         self.txt_date = QLineEdit();
         self.txt_cm_form_no = QLineEdit()
         gen_form.addRow("Date:", self.txt_date);
@@ -62,6 +64,7 @@ class MBFormula(QWidget):
 
         form_group = QGroupBox("Formulation Details")
         f_details = QFormLayout(form_group)
+        f_details.setContentsMargins(0, 25, 0, 0)
         self.txt_prod_code = QLineEdit();
         self.txt_resin_used = QLineEdit()
         self.txt_customer = QLineEdit();
@@ -82,6 +85,7 @@ class MBFormula(QWidget):
 
         person_group = QGroupBox("Personnel")
         p_form = QFormLayout(person_group)
+        p_form.setContentsMargins(0, 25, 0, 0)
         self.txt_matched_by = QLineEdit();
         self.txt_weighed_by = QLineEdit();
         self.txt_encoded_by = QLineEdit()
@@ -89,12 +93,11 @@ class MBFormula(QWidget):
         p_form.addRow("Weighed by:", self.txt_weighed_by);
         p_form.addRow("Encoded by:", self.txt_encoded_by)
 
-        field_card_layout.addWidget(gen_group)
-        field_card_layout.addWidget(form_group)
-        field_card_layout.addWidget(person_group)
+        field_card_layout.addWidget(gen_group, stretch=1)
+        field_card_layout.addWidget(form_group, stretch=2)
+        field_card_layout.addWidget(person_group, stretch=1)
 
-        left_cont_layout.addWidget(field_card)
-        left_cont_layout.addStretch()
+        left_cont_layout.addWidget(field_card, stretch=1)
         left_scroll.setWidget(left_container)
 
         # --- RIGHT PANEL: TABLE ---
