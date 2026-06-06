@@ -93,7 +93,7 @@ class MBFormula(QWidget):
         p_form.addRow("Weighed by:", self.txt_weighed_by);
         p_form.addRow("Encoded by:", self.txt_encoded_by)
 
-        field_card_layout.addWidget(gen_group, stretch=1)
+        field_card_layout.addWidget(gen_group)
         field_card_layout.addWidget(form_group, stretch=2)
         field_card_layout.addWidget(person_group, stretch=1)
 
