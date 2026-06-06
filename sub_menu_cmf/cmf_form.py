@@ -217,7 +217,7 @@ class CMFForm(QWidget):
         button_layout = QHBoxLayout()
         button_layout.setContentsMargins(0, 10, 0, 0)
 
-        self.btn_cancel = QPushButton(" Cancel", objectName="DangerButton")
+        self.btn_cancel = QPushButton(" Upload", objectName="PrimaryButton")
         self.btn_cancel.setIcon(fa.icon('mdi6.text-box-remove', color='white'))
 
         self.btn_print = QPushButton(" Print", objectName="SecondaryButton")
