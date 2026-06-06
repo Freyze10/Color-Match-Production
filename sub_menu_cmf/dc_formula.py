@@ -66,6 +66,7 @@ class DCFormula(QWidget):
         self.txt_product_used = QLineEdit()
         self.txt_mixing_time = QLineEdit()
         self.txt_application = QLineEdit()
+        self.txt_finished_prod = QLineEdit()
 
         gen_form.addRow("Code:", self.txt_code)
         gen_form.addRow("CMF #:", self.txt_cmf_no)
@@ -78,6 +79,7 @@ class DCFormula(QWidget):
         gen_form.addRow("Product Used:", self.txt_product_used)
         gen_form.addRow("Mixing Time:", self.txt_mixing_time)
         gen_form.addRow("Application:", self.txt_application)
+        gen_form.addRow("Finished Prod:", self.txt_finished_prod)
 
         # Group 2: Personnel
         person_group = QGroupBox("Personnel")

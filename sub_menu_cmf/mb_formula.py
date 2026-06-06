@@ -68,6 +68,7 @@ class MBFormula(QWidget):
         self.txt_mixing_time = QLineEdit()
         self.txt_color = QLineEdit();
         self.txt_application = QLineEdit()
+        self.txt_finished_prod = QLineEdit()
 
         f_details.addRow("Product Code:", self.txt_prod_code);
         f_details.addRow("Resin Used:", self.txt_resin_used)
@@ -77,6 +78,7 @@ class MBFormula(QWidget):
         f_details.addRow("Mixing Time:", self.txt_mixing_time)
         f_details.addRow("Color:", self.txt_color);
         f_details.addRow("Application:", self.txt_application)
+        f_details.addRow("Finished Prod:", self.txt_finished_prod)
 
         person_group = QGroupBox("Personnel")
         p_form = QFormLayout(person_group)
