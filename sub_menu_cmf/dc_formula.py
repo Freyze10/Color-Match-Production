@@ -4,8 +4,6 @@ from PyQt6.QtWidgets import (QWidget, QLabel, QVBoxLayout, QHBoxLayout, QLineEdi
                              QGroupBox, QFormLayout, QFrame, QAbstractItemView, QScrollArea)
 from PyQt6.QtCore import Qt
 from css.styles import AppStyles
-# Import the shared delegates
-from util.formula_table_delegate import MaterialDelegate, NumericDelegate
 
 
 class DCFormula(QWidget):
@@ -13,9 +11,6 @@ class DCFormula(QWidget):
         super().__init__()
         self.mac_role = mac_role
         self.user_role = user_role
-
-        # Inherit centralized styling
-        self.setStyleSheet(AppStyles.MB_FORMULA_STYLESHEET)
         self.init_ui()
 
     def init_ui(self):
@@ -31,8 +26,7 @@ class DCFormula(QWidget):
         title_layout.addWidget(header_label)
 
         title_layout.addStretch()
-        # Mapped to the DC specific form code
-        title_layout.addWidget(QLabel("<b>FM25-00001</b>"))
+        title_layout.addWidget(QLabel("<b>FM00006D</b>"))
         self.main_layout.addWidget(title_frame)
 
         # =========================================================================
@@ -55,7 +49,7 @@ class DCFormula(QWidget):
         field_card_layout = QVBoxLayout(field_card)
         field_card_layout.setSpacing(10)
 
-        # Group 1: Formulation Details
+        # Group 1: General Details (Mapped from Image)
         gen_group = QGroupBox("Formulation Details")
         gen_form = QFormLayout(gen_group)
         gen_form.setContentsMargins(10, 25, 10, 10)
@@ -120,19 +114,11 @@ class DCFormula(QWidget):
         self.table.setRowCount(16)
         self.table.setHorizontalHeaderLabels(["Material", "Final %", "Total Weight"])
 
-        # --- APPLY DELEGATES ---
-        # 1. Autofill Material (Same dummy data or load from DB)
-        dummy_materials = ["PE Resin", "PP Resin", "Titanium Dioxide", "Carbon Black", "Iron Oxide Red"]
-        self.material_delegate = MaterialDelegate(self, dummy_materials)
-        self.table.setItemDelegateForColumn(0, self.material_delegate)
+        # Table Configuration
+        header = self.table.horizontalHeader()
+        header.setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
 
-        # 2. Numeric Only Columns (Final % and Total Weight)
-        self.numeric_delegate = NumericDelegate()
-        self.table.setItemDelegateForColumn(1, self.numeric_delegate)
-        self.table.setItemDelegateForColumn(2, self.numeric_delegate)
-
-        # Table Appearance
-        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+        # Rows stretch to fill height
         self.table.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         self.table.verticalHeader().setVisible(False)
         self.table.setAlternatingRowColors(True)
@@ -155,13 +141,17 @@ class DCFormula(QWidget):
 
         # Assemble Main Layout
         body_layout.addWidget(left_scroll)
-        body_layout.addWidget(right_card, 1)
+        body_layout.addWidget(right_card, 1)  # Right side expands
         self.main_layout.addLayout(body_layout)
 
         # =========================================================================
         # BUTTON BAR
         # =========================================================================
         button_layout = QHBoxLayout()
+
+        # self.btn_cancel = QPushButton(" Cancel", objectName="DangerButton")
+        # self.btn_cancel.setIcon(fa.icon('mdi6.text-box-remove', color='white'))
+
         self.btn_print = QPushButton(" Print", objectName="SecondaryButton")
         self.btn_print.setIcon(fa.icon('fa5s.print', color='white'))
 
@@ -171,10 +161,10 @@ class DCFormula(QWidget):
         self.btn_save = QPushButton(" Save", objectName="SuccessButton")
         self.btn_save.setIcon(fa.icon('fa5s.save', color='white'))
 
-        for btn in [self.btn_print, self.btn_new, self.btn_save]:
+        for btn in [ self.btn_print, self.btn_new, self.btn_save]:
             btn.setMinimumHeight(40)
-            btn.setFixedWidth(130)
 
+        # button_layout.addWidget(self.btn_cancel)
         button_layout.addStretch()
         button_layout.addWidget(self.btn_print)
         button_layout.addWidget(self.btn_new)

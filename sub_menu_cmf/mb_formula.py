@@ -1,4 +1,5 @@
 import qtawesome as fa
+from PyQt6.QtGui import QDoubleValidator
 from PyQt6.QtWidgets import (QWidget, QLabel, QVBoxLayout, QHBoxLayout, QLineEdit,
                              QPushButton, QTableWidget, QTableWidgetItem, QHeaderView,
                              QGroupBox, QFormLayout, QFrame, QAbstractItemView, QScrollArea,
@@ -134,6 +135,9 @@ class MBFormula(QWidget):
         self.txt_total_weight.setPlaceholderText("0.00")
         self.txt_total_weight.setFixedWidth(180)
         self.txt_total_weight.setAlignment(Qt.AlignmentFlag.AlignRight)
+        total_validator = QDoubleValidator(0.0, 999999999.9999999, 7, self)
+        total_validator.setNotation(QDoubleValidator.Notation.StandardNotation)
+        self.txt_total_weight.setValidator(total_validator)
 
         total_layout.addStretch()
         total_layout.addWidget(QLabel("<b>TOTAL WEIGHT:</b>"))

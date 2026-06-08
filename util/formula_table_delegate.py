@@ -7,8 +7,7 @@ from PyQt6.QtWidgets import QStyledItemDelegate, QLineEdit, QComboBox, QComplete
 class NumericDelegate(QStyledItemDelegate):
     def createEditor(self, parent, option, index):
         editor = QLineEdit(parent)
-        # Updated: 0.0 to 999,999,999.9999999 with 7 decimal places
-        validator = QDoubleValidator(0.0, 999999999.9999999, 7, editor)
+        validator = QDoubleValidator(0.0, 999999999.99, 7, editor)
         validator.setNotation(QDoubleValidator.Notation.StandardNotation)
         editor.setValidator(validator)
         return editor
