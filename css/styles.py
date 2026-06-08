@@ -188,7 +188,7 @@ class AppStyles:
             font-size: 11px;
             font-weight: 700;
             color: {SLATE_400};
-            padding: 16px 20px 8px 20px;
+            padding: 16px 10px 8px 12px;
             letter-spacing: 0.08em;
             text-transform: uppercase;
         }}
@@ -198,7 +198,7 @@ class AppStyles:
             color: {SLATE_300};
             border: none;
             text-align: left;
-            padding: 14px 20px;
+            padding: 12px;
             font-size: 14px;
             font-weight: 500;
             border-radius: 10px;
