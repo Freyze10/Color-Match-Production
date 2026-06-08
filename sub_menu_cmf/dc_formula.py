@@ -1,9 +1,11 @@
 import qtawesome as fa
+from PyQt6.QtGui import QDoubleValidator
 from PyQt6.QtWidgets import (QWidget, QLabel, QVBoxLayout, QHBoxLayout, QLineEdit,
                              QPushButton, QTableWidget, QTableWidgetItem, QHeaderView,
                              QGroupBox, QFormLayout, QFrame, QAbstractItemView, QScrollArea)
 from PyQt6.QtCore import Qt
 from css.styles import AppStyles
+from util.formula_table_delegate import MaterialDelegate, NumericDelegate
 
 
 class DCFormula(QWidget):
@@ -114,11 +116,21 @@ class DCFormula(QWidget):
         self.table.setRowCount(16)
         self.table.setHorizontalHeaderLabels(["Material", "Final %", "Total Weight"])
 
+        # --- APPLY DELEGATES ---
+        # 1. Autofill Material (load from database as needed)
+        dummy_materials = ["PE Resin", "PP Resin", "Titanium Dioxide", "Carbon Black", "Iron Oxide Red"]
+        self.material_delegate = MaterialDelegate(self, dummy_materials)
+        self.table.setItemDelegateForColumn(0, self.material_delegate)
+
+        # 2. Numeric Only Columns
+        self.numeric_delegate = NumericDelegate()
+        self.table.setItemDelegateForColumn(1, self.numeric_delegate)
+        self.table.setItemDelegateForColumn(2, self.numeric_delegate)
+
         # Table Configuration
         header = self.table.horizontalHeader()
         header.setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
 
-        # Rows stretch to fill height
         self.table.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         self.table.verticalHeader().setVisible(False)
         self.table.setAlternatingRowColors(True)
@@ -133,6 +145,9 @@ class DCFormula(QWidget):
         self.txt_total_weight.setPlaceholderText("0.00")
         self.txt_total_weight.setFixedWidth(200)
         self.txt_total_weight.setAlignment(Qt.AlignmentFlag.AlignRight)
+        total_validator = QDoubleValidator(0.0, 999999999.9999999, 7, self)
+        total_validator.setNotation(QDoubleValidator.Notation.StandardNotation)
+        self.txt_total_weight.setValidator(total_validator)
 
         total_layout.addStretch()
         total_layout.addWidget(QLabel("<b>TOTAL WEIGHT:</b>"))
@@ -141,16 +156,13 @@ class DCFormula(QWidget):
 
         # Assemble Main Layout
         body_layout.addWidget(left_scroll)
-        body_layout.addWidget(right_card, 1)  # Right side expands
+        body_layout.addWidget(right_card, 1)
         self.main_layout.addLayout(body_layout)
 
         # =========================================================================
         # BUTTON BAR
         # =========================================================================
         button_layout = QHBoxLayout()
-
-        # self.btn_cancel = QPushButton(" Cancel", objectName="DangerButton")
-        # self.btn_cancel.setIcon(fa.icon('mdi6.text-box-remove', color='white'))
 
         self.btn_print = QPushButton(" Print", objectName="SecondaryButton")
         self.btn_print.setIcon(fa.icon('fa5s.print', color='white'))
@@ -161,10 +173,9 @@ class DCFormula(QWidget):
         self.btn_save = QPushButton(" Save", objectName="SuccessButton")
         self.btn_save.setIcon(fa.icon('fa5s.save', color='white'))
 
-        for btn in [ self.btn_print, self.btn_new, self.btn_save]:
+        for btn in [self.btn_print, self.btn_new, self.btn_save]:
             btn.setMinimumHeight(40)
 
-        # button_layout.addWidget(self.btn_cancel)
         button_layout.addStretch()
         button_layout.addWidget(self.btn_print)
         button_layout.addWidget(self.btn_new)

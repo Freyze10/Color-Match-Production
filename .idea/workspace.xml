@@ -112,14 +112,6 @@
       <option name="presentableId" value="Default" />
       <updated>1780293734655</updated>
     </task>
-    <task id="LOCAL-00008" summary="updated the getting of mac addrress role">
-      <option name="closed" value="true" />
-      <created>1780385764727</created>
-      <option name="number" value="00008" />
-      <option name="presentableId" value="LOCAL-00008" />
-      <option name="project" value="LOCAL" />
-      <updated>1780385764727</updated>
-    </task>
     <task id="LOCAL-00009" summary="added department in accessing the access points for more accuracy">
       <option name="closed" value="true" />
       <created>1780386725707</created>
@@ -504,7 +496,15 @@
       <option name="project" value="LOCAL" />
       <updated>1780901511520</updated>
     </task>
-    <option name="localTasksCounter" value="57" />
+    <task id="LOCAL-00057" summary="added validation in the total weight field for the mb">
+      <option name="closed" value="true" />
+      <created>1780903491694</created>
+      <option name="number" value="00057" />
+      <option name="presentableId" value="LOCAL-00057" />
+      <option name="project" value="LOCAL" />
+      <updated>1780903491694</updated>
+    </task>
+    <option name="localTasksCounter" value="58" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -519,7 +519,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="added dc formula" />
     <MESSAGE value="fixed the naming of the directory to import the desired pages" />
     <MESSAGE value="added all the cmf module for integration" />
     <MESSAGE value="adjusted the getting of lastest prod id for more faster query" />
@@ -544,7 +543,8 @@
     <MESSAGE value="seperate the delegate file to reuse the other formula table" />
     <MESSAGE value="updated the dc formula to use the delegate to limit  the errors on entry in the table" />
     <MESSAGE value="updated the numeric delegate to accept 7 decimal" />
-    <option name="LAST_COMMIT_MESSAGE" value="updated the numeric delegate to accept 7 decimal" />
+    <MESSAGE value="added validation in the total weight field for the mb" />
+    <option name="LAST_COMMIT_MESSAGE" value="added validation in the total weight field for the mb" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
