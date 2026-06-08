@@ -2,20 +2,11 @@ import qtawesome as fa
 from PyQt6.QtWidgets import (QWidget, QLabel, QVBoxLayout, QHBoxLayout, QLineEdit,
                              QPushButton, QTableWidget, QTableWidgetItem, QHeaderView,
                              QGroupBox, QFormLayout, QFrame, QAbstractItemView, QScrollArea,
-                             QStyledItemDelegate) # Added QStyledItemDelegate
-from PyQt6.QtGui import QDoubleValidator # Added QDoubleValidator
+                             QStyledItemDelegate, QComboBox, QCompleter)
+from PyQt6.QtGui import QDoubleValidator
 from PyQt6.QtCore import Qt
 from css.styles import AppStyles
 
-# --- NEW DELEGATE CLASS ---
-class NumericDelegate(QStyledItemDelegate):
-    def createEditor(self, parent, option, index):
-        editor = QLineEdit(parent)
-        # Set range (0.0 to 1 Billion) and 4 decimal places
-        validator = QDoubleValidator(0.0, 999999999.99, 4, editor)
-        validator.setNotation(QDoubleValidator.Notation.StandardNotation)
-        editor.setValidator(validator)
-        return editor
 
 class MBFormula(QWidget):
     def __init__(self, mac_role, user_role):
@@ -59,7 +50,7 @@ class MBFormula(QWidget):
         field_card_layout = QVBoxLayout(field_card)
         field_card_layout.setSpacing(10)
 
-        # Group Boxes
+        # Groups
         gen_group = QGroupBox("General Information")
         gen_form = QFormLayout(gen_group)
         gen_form.setContentsMargins(10, 25, 10, 10)
@@ -102,8 +93,8 @@ class MBFormula(QWidget):
         p_form.addRow("Encoded by:", self.txt_encoded_by)
 
         field_card_layout.addWidget(gen_group)
-        field_card_layout.addWidget(form_group, stretch=2)
-        field_card_layout.addWidget(person_group, stretch=1)
+        field_card_layout.addWidget(form_group)
+        field_card_layout.addWidget(person_group)
 
         left_cont_layout.addWidget(field_card)
         left_scroll.setWidget(left_container)
@@ -118,7 +109,13 @@ class MBFormula(QWidget):
         self.table.setRowCount(16)
         self.table.setHorizontalHeaderLabels(["Material", "Final %", "Total Weight"])
 
-        # --- APPLY NUMERIC RESTRICTIONS ---
+        # --- APPLY DELEGATES ---
+        # 1. Autofill Material (Usually you would load this from the database)
+        dummy_materials = ["PE Resin", "PP Resin", "Titanium Dioxide", "Carbon Black", "Iron Oxide Red"]
+        self.material_delegate = MaterialDelegate(self, dummy_materials)
+        self.table.setItemDelegateForColumn(0, self.material_delegate)
+
+        # 2. Numeric Only Columns
         self.numeric_delegate = NumericDelegate()
         self.table.setItemDelegateForColumn(1, self.numeric_delegate)
         self.table.setItemDelegateForColumn(2, self.numeric_delegate)
