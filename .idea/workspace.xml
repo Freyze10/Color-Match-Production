@@ -112,22 +112,6 @@
       <option name="presentableId" value="Default" />
       <updated>1780293734655</updated>
     </task>
-    <task id="LOCAL-00012" summary="updated database schema for production records holdewr">
-      <option name="closed" value="true" />
-      <created>1780465300904</created>
-      <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL-00012" />
-      <option name="project" value="LOCAL" />
-      <updated>1780465300904</updated>
-    </task>
-    <task id="LOCAL-00013" summary="adjusted production access control with otherr user">
-      <option name="closed" value="true" />
-      <created>1780466190509</created>
-      <option name="number" value="00013" />
-      <option name="presentableId" value="LOCAL-00013" />
-      <option name="project" value="LOCAL" />
-      <updated>1780466190509</updated>
-    </task>
     <task id="LOCAL-00014" summary="updated print production to only accessible in production department only">
       <option name="closed" value="true" />
       <created>1780466463294</created>
@@ -504,7 +488,23 @@
       <option name="project" value="LOCAL" />
       <updated>1780972963637</updated>
     </task>
-    <option name="localTasksCounter" value="61" />
+    <task id="LOCAL-00061" summary="created a cmf records display">
+      <option name="closed" value="true" />
+      <created>1780974741443</created>
+      <option name="number" value="00061" />
+      <option name="presentableId" value="LOCAL-00061" />
+      <option name="project" value="LOCAL" />
+      <updated>1780974741443</updated>
+    </task>
+    <task id="LOCAL-00062" summary="updated the ui to include the product code and adjusted spacing">
+      <option name="closed" value="true" />
+      <created>1780974758471</created>
+      <option name="number" value="00062" />
+      <option name="presentableId" value="LOCAL-00062" />
+      <option name="project" value="LOCAL" />
+      <updated>1780974758471</updated>
+    </task>
+    <option name="localTasksCounter" value="63" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -519,8 +519,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="added a simple entry for cmf" />
-    <MESSAGE value="updated new cmf" />
     <MESSAGE value="updated the missing fields" />
     <MESSAGE value="updated the cmf fields" />
     <MESSAGE value="added inital fields and table for mb extruder" />
@@ -544,7 +542,9 @@
     <MESSAGE value="updated the dc formula to match the validation of the mb formula" />
     <MESSAGE value="modified css to fit more button for navigation" />
     <MESSAGE value="pepare to add the widget for cmf records tab" />
-    <option name="LAST_COMMIT_MESSAGE" value="pepare to add the widget for cmf records tab" />
+    <MESSAGE value="created a cmf records display" />
+    <MESSAGE value="updated the ui to include the product code and adjusted spacing" />
+    <option name="LAST_COMMIT_MESSAGE" value="updated the ui to include the product code and adjusted spacing" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
