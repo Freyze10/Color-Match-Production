@@ -112,14 +112,6 @@
       <option name="presentableId" value="Default" />
       <updated>1780293734655</updated>
     </task>
-    <task id="LOCAL-00011" summary="modifying main page">
-      <option name="closed" value="true" />
-      <created>1780455793839</created>
-      <option name="number" value="00011" />
-      <option name="presentableId" value="LOCAL-00011" />
-      <option name="project" value="LOCAL" />
-      <updated>1780455793839</updated>
-    </task>
     <task id="LOCAL-00012" summary="updated database schema for production records holdewr">
       <option name="closed" value="true" />
       <created>1780465300904</created>
@@ -504,7 +496,15 @@
       <option name="project" value="LOCAL" />
       <updated>1780905366220</updated>
     </task>
-    <option name="localTasksCounter" value="60" />
+    <task id="LOCAL-00060" summary="pepare to add the widget for cmf records tab">
+      <option name="closed" value="true" />
+      <created>1780972963636</created>
+      <option name="number" value="00060" />
+      <option name="presentableId" value="LOCAL-00060" />
+      <option name="project" value="LOCAL" />
+      <updated>1780972963637</updated>
+    </task>
+    <option name="localTasksCounter" value="61" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -519,7 +519,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="adjusted the getting of lastest prod id for more faster query" />
     <MESSAGE value="added a simple entry for cmf" />
     <MESSAGE value="updated new cmf" />
     <MESSAGE value="updated the missing fields" />
@@ -544,7 +543,8 @@
     <MESSAGE value="added validation in the total weight field for the mb" />
     <MESSAGE value="updated the dc formula to match the validation of the mb formula" />
     <MESSAGE value="modified css to fit more button for navigation" />
-    <option name="LAST_COMMIT_MESSAGE" value="modified css to fit more button for navigation" />
+    <MESSAGE value="pepare to add the widget for cmf records tab" />
+    <option name="LAST_COMMIT_MESSAGE" value="pepare to add the widget for cmf records tab" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

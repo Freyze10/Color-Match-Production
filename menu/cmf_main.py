@@ -5,6 +5,7 @@ from PyQt6.QtCore import Qt
 # Import your sub-widgets from their respective files
 from css.styles import AppStyles
 from sub_menu_cmf.cmf_form import CMFForm
+from sub_menu_cmf.cmf_records import CMFRecords
 from sub_menu_cmf.dc_formula import DCFormula
 from sub_menu_cmf.mb_formula import MBFormula
 
