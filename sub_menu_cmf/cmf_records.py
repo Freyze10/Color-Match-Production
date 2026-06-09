@@ -7,9 +7,6 @@ from css.styles import AppStyles
 from table_model.model import TableModel
 
 
-# Mock import for your database read function
-# from db.read import get_cmf_list
-
 class CMFRecords(QWidget):
     def __init__(self, mac_role, user_role):
         super().__init__()
@@ -31,21 +28,18 @@ class CMFRecords(QWidget):
         # --- TOP SECTION: HEADER & SEARCH ---
         header_layout = QHBoxLayout()
 
-        # Title
         title_label = QLabel("Color Matching Records")
         title_label.setStyleSheet("font-size: 24px; font-weight: bold; color: #0f172a;")
         header_layout.addWidget(title_label)
 
         header_layout.addStretch()
 
-        # Search Bar
         self.txt_search = QLineEdit()
-        self.txt_search.setPlaceholderText(" Search records (CMF#, Customer, Product...)")
+        self.txt_search.setPlaceholderText(" Search records...")
         self.txt_search.setFixedWidth(350)
         self.txt_search.setClearButtonEnabled(True)
         self.txt_search.textChanged.connect(self.handle_filter)
 
-        # Refresh Button
         self.btn_refresh = QPushButton(" Refresh")
         self.btn_refresh.setIcon(fa.icon('fa5s.sync-alt', color=AppStyles.TEAL_600))
         self.btn_refresh.clicked.connect(self.load_data)
@@ -69,22 +63,22 @@ class CMFRecords(QWidget):
         self.table_view.verticalHeader().setVisible(False)
         self.table_view.setFrameShape(QFrame.Shape.NoFrame)
 
-        # Initialize Table Model
+        # 1. Update Headers to include Product Code (Index 8)
         self.headers = [
             "CMF No.", "Customer", "Primary Color", "Color Description",
-            "Finished Product", "Required Date", "Target Date", "Matching Type"
+            "Finished Product", "Required Date", "Target Date", "Matching Type", "Product Code"
         ]
         self.model = TableModel([], self.headers)
         self.table_view.setModel(self.model)
 
-        # Configure Header sizing
+        # 2. COLUMN WIDTH LOGIC
         header = self.table_view.horizontalHeader()
-        header.setSectionResizeMode(QHeaderView.ResizeMode.Interactive)
-        header.setStretchLastSection(True)
-        # Make specific columns wider by default
-        header.resizeSection(0, 120)  # CMF No
-        header.resizeSection(1, 180)  # Customer
-        header.resizeSection(3, 200)  # Description
+
+        # Set all columns to fit their content exactly
+        header.setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
+
+        # Override Column 1 (Customer) to STRETCH and fill remaining space
+        header.setSectionResizeMode(1, QHeaderView.ResizeMode.Stretch)
 
         table_layout.addWidget(self.table_view)
         self.main_layout.addWidget(self.table_container)
@@ -96,26 +90,22 @@ class CMFRecords(QWidget):
 
     def load_data(self):
         """
-        Fetch data from the database and populate the table.
-        Replace 'dummy_data' with your actual database call.
+        Fetch data from database.
+        Note: The list inside needs 9 items now to match the headers.
         """
-        # Example data format matching the headers
         dummy_data = [
-            ["CMF-2024-001", "Customer A", "Red", "Glossy Red Finish", "Plastic Toy", "10/25/2024", "10/30/2024",
-             "New"],
-            ["CMF-2024-002", "Customer B", "Blue", "Matte Blue", "Car Part", "11/01/2024", "11/05/2024", "Re-Match"],
-            ["CMF-2024-003", "Customer C", "Black", "Jet Black", "Phone Case", "10/20/2024", "10/22/2024", "New"],
+            ["CMF-2024-001", "Masterbatch Philippines Inc.", "Red", "Glossy Finish", "Plastic Cap", "10/25/2024",
+             "10/30/2024", "New", "PC-RED-001"],
+            ["CMF-2024-002", "Generic Customer", "Blue", "Matte Blue", "Car Part", "11/01/2024", "11/05/2024",
+             "Re-Match", "PC-BLU-992"],
+            ["CMF-2024-003", "Example Corp", "Black", "Jet Black", "Phone Case", "10/20/2024", "10/22/2024", "New",
+             "PC-BLK-500"],
         ]
-
-        # Actual Implementation:
-        # data = get_cmf_list()
-        # self.model.set_data(data)
 
         self.model.set_data(dummy_data)
         self.update_count()
 
     def handle_filter(self):
-        """Filters the table based on the search bar text."""
         search_text = self.txt_search.text()
         self.model.filter_data(search_text)
         self.update_count()
@@ -123,11 +113,3 @@ class CMFRecords(QWidget):
     def update_count(self):
         count = self.model.rowCount()
         self.lbl_count.setText(f"Showing {count} records")
-
-    def get_selected_cmf_no(self):
-        """Returns the CMF Number of the selected row."""
-        index = self.table_view.currentIndex()
-        if index.isValid():
-            # Returns the value from the first column (index 0)
-            return self.model._data[index.row()][0]
-        return None
