@@ -27,11 +27,13 @@ class CMFModule(QWidget):
 
         # 1. Initialize the sub-widgets
         # We pass roles/permissions down to the children
+        self.cmf_records_tab = CMFRecords(self.mac_role, self.user_role)
         self.cmf_form_tab = CMFForm(self.mac_role, self.user_role)
         self.mb_formula_tab = MBFormula(self.mac_role, self.user_role)
         self.dc_formula_tab = DCFormula(self.mac_role, self.user_role)
 
         # 2. Add widgets to tabs with icons
+        self.tabs.addTab(self.cmf_records_tab, fa.icon('msc.checklist', color=AppStyles.SLATE_600), " CMF Records")
         self.tabs.addTab(self.cmf_form_tab, fa.icon('fa5s.file-alt', color=AppStyles.SLATE_600), " CMF Form")
         self.tabs.addTab(self.mb_formula_tab, fa.icon('mdi.flask-outline', color=AppStyles.SLATE_600), " MB Formula")
         self.tabs.addTab(self.dc_formula_tab, fa.icon('mdi.flask-empty-outline', color=AppStyles.SLATE_600),
