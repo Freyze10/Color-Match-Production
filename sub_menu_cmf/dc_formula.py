@@ -182,3 +182,6 @@ class DCFormula(QWidget):
         button_layout.addWidget(self.btn_save)
 
         self.main_layout.addLayout(button_layout)
+
+    def load_formula_by_cmf(self, cmf_no):
+        self.txt_cmf_no.setText(cmf_no)
