@@ -45,13 +45,6 @@ class TableModel(QAbstractTableModel):
 
             return None
 
-        # --- 2. TOOLTIP LOGIC ---
-        if role == Qt.ItemDataRole.ToolTipRole:
-            if len(self._data[row]) > 7:
-                wip_no = self._data[row][7]
-                if wip_no and str(wip_no).strip() not in ("", "None", "0"):
-                    return f"WIP Number: {wip_no}"
-
         # --- 3. TEXT DISPLAY LOGIC ---
         if role in (Qt.ItemDataRole.DisplayRole, Qt.ItemDataRole.EditRole):
             return self._data[row][col]
