@@ -1,12 +1,9 @@
 import qtawesome as fa
-from PyQt6.QtGui import QDoubleValidator
 from PyQt6.QtWidgets import (QWidget, QLabel, QVBoxLayout, QHBoxLayout, QLineEdit,
-                             QPushButton, QTableWidget, QTableWidgetItem, QHeaderView,
-                             QGroupBox, QFormLayout, QFrame, QAbstractItemView, QScrollArea,
-                             QStyledItemDelegate, QComboBox, QCompleter)
-from PyQt6.QtCore import Qt
+                             QPushButton, QGroupBox, QFormLayout, QFrame,
+                             QScrollArea, QDateEdit)
+from PyQt6.QtCore import Qt, QDate
 from css.styles import AppStyles
-from util.formula_table_delegate import MaterialDelegate, NumericDelegate
 
 
 class PendingCompleted(QWidget):
@@ -14,7 +11,92 @@ class PendingCompleted(QWidget):
         super().__init__()
         self.mac_role = mac_role
         self.user_role = user_role
+        self.setStyleSheet(AppStyles.MAIN_WINDOW_STYLESHEET)
         self.init_ui()
 
     def init_ui(self):
-        pass
+        self.main_layout = QVBoxLayout(self)
+        self.main_layout.setContentsMargins(25, 25, 25, 25)
+        self.main_layout.setSpacing(20)
+
+        # Title
+        header = QLabel("Update CMF Status & Tracking")
+        header.setStyleSheet("font-size: 22px; font-weight: bold; color: #0f172a;")
+        self.main_layout.addWidget(header)
+
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        scroll.setFrameShape(QFrame.Shape.NoFrame)
+
+        container = QWidget()
+        cont_layout = QVBoxLayout(container)
+        cont_layout.setContentsMargins(0, 0, 10, 0)
+
+        form_card = QFrame(objectName="FormCard")
+        grid_layout = QHBoxLayout(form_card)
+        grid_layout.setContentsMargins(20, 20, 20, 20)
+        grid_layout.setSpacing(40)
+
+        # --- LEFT COLUMN ---
+        left_col = QFormLayout()
+        left_col.setVerticalSpacing(15)
+        self.txt_cmf_no = QLineEdit();
+        self.txt_cmf_no.setReadOnly(True)
+        self.txt_customer = QLineEdit()
+        self.date_made = QDateEdit(calendarPopup=True, date=QDate.currentDate())
+        self.date_received = QDateEdit(calendarPopup=True, date=QDate.currentDate())
+        self.date_required = QDateEdit(calendarPopup=True, date=QDate.currentDate())
+        self.date_due = QDateEdit(calendarPopup=True, date=QDate.currentDate())
+        self.txt_finished_prod = QLineEdit()
+        self.txt_color_desc = QLineEdit()
+
+        left_col.addRow("Matching No:", self.txt_cmf_no)
+        left_col.addRow("Customer:", self.txt_customer)
+        left_col.addRow("Form Made Date:", self.date_made)
+        left_col.addRow("Received by Lab:", self.date_received)
+        left_col.addRow("Date Required:", self.date_required)
+        left_col.addRow("Due Date:", self.date_due)
+        left_col.addRow("Finished Product:", self.txt_finished_prod)
+        left_col.addRow("Color Description:", self.txt_color_desc)
+
+        # --- RIGHT COLUMN ---
+        right_col = QFormLayout()
+        right_col.setVerticalSpacing(15)
+        self.txt_match_type = QLineEdit()
+        self.txt_salesman = QLineEdit()
+        self.txt_reason = QLineEdit()
+        self.txt_prod_code = QLineEdit()
+        self.date_submitted = QDateEdit(calendarPopup=True, date=QDate.currentDate())
+        self.txt_ar_no = QLineEdit()
+        self.date_ar = QDateEdit(calendarPopup=True, date=QDate.currentDate())
+
+        right_col.addRow("Matching Type:", self.txt_match_type)
+        right_col.addRow("Salesman:", self.txt_salesman)
+        right_col.addRow("Pending Reason:", self.txt_reason)
+        right_col.addRow("Product Code:", self.txt_prod_code)
+        right_col.addRow("Date Submitted:", self.date_submitted)
+        right_col.addRow("AR Number:", self.txt_ar_no)
+        right_col.addRow("AR Date:", self.date_ar)
+
+        grid_layout.addLayout(left_col, 1)
+        grid_layout.addLayout(right_col, 1)
+
+        cont_layout.addWidget(form_card)
+        cont_layout.addStretch()
+        scroll.setWidget(container)
+        self.main_layout.addWidget(scroll)
+
+        # Footer Buttons
+        footer = QHBoxLayout()
+        self.btn_save = QPushButton(" Update Record")
+        self.btn_save.setObjectName("SuccessButton")
+        self.btn_save.setIcon(fa.icon('fa5s.save', color='white'))
+        self.btn_save.setFixedSize(180, 45)
+        footer.addStretch()
+        footer.addWidget(self.btn_save)
+        self.main_layout.addLayout(footer)
+
+    def load_cmf_data(self, cmf_no):
+        """Called when user clicks 'Update Record Status' in CMFRecords"""
+        self.txt_cmf_no.setText(cmf_no)
+        # Logic to fetch other fields from DB based on cmf_no goes here
