@@ -48,5 +48,13 @@ class CMFModule(QWidget):
 
     def go_to_edit_tab(self, cmf_no):
         """Slot to handle jumping to tab 2 (index 1)"""
-        # self.cmf_form_tab.load_data(cmf_no) # Assuming CMFForm has a load method
+        # 1. Sync the Main Form (Index 1)
+        self.cmf_form_tab.load_cmf_data(cmf_no)
+
+        # 2. Sync the MB Formula (Index 2)
+        self.mb_formula_tab.load_formula_by_cmf(cmf_no)
+
+        # 3. Sync the DC Formula (Index 3)
+        self.dc_formula_tab.load_formula_by_cmf(cmf_no)
+
         self.tabs.setCurrentIndex(1)

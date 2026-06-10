@@ -239,3 +239,7 @@ class CMFForm(QWidget):
         button_layout.addWidget(self.btn_save)
 
         self.main_layout.addLayout(button_layout)
+
+    def load_cmf_data(self, cmf_no):
+        """Fetch data from DB and fill the CMF Form fields"""
+        self.txt_cm_no.setText(cmf_no)

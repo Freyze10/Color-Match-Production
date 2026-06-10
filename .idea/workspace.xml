@@ -112,14 +112,6 @@
       <option name="presentableId" value="Default" />
       <updated>1780293734655</updated>
     </task>
-    <task id="LOCAL-00020" summary="added dashboard in the main menu">
-      <option name="closed" value="true" />
-      <created>1780544091149</created>
-      <option name="number" value="00020" />
-      <option name="presentableId" value="LOCAL-00020" />
-      <option name="project" value="LOCAL" />
-      <updated>1780544091149</updated>
-    </task>
     <task id="LOCAL-00021" summary="created a simple base template for dashboard">
       <option name="closed" value="true" />
       <created>1780544333653</created>
@@ -504,7 +496,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781054251495</updated>
     </task>
-    <option name="localTasksCounter" value="69" />
+    <task id="LOCAL-00069" summary="modify the parent cmf to handle the transferring of signal/pages to pass the cmf no">
+      <option name="closed" value="true" />
+      <created>1781054364704</created>
+      <option name="number" value="00069" />
+      <option name="presentableId" value="LOCAL-00069" />
+      <option name="project" value="LOCAL" />
+      <updated>1781054364704</updated>
+    </task>
+    <option name="localTasksCounter" value="70" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -519,7 +519,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="adjusted the groups spacing" />
     <MESSAGE value="modify the stretch of the group" />
     <MESSAGE value="updated the mb formula" />
     <MESSAGE value="addded dc formulation" />
@@ -544,7 +543,8 @@
     <MESSAGE value="connected the two widget to display the pending update" />
     <MESSAGE value="updated cmf records to have a  right click option" />
     <MESSAGE value="updated the pending completed with the supposed fields to modify forr records" />
-    <option name="LAST_COMMIT_MESSAGE" value="updated the pending completed with the supposed fields to modify forr records" />
+    <MESSAGE value="modify the parent cmf to handle the transferring of signal/pages to pass the cmf no" />
+    <option name="LAST_COMMIT_MESSAGE" value="modify the parent cmf to handle the transferring of signal/pages to pass the cmf no" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
