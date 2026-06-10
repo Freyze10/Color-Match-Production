@@ -1,7 +1,7 @@
 import qtawesome as fa
 from PyQt6.QtWidgets import (QWidget, QLabel, QVBoxLayout, QHBoxLayout, QLineEdit,
                              QPushButton, QGroupBox, QFormLayout, QFrame,
-                             QScrollArea, QDateEdit)
+                             QScrollArea, QDateEdit, QComboBox)
 from PyQt6.QtCore import Qt, QDate
 from css.styles import AppStyles
 
@@ -40,7 +40,7 @@ class PendingCompleted(QWidget):
         # --- LEFT COLUMN ---
         left_col = QFormLayout()
         left_col.setVerticalSpacing(15)
-        self.txt_cmf_no = QLineEdit();
+        self.txt_cmf_no = QLineEdit()
         self.txt_cmf_no.setReadOnly(True)
         self.txt_customer = QLineEdit()
         self.date_made = QDateEdit(calendarPopup=True, date=QDate.currentDate())
@@ -62,18 +62,25 @@ class PendingCompleted(QWidget):
         # --- RIGHT COLUMN ---
         right_col = QFormLayout()
         right_col.setVerticalSpacing(15)
+
+        self.cmb_status = QComboBox()
+        self.cmb_status.addItems(["Pending", "Completed"])
+
         self.txt_match_type = QLineEdit()
-        self.txt_salesman = QLineEdit()
+        self.txt_salesperson = QLineEdit()
         self.txt_reason = QLineEdit()
         self.txt_prod_code = QLineEdit()
+        self.txt_prod_code_desc = QLineEdit()  # NEW FIELD
         self.date_submitted = QDateEdit(calendarPopup=True, date=QDate.currentDate())
         self.txt_ar_no = QLineEdit()
         self.date_ar = QDateEdit(calendarPopup=True, date=QDate.currentDate())
 
+        right_col.addRow("Current Status:", self.cmb_status)
         right_col.addRow("Matching Type:", self.txt_match_type)
-        right_col.addRow("Salesman:", self.txt_salesman)
+        right_col.addRow("Sales Person:", self.txt_salesperson)
         right_col.addRow("Pending Reason:", self.txt_reason)
         right_col.addRow("Product Code:", self.txt_prod_code)
+        right_col.addRow("Code Description:", self.txt_prod_code_desc)  # Added here
         right_col.addRow("Date Submitted:", self.date_submitted)
         right_col.addRow("AR Number:", self.txt_ar_no)
         right_col.addRow("AR Date:", self.date_ar)
@@ -97,6 +104,6 @@ class PendingCompleted(QWidget):
         self.main_layout.addLayout(footer)
 
     def load_cmf_data(self, cmf_no):
-        """Called when user clicks 'Update Record Status' in CMFRecords"""
+        """Method to trigger database fetch and fill the form"""
         self.txt_cmf_no.setText(cmf_no)
-        # Logic to fetch other fields from DB based on cmf_no goes here
+        # Here you would perform your DB query to fill all the QLineEdits and QDateEdits
