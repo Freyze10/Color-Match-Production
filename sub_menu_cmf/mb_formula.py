@@ -10,10 +10,10 @@ from util.formula_table_delegate import MaterialDelegate, NumericDelegate
 
 
 class MBFormula(QWidget):
-    def __init__(self, mac_role, user_role):
+    def __init__(self, mac_department, user_department):
         super().__init__()
-        self.mac_role = mac_role
-        self.user_role = user_role
+        self.mac_department = mac_department
+        self.user_department = user_department
         self.init_ui()
 
     def init_ui(self):

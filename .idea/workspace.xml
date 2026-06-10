@@ -112,14 +112,6 @@
       <option name="presentableId" value="Default" />
       <updated>1780293734655</updated>
     </task>
-    <task id="LOCAL-00026" summary="added a cmf module to hold different widgets">
-      <option name="closed" value="true" />
-      <created>1780555122770</created>
-      <option name="number" value="00026" />
-      <option name="presentableId" value="LOCAL-00026" />
-      <option name="project" value="LOCAL" />
-      <updated>1780555122770</updated>
-    </task>
     <task id="LOCAL-00027" summary="added a new directory for cmf form, and formula">
       <option name="closed" value="true" />
       <created>1780555202812</created>
@@ -504,7 +496,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781060425492</updated>
     </task>
-    <option name="localTasksCounter" value="75" />
+    <task id="LOCAL-00075" summary="updated the database schema to add the feedback">
+      <option name="closed" value="true" />
+      <created>1781074136804</created>
+      <option name="number" value="00075" />
+      <option name="presentableId" value="LOCAL-00075" />
+      <option name="project" value="LOCAL" />
+      <updated>1781074136804</updated>
+    </task>
+    <option name="localTasksCounter" value="76" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -519,7 +519,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="added finished product" />
     <MESSAGE value="removed the minimun height foir the header" />
     <MESSAGE value="tried numeric delegate on the mb formula for column 2 and 3" />
     <MESSAGE value="added a material delegate for drop down on the material codes" />
@@ -544,7 +543,8 @@
     <MESSAGE value="added a status field and a product code description" />
     <MESSAGE value="updated the cmf form to already have a date received by lab field immediately" />
     <MESSAGE value="updated the uwi for more better" />
-    <option name="LAST_COMMIT_MESSAGE" value="updated the uwi for more better" />
+    <MESSAGE value="updated the database schema to add the feedback" />
+    <option name="LAST_COMMIT_MESSAGE" value="updated the database schema to add the feedback" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

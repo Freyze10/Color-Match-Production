@@ -9,10 +9,10 @@ from sub_menu_cmf.mb_formula import MBFormula
 from sub_menu_cmf.pending_completed import PendingCompleted
 
 class CMFModule(QWidget):
-    def __init__(self, mac_role, user_role):
+    def __init__(self, mac_department, user_department):
         super().__init__()
-        self.mac_role = mac_role
-        self.user_role = user_role
+        self.mac_department = mac_department
+        self.user_department = user_department
         self.init_ui()
 
     def init_ui(self):
@@ -22,11 +22,11 @@ class CMFModule(QWidget):
         self.tabs = QTabWidget()
         self.tabs.setDocumentMode(True)
 
-        self.cmf_records_tab = CMFRecords(self.mac_role, self.user_role)
-        self.cmf_form_tab = CMFForm(self.mac_role, self.user_role)
-        self.mb_formula_tab = MBFormula(self.mac_role, self.user_role)
-        self.dc_formula_tab = DCFormula(self.mac_role, self.user_role)
-        self.pending_completed_tab = PendingCompleted(self.mac_role, self.user_role)
+        self.cmf_records_tab = CMFRecords(self.mac_department, self.user_department)
+        self.cmf_form_tab = CMFForm(self.mac_department, self.user_department)
+        self.mb_formula_tab = MBFormula(self.mac_department, self.user_department)
+        self.dc_formula_tab = DCFormula(self.mac_department, self.user_department)
+        self.pending_completed_tab = PendingCompleted(self.mac_department, self.user_department)
 
         # Connect the bridge signal
         self.cmf_records_tab.request_update.connect(self.go_to_update_tab)

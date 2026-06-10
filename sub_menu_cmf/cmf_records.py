@@ -22,10 +22,10 @@ class CMFRecords(QWidget):
     request_update = pyqtSignal(str)
     request_edit = pyqtSignal(str)
 
-    def __init__(self, mac_role, user_role):
+    def __init__(self, mac_department, user_department):
         super().__init__()
-        self.mac_role = mac_role
-        self.user_role = user_role
+        self.mac_department = mac_department
+        self.user_department = user_department
         self.setStyleSheet(AppStyles.MAIN_WINDOW_STYLESHEET)
         self.init_ui()
         self.load_data()
