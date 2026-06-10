@@ -32,6 +32,7 @@ class CMFModule(QWidget):
         self.cmf_form_tab = CMFForm(self.mac_role, self.user_role)
         self.mb_formula_tab = MBFormula(self.mac_role, self.user_role)
         self.dc_formula_tab = DCFormula(self.mac_role, self.user_role)
+        self.pending_completed_tab = DCFormula(self.mac_role, self.user_role)
 
         # 2. Add widgets to tabs with icons
         self.tabs.addTab(self.cmf_records_tab, fa.icon('msc.checklist', color=AppStyles.SLATE_600), " CMF Records")
@@ -39,6 +40,8 @@ class CMFModule(QWidget):
         self.tabs.addTab(self.mb_formula_tab, fa.icon('mdi.flask-outline', color=AppStyles.SLATE_600), " MB Formula")
         self.tabs.addTab(self.dc_formula_tab, fa.icon('mdi.flask-empty-outline', color=AppStyles.SLATE_600),
                          " DC Formula")
+        self.tabs.addTab(self.pending_completed_tab, fa.icon('ri.file-edit-line', color=AppStyles.SLATE_600),
+                         " Pending/Completed")
 
         # 3. SET DEFAULT TAB
         # This ensures Tab 1 (Index 0) is always shown when the widget opens

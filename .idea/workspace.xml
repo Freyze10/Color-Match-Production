@@ -112,14 +112,6 @@
       <option name="presentableId" value="Default" />
       <updated>1780293734655</updated>
     </task>
-    <task id="LOCAL-00015" summary="updated the calling of production mb/dc with passing of mac access and user access">
-      <option name="closed" value="true" />
-      <created>1780467577335</created>
-      <option name="number" value="00015" />
-      <option name="presentableId" value="LOCAL-00015" />
-      <option name="project" value="LOCAL" />
-      <updated>1780467577335</updated>
-    </task>
     <task id="LOCAL-00016" summary="updated the displaying of production audit trail and the admin permission access">
       <option name="closed" value="true" />
       <created>1780470493170</created>
@@ -504,7 +496,15 @@
       <option name="project" value="LOCAL" />
       <updated>1780984504719</updated>
     </task>
-    <option name="localTasksCounter" value="64" />
+    <task id="LOCAL-00064" summary="removed the wip tooltip in the table model">
+      <option name="closed" value="true" />
+      <created>1781052809484</created>
+      <option name="number" value="00064" />
+      <option name="presentableId" value="LOCAL-00064" />
+      <option name="project" value="LOCAL" />
+      <updated>1781052809485</updated>
+    </task>
+    <option name="localTasksCounter" value="65" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -519,7 +519,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="updated the cmf fields" />
     <MESSAGE value="added inital fields and table for mb extruder" />
     <MESSAGE value="modified the mb extruder matching" />
     <MESSAGE value="added a style for formula page" />
@@ -544,7 +543,8 @@
     <MESSAGE value="created a cmf records display" />
     <MESSAGE value="updated the ui to include the product code and adjusted spacing" />
     <MESSAGE value="make the table for cmf report dynamicaly change based on the checkbbox" />
-    <option name="LAST_COMMIT_MESSAGE" value="make the table for cmf report dynamicaly change based on the checkbbox" />
+    <MESSAGE value="removed the wip tooltip in the table model" />
+    <option name="LAST_COMMIT_MESSAGE" value="removed the wip tooltip in the table model" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
