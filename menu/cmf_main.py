@@ -8,6 +8,7 @@ from sub_menu_cmf.cmf_form import CMFForm
 from sub_menu_cmf.cmf_records import CMFRecords
 from sub_menu_cmf.dc_formula import DCFormula
 from sub_menu_cmf.mb_formula import MBFormula
+from sub_menu_cmf.pending_completed import PendingCompleted
 
 
 class CMFModule(QWidget):
@@ -32,7 +33,7 @@ class CMFModule(QWidget):
         self.cmf_form_tab = CMFForm(self.mac_role, self.user_role)
         self.mb_formula_tab = MBFormula(self.mac_role, self.user_role)
         self.dc_formula_tab = DCFormula(self.mac_role, self.user_role)
-        self.pending_completed_tab = DCFormula(self.mac_role, self.user_role)
+        self.pending_completed_tab = PendingCompleted(self.mac_role, self.user_role)
 
         # 2. Add widgets to tabs with icons
         self.tabs.addTab(self.cmf_records_tab, fa.icon('msc.checklist', color=AppStyles.SLATE_600), " CMF Records")

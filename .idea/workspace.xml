@@ -112,14 +112,6 @@
       <option name="presentableId" value="Default" />
       <updated>1780293734655</updated>
     </task>
-    <task id="LOCAL-00016" summary="updated the displaying of production audit trail and the admin permission access">
-      <option name="closed" value="true" />
-      <created>1780470493170</created>
-      <option name="number" value="00016" />
-      <option name="presentableId" value="LOCAL-00016" />
-      <option name="project" value="LOCAL" />
-      <updated>1780470493170</updated>
-    </task>
     <task id="LOCAL-00017" summary="fix the user management and permission access">
       <option name="closed" value="true" />
       <created>1780471737781</created>
@@ -504,7 +496,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781052809485</updated>
     </task>
-    <option name="localTasksCounter" value="65" />
+    <task id="LOCAL-00065" summary="added a widget in the cmf main">
+      <option name="closed" value="true" />
+      <created>1781053591965</created>
+      <option name="number" value="00065" />
+      <option name="presentableId" value="LOCAL-00065" />
+      <option name="project" value="LOCAL" />
+      <updated>1781053591965</updated>
+    </task>
+    <option name="localTasksCounter" value="66" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -519,7 +519,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="added inital fields and table for mb extruder" />
     <MESSAGE value="modified the mb extruder matching" />
     <MESSAGE value="added a style for formula page" />
     <MESSAGE value="changed the style of the md formula page" />
@@ -544,7 +543,8 @@
     <MESSAGE value="updated the ui to include the product code and adjusted spacing" />
     <MESSAGE value="make the table for cmf report dynamicaly change based on the checkbbox" />
     <MESSAGE value="removed the wip tooltip in the table model" />
-    <option name="LAST_COMMIT_MESSAGE" value="removed the wip tooltip in the table model" />
+    <MESSAGE value="added a widget in the cmf main" />
+    <option name="LAST_COMMIT_MESSAGE" value="added a widget in the cmf main" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
