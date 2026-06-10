@@ -47,21 +47,31 @@ class CMFForm(QWidget):
         self.txt_cm_no = QLineEdit()
         self.txt_customer = QLineEdit()
 
-        # ─── DATE ROW 1: Submitted & Required ───
+        # ─── DATE ROW 1: Submitted (DateEdit) & Required (LineEdit) ───
         date_row_1 = QHBoxLayout()
+        date_row_1.setSpacing(10)
         self.date_submitted = QDateEdit(calendarPopup=True, date=QDate.currentDate())
-        self.date_required = QDateEdit(calendarPopup=True, date=QDate.currentDate().addDays(7))
-        date_row_1.addWidget(self.date_submitted)
-        date_row_1.addWidget(QLabel("Required Date:"))
-        date_row_1.addWidget(self.date_required)
+        self.date_submitted.setDisplayFormat("MM/dd/yyyy")  # Set Format
 
-        # ─── DATE ROW 2: Received & Due ───
+        self.txt_date_required = QLineEdit()
+        self.txt_date_required.setPlaceholderText("MM/DD/YYYY")
+
+        date_row_1.addWidget(self.date_submitted, 1)
+        date_row_1.addWidget(QLabel("Required Date:"), 0)
+        date_row_1.addWidget(self.txt_date_required, 1)
+
+        # ─── DATE ROW 2: Received (LineEdit) & Due (DateEdit) ───
         date_row_2 = QHBoxLayout()
-        self.date_received = QDateEdit(calendarPopup=True, date=QDate.currentDate())
+        date_row_2.setSpacing(10)
+        self.txt_date_received = QLineEdit()
+        self.txt_date_received.setPlaceholderText("MM/DD/YYYY")
+
         self.date_due = QDateEdit(calendarPopup=True, date=QDate.currentDate().addDays(5))
-        date_row_2.addWidget(self.date_received)
-        date_row_2.addWidget(QLabel("Due Date:"))
-        date_row_2.addWidget(self.date_due)
+        self.date_due.setDisplayFormat("MM/dd/yyyy")  # Set Format
+
+        date_row_2.addWidget(self.txt_date_received, 1)
+        date_row_2.addWidget(QLabel("Due Date:"), 0)
+        date_row_2.addWidget(self.date_due, 1)
 
         type_lay = QHBoxLayout()
         self.rad_new = QRadioButton("New Matching")
@@ -79,14 +89,14 @@ class CMFForm(QWidget):
         self.cmb_primary_color = QComboBox()
         self.cmb_primary_color.addItems(
             ["", "Red", "Blue", "Yellow", "Green", "Orange", "Purple", "Brown", "Black", "White", "Grey"])
-        self.cmb_primary_color.setFixedWidth(130)  # Fixed small width
+        self.cmb_primary_color.setFixedWidth(120)
 
         self.txt_color_desc = QLineEdit()
-        self.txt_color_desc.setPlaceholderText("Enter detailed color description...")
+        self.txt_color_desc.setPlaceholderText("Enter color description...")
 
         color_row.addWidget(self.cmb_primary_color)
-        color_row.addWidget(QLabel("Description:"))
-        color_row.addWidget(self.txt_color_desc, 1)  # Stretch factor 1 makes description take remaining space
+        color_row.addWidget(QLabel("Description:"), 0)
+        color_row.addWidget(self.txt_color_desc, 1)
 
         # Adding to Form
         gen_form.addRow("Color Matching No:", self.txt_cm_no)
@@ -116,7 +126,7 @@ class CMFForm(QWidget):
         left_col.addWidget(gen_group)
         left_col.addWidget(color_group)
 
-        # --- RIGHT COLUMN (Stretch 2) ---
+        # --- RIGHT COLUMN ---
         right_col = QVBoxLayout()
         tech_group = QGroupBox("Process & Technical Specifications")
         tech_form = QFormLayout(tech_group)
@@ -257,7 +267,3 @@ class CMFForm(QWidget):
         button_layout.addWidget(self.btn_save)
 
         self.main_layout.addLayout(button_layout)
-
-    def load_cmf_data(self, cmf_no):
-        """Fetch data from DB and fill the CMF Form fields"""
-        self.txt_cm_no.setText(cmf_no)

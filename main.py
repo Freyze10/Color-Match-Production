@@ -275,7 +275,7 @@ class MainWindow(QMainWindow):
                 self.dashboard = Dashboard()
                 new_widget = self.dashboard
             elif index == 7:  # Assuming 7 is your new index for CMF
-                self.cmf_module = CMFModule(self.mac_role, self.user_role)
+                self.cmf_module = CMFModule(self.mac_department, self.user_department)
                 new_widget = self.cmf_module
 
             if new_widget:
