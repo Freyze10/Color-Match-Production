@@ -112,14 +112,6 @@
       <option name="presentableId" value="Default" />
       <updated>1780293734655</updated>
     </task>
-    <task id="LOCAL-00017" summary="fix the user management and permission access">
-      <option name="closed" value="true" />
-      <created>1780471737781</created>
-      <option name="number" value="00017" />
-      <option name="presentableId" value="LOCAL-00017" />
-      <option name="project" value="LOCAL" />
-      <updated>1780471737781</updated>
-    </task>
     <task id="LOCAL-00018" summary="updated the updating of combo box in user management">
       <option name="closed" value="true" />
       <created>1780472959063</created>
@@ -504,7 +496,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781053591965</updated>
     </task>
-    <option name="localTasksCounter" value="66" />
+    <task id="LOCAL-00066" summary="connected the two widget to display the pending update">
+      <option name="closed" value="true" />
+      <created>1781053664704</created>
+      <option name="number" value="00066" />
+      <option name="presentableId" value="LOCAL-00066" />
+      <option name="project" value="LOCAL" />
+      <updated>1781053664704</updated>
+    </task>
+    <option name="localTasksCounter" value="67" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -519,7 +519,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="modified the mb extruder matching" />
     <MESSAGE value="added a style for formula page" />
     <MESSAGE value="changed the style of the md formula page" />
     <MESSAGE value="adjusted the groups spacing" />
@@ -544,7 +543,8 @@
     <MESSAGE value="make the table for cmf report dynamicaly change based on the checkbbox" />
     <MESSAGE value="removed the wip tooltip in the table model" />
     <MESSAGE value="added a widget in the cmf main" />
-    <option name="LAST_COMMIT_MESSAGE" value="added a widget in the cmf main" />
+    <MESSAGE value="connected the two widget to display the pending update" />
+    <option name="LAST_COMMIT_MESSAGE" value="connected the two widget to display the pending update" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
