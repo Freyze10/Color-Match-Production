@@ -49,6 +49,10 @@ class CMFForm(QWidget):
         self.date_submitted = QDateEdit(calendarPopup=True, date=QDate.currentDate())
         self.date_required = QDateEdit(calendarPopup=True, date=QDate.currentDate().addDays(7))
 
+        # NEW DATE FIELDS
+        self.date_received = QDateEdit(calendarPopup=True, date=QDate.currentDate())
+        self.date_due = QDateEdit(calendarPopup=True, date=QDate.currentDate().addDays(5))
+
         type_lay = QHBoxLayout()
         self.rad_new = QRadioButton("New Matching")
         self.rad_rematch = QRadioButton("Re-Match")
@@ -69,6 +73,8 @@ class CMFForm(QWidget):
         gen_form.addRow("Customer:", self.txt_customer)
         gen_form.addRow("Date Submitted:", self.date_submitted)
         gen_form.addRow("Date Required:", self.date_required)
+        gen_form.addRow("Date Received (Lab):", self.date_received)  # Added
+        gen_form.addRow("Due Date (Lab):", self.date_due)  # Added
         gen_form.addRow("Matching Type:", type_lay)
         gen_form.addRow("Sales Person:", self.txt_sales_person)
         gen_form.addRow("Finished Product:", self.txt_finished_product)
@@ -102,9 +108,9 @@ class CMFForm(QWidget):
         # 1. Resin and Process
         self.txt_resin = QLineEdit()
         proc_grid = QGridLayout()
-        self.chk_inj = QCheckBox("Injection");
+        self.chk_inj = QCheckBox("Injection")
         self.chk_blow = QCheckBox("Blow-Molding")
-        self.chk_film = QCheckBox("Film");
+        self.chk_film = QCheckBox("Film")
         self.chk_pipe = QCheckBox("Pipe Extrusion")
         proc_grid.addWidget(self.chk_inj, 0, 0);
         proc_grid.addWidget(self.chk_blow, 0, 1)
@@ -112,7 +118,7 @@ class CMFForm(QWidget):
         proc_grid.addWidget(self.chk_pipe, 1, 1)
 
         # 2. Qty and Resin Provided
-        self.txt_qty_resin = QLineEdit()  # NEW
+        self.txt_qty_resin = QLineEdit()
 
         def yes_no_layout():
             lay = QHBoxLayout();
@@ -129,7 +135,7 @@ class CMFForm(QWidget):
         self.txt_mi = QLineEdit()
         samp_lay, self.samp_y, self.samp_n = yes_no_layout()
 
-        # 3. Type of Colorant (Radio Group + Others)
+        # 3. Type of Colorant
         colorant_lay = QHBoxLayout()
         self.colorant_bg = QButtonGroup(self)
         self.rad_mb = QRadioButton("MB")
@@ -146,7 +152,7 @@ class CMFForm(QWidget):
 
         self.txt_dosage = QLineEdit()
 
-        # 4. Other Specifications (Checkboxes)
+        # 4. Other Specifications
         spec_lay = QHBoxLayout()
         self.chk_food = QCheckBox("Food Contact")
         self.chk_sunlight = QCheckBox("Sunlight Exposure")
@@ -167,13 +173,13 @@ class CMFForm(QWidget):
 
         tech_form.addRow("Resin Type:", self.txt_resin)
         tech_form.addRow("Process:", proc_grid)
-        tech_form.addRow("Qty Resin for Test:", self.txt_qty_resin)  # Added
+        tech_form.addRow("Qty Resin for Test:", self.txt_qty_resin)
         tech_form.addRow("Resin Provided:", res_lay)
         tech_form.addRow("MI Value:", self.txt_mi)
         tech_form.addRow("Sample Avail:", samp_lay)
-        tech_form.addRow("Type of Colorant:", colorant_lay)  # Added
+        tech_form.addRow("Type of Colorant:", colorant_lay)
         tech_form.addRow("Target Dosage:", self.txt_dosage)
-        tech_form.addRow("Other Specs:", spec_lay)  # Added
+        tech_form.addRow("Other Specs:", spec_lay)
         tech_form.addRow("Return Guide:", guide_lay)
         tech_form.addRow("Operating Temp:", self.txt_temp)
         tech_form.addRow("Low Cost Req:", low_lay)
@@ -198,12 +204,11 @@ class CMFForm(QWidget):
         notes_layout.addWidget(self.txt_additional_info)
 
         self.container_layout.addLayout(columns_layout, 0)
-        self.container_layout.addWidget(notes_group, 1)  # This forces the notes to take all vertical space
+        self.container_layout.addWidget(notes_group, 1)
 
         # Footer
         footer_info = QHBoxLayout()
         self.txt_prod_code = QLineEdit()
-        # self.txt_prod_code.setFixedWidth(300)
         footer_info.addWidget(QLabel("<b>PRODUCT CODE:</b>"))
         footer_info.addWidget(self.txt_prod_code)
         self.container_layout.addLayout(footer_info)
@@ -215,7 +220,7 @@ class CMFForm(QWidget):
         # BUTTON BAR
         # =========================================================================
         button_layout = QHBoxLayout()
-        button_layout.setContentsMargins(0, 10, 0, 0)
+        button_layout.setContentsMargins(0, 10, 0, 10)  # Added bottom margin
 
         self.btn_upload = QPushButton(" Upload", objectName="PrimaryButton")
         self.btn_upload.setIcon(fa.icon('mdi6.text-box-remove', color='white'))
