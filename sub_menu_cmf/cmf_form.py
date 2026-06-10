@@ -46,12 +46,22 @@ class CMFForm(QWidget):
 
         self.txt_cm_no = QLineEdit()
         self.txt_customer = QLineEdit()
+
+        # ─── DATE ROW 1: Submitted & Required ───
+        date_row_1 = QHBoxLayout()
         self.date_submitted = QDateEdit(calendarPopup=True, date=QDate.currentDate())
         self.date_required = QDateEdit(calendarPopup=True, date=QDate.currentDate().addDays(7))
+        date_row_1.addWidget(self.date_submitted)
+        date_row_1.addWidget(QLabel("Required Date:"))
+        date_row_1.addWidget(self.date_required)
 
-        # NEW DATE FIELDS
+        # ─── DATE ROW 2: Received & Due ───
+        date_row_2 = QHBoxLayout()
         self.date_received = QDateEdit(calendarPopup=True, date=QDate.currentDate())
         self.date_due = QDateEdit(calendarPopup=True, date=QDate.currentDate().addDays(5))
+        date_row_2.addWidget(self.date_received)
+        date_row_2.addWidget(QLabel("Due Date:"))
+        date_row_2.addWidget(self.date_due)
 
         type_lay = QHBoxLayout()
         self.rad_new = QRadioButton("New Matching")
@@ -64,22 +74,29 @@ class CMFForm(QWidget):
         self.txt_sales_person = QLineEdit()
         self.txt_finished_product = QLineEdit()
 
+        # ─── COLOR ROW: Primary & Description ───
+        color_row = QHBoxLayout()
         self.cmb_primary_color = QComboBox()
         self.cmb_primary_color.addItems(
             ["", "Red", "Blue", "Yellow", "Green", "Orange", "Purple", "Brown", "Black", "White", "Grey"])
-        self.txt_color_desc = QLineEdit()
+        self.cmb_primary_color.setFixedWidth(130)  # Fixed small width
 
+        self.txt_color_desc = QLineEdit()
+        self.txt_color_desc.setPlaceholderText("Enter detailed color description...")
+
+        color_row.addWidget(self.cmb_primary_color)
+        color_row.addWidget(QLabel("Description:"))
+        color_row.addWidget(self.txt_color_desc, 1)  # Stretch factor 1 makes description take remaining space
+
+        # Adding to Form
         gen_form.addRow("Color Matching No:", self.txt_cm_no)
         gen_form.addRow("Customer:", self.txt_customer)
-        gen_form.addRow("Date Submitted:", self.date_submitted)
-        gen_form.addRow("Date Required:", self.date_required)
-        gen_form.addRow("Date Received (Lab):", self.date_received)  # Added
-        gen_form.addRow("Due Date (Lab):", self.date_due)  # Added
+        gen_form.addRow("Date Submitted:", date_row_1)
+        gen_form.addRow("Date Received:", date_row_2)
         gen_form.addRow("Matching Type:", type_lay)
         gen_form.addRow("Sales Person:", self.txt_sales_person)
         gen_form.addRow("Finished Product:", self.txt_finished_product)
-        gen_form.addRow("Primary Color:", self.cmb_primary_color)
-        gen_form.addRow("Color Description:", self.txt_color_desc)
+        gen_form.addRow("Primary Color:", color_row)
 
         color_group = QGroupBox("Color Requirement")
         color_grid = QGridLayout(color_group)
@@ -105,19 +122,17 @@ class CMFForm(QWidget):
         tech_form = QFormLayout(tech_group)
         tech_form.setSpacing(10)
 
-        # 1. Resin and Process
         self.txt_resin = QLineEdit()
         proc_grid = QGridLayout()
-        self.chk_inj = QCheckBox("Injection")
+        self.chk_inj = QCheckBox("Injection");
         self.chk_blow = QCheckBox("Blow-Molding")
-        self.chk_film = QCheckBox("Film")
+        self.chk_film = QCheckBox("Film");
         self.chk_pipe = QCheckBox("Pipe Extrusion")
         proc_grid.addWidget(self.chk_inj, 0, 0);
         proc_grid.addWidget(self.chk_blow, 0, 1)
         proc_grid.addWidget(self.chk_film, 1, 0);
         proc_grid.addWidget(self.chk_pipe, 1, 1)
 
-        # 2. Qty and Resin Provided
         self.txt_qty_resin = QLineEdit()
 
         def yes_no_layout():
@@ -135,11 +150,10 @@ class CMFForm(QWidget):
         self.txt_mi = QLineEdit()
         samp_lay, self.samp_y, self.samp_n = yes_no_layout()
 
-        # 3. Type of Colorant
         colorant_lay = QHBoxLayout()
         self.colorant_bg = QButtonGroup(self)
-        self.rad_mb = QRadioButton("MB")
-        self.rad_dc = QRadioButton("DC")
+        self.rad_mb = QRadioButton("MB");
+        self.rad_dc = QRadioButton("DC");
         self.rad_colorant_others = QRadioButton("Others:")
         self.colorant_bg.addButton(self.rad_mb);
         self.colorant_bg.addButton(self.rad_dc);
@@ -152,10 +166,9 @@ class CMFForm(QWidget):
 
         self.txt_dosage = QLineEdit()
 
-        # 4. Other Specifications
         spec_lay = QHBoxLayout()
-        self.chk_food = QCheckBox("Food Contact")
-        self.chk_sunlight = QCheckBox("Sunlight Exposure")
+        self.chk_food = QCheckBox("Food Contact");
+        self.chk_sunlight = QCheckBox("Sunlight Exposure");
         self.chk_spec_others = QCheckBox("Others:")
         self.txt_spec_others = QLineEdit()
         spec_lay.addWidget(self.chk_food);
@@ -220,7 +233,7 @@ class CMFForm(QWidget):
         # BUTTON BAR
         # =========================================================================
         button_layout = QHBoxLayout()
-        button_layout.setContentsMargins(0, 10, 0, 10)  # Added bottom margin
+        button_layout.setContentsMargins(0, 10, 0, 10)
 
         self.btn_upload = QPushButton(" Upload", objectName="PrimaryButton")
         self.btn_upload.setIcon(fa.icon('mdi6.text-box-remove', color='white'))

@@ -112,14 +112,6 @@
       <option name="presentableId" value="Default" />
       <updated>1780293734655</updated>
     </task>
-    <task id="LOCAL-00024" summary="added tight layout in the canvas to occupy the white sppaces">
-      <option name="closed" value="true" />
-      <created>1780553093930</created>
-      <option name="number" value="00024" />
-      <option name="presentableId" value="LOCAL-00024" />
-      <option name="project" value="LOCAL" />
-      <updated>1780553093930</updated>
-    </task>
     <task id="LOCAL-00025" summary="make the indicator to be globally editable">
       <option name="closed" value="true" />
       <created>1780553574465</created>
@@ -504,7 +496,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781057064514</updated>
     </task>
-    <option name="localTasksCounter" value="73" />
+    <task id="LOCAL-00073" summary="updated the cmf form to already have a date received by lab field immediately">
+      <option name="closed" value="true" />
+      <created>1781059295743</created>
+      <option name="number" value="00073" />
+      <option name="presentableId" value="LOCAL-00073" />
+      <option name="project" value="LOCAL" />
+      <updated>1781059295743</updated>
+    </task>
+    <option name="localTasksCounter" value="74" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -519,7 +519,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="updated the form number" />
     <MESSAGE value="updated the button in the cmf" />
     <MESSAGE value="added finished product" />
     <MESSAGE value="removed the minimun height foir the header" />
@@ -544,7 +543,8 @@
     <MESSAGE value="passing the cmf no to smf form correctly" />
     <MESSAGE value="pass the cmf no to mb and dc formula" />
     <MESSAGE value="added a status field and a product code description" />
-    <option name="LAST_COMMIT_MESSAGE" value="added a status field and a product code description" />
+    <MESSAGE value="updated the cmf form to already have a date received by lab field immediately" />
+    <option name="LAST_COMMIT_MESSAGE" value="updated the cmf form to already have a date received by lab field immediately" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
