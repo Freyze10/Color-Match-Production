@@ -27,8 +27,8 @@ def create_table():
         CREATE TABLE IF NOT EXISTS tbl_user(
             user_id SERIAL PRIMARY KEY,
             hostname VARCHAR(100),
-            ipaddress VARCHAR(50),
-            mac VARCHAR(50) UNIQUE,
+            ip_address VARCHAR(50),
+            mac_address VARCHAR(50) UNIQUE,
             username VARCHAR(50) NOT NULL,
             password VARCHAR(100) NOT NULL,
             role_id INT REFERENCES tbl_role(role_id)
