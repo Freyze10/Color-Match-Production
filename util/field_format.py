@@ -163,23 +163,28 @@ def setup_auto_completers(customer_widget=None,
 class SmartDateEdit(QLineEdit):
     """
     A QLineEdit that auto-formats numeric input into MM/DD/YYYY.
-
-    - Only accepts numeric keys (0–9)
-    - Slashes are inserted automatically after MM and DD
-    - Backspace removes the last digit (and trailing slash if needed)
-    - Displays a placeholder: MM/DD/YYYY
+    Supports single or multiple dates separated by commas.
     """
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, allow_multiple=False):
         super().__init__(parent)
-        self.setPlaceholderText("MM/DD/YYYY")
-        self.setMaxLength(10)
-        self._digits = ""  # stores only the raw digits the user has typed
+        self.allow_multiple = allow_multiple
+        # List of strings, where each string contains the raw digits for one date
+        self._segments = [""]
+
+        placeholder = "MM/DD/YYYY"
+        if allow_multiple:
+            placeholder += ", MM/DD/YYYY..."
+
+        self.setPlaceholderText(placeholder)
+        # Max length is dynamic for multiple dates, so we remove the fixed 10
+        if not allow_multiple:
+            self.setMaxLength(10)
 
     # ── Internal helpers ──────────────────────────────────────────────────────
 
-    def _format(self, digits: str) -> str:
-        """Convert a raw digit string (up to 8 chars) into MM/DD/YYYY format."""
+    def _format_segment(self, digits: str) -> str:
+        """Convert a single raw digit string (up to 8 chars) into MM/DD/YYYY."""
         d = digits[:8]
         result = ""
         if len(d) >= 1:
@@ -193,10 +198,14 @@ class SmartDateEdit(QLineEdit):
         return result
 
     def _apply(self):
-        """Re-render the formatted string into the widget without triggering recursion."""
+        """Join all segments with commas and update the text field."""
         self.blockSignals(True)
-        self.setText(self._format(self._digits))
-        # Move cursor to end
+
+        formatted_segments = [self._format_segment(s) for s in self._segments]
+        # Filter out empty segments at the end unless it's the only one
+        display_text = ", ".join(formatted_segments)
+
+        self.setText(display_text)
         self.setCursorPosition(len(self.text()))
         self.blockSignals(False)
 
@@ -204,65 +213,76 @@ class SmartDateEdit(QLineEdit):
 
     def keyPressEvent(self, event: QKeyEvent):
         key = event.key()
+        text = event.text()
 
-        # Allow: Backspace
+        # 1. Handle Backspace
         if key == Qt.Key.Key_Backspace:
-            if self._digits:
-                self._digits = self._digits[:-1]
+            if self._segments:
+                # If current segment is empty and we have previous segments,
+                # remove the empty segment and the comma
+                if self._segments[-1] == "" and len(self._segments) > 1:
+                    self._segments.pop()
+                # Otherwise remove last digit of current segment
+                elif self._segments[-1] != "":
+                    self._segments[-1] = self._segments[-1][:-1]
+
                 self._apply()
             return
 
-        # Allow: Delete (clear all)
-        if key == Qt.Key.Key_Delete:
-            self._digits = ""
-            self._apply()
+        # 2. Handle Comma (Only if multiple dates allowed and current date is full)
+        if self.allow_multiple and text == ",":
+            if len(self._segments[-1]) == 8:
+                self._segments.append("")
+                self._apply()
             return
 
-        # Allow: Tab, Return, navigation keys — pass through normally
+        # 3. Handle Digits 0-9
+        if text.isdigit():
+            # If current segment is full (8 digits), don't allow more digits
+            # User MUST type a comma first to start a new segment
+            if len(self._segments[-1]) < 8:
+                self._segments[-1] += text
+                self._apply()
+            return
+
+        # 4. Standard navigation keys
         if key in (Qt.Key.Key_Tab, Qt.Key.Key_Backtab, Qt.Key.Key_Return,
                    Qt.Key.Key_Enter, Qt.Key.Key_Left, Qt.Key.Key_Right,
                    Qt.Key.Key_Home, Qt.Key.Key_End):
             super().keyPressEvent(event)
             return
 
-        # Allow: Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
-        if event.modifiers() == Qt.KeyboardModifier.ControlModifier and key in (
-                Qt.Key.Key_A, Qt.Key.Key_C, Qt.Key.Key_V, Qt.Key.Key_X
-        ):
+        # 5. Allow standard copy/paste modifiers
+        if event.modifiers() == Qt.KeyboardModifier.ControlModifier:
             super().keyPressEvent(event)
             return
 
-        # Only accept digit keys 0–9
-        if Qt.Key.Key_0 <= key <= Qt.Key.Key_9:
-            if len(self._digits) < 8:  # MM DD YYYY = 8 digits max
-                self._digits += event.text()
-                self._apply()
-            return
-
-        # Block everything else (letters, symbols, space, etc.)
-
     # ── Public helpers ────────────────────────────────────────────────────────
 
-    def date_text(self) -> str:
-        """Return the formatted date string, e.g. '02/23/2026'."""
-        return self.text()
-
-    def is_complete(self) -> bool:
-        """Return True only when all 8 digits have been entered (MM/DD/YYYY)."""
-        return len(self._digits) == 8
+    def get_dates_list(self):
+        """Returns a list of complete MM/DD/YYYY strings."""
+        return [self._format_segment(s) for s in self._segments if len(s) == 8]
 
     def clear_date(self):
-        """Reset the field."""
-        self._digits = ""
+        self._segments = [""]
         self._apply()
 
     def set_date_text(self, date_str: str):
         """
-        Pre-fill the field from a string.
-        Accepts 'MM/DD/YYYY', 'MMDDYYYY', or any string — strips non-digits.
+        Parses a string like '01/01/2023, 02/02/2024' into segments.
         """
-        digits = "".join(ch for ch in date_str if ch.isdigit())
-        self._digits = digits[:8]
+        if not date_str:
+            self.clear_date()
+            return
+
+        # Split by comma if multiple allowed
+        if self.allow_multiple:
+            parts = date_str.split(",")
+            self._segments = ["".join(filter(str.isdigit, p))[:8] for p in parts]
+        else:
+            digits = "".join(filter(str.isdigit, date_str))
+            self._segments = [digits[:8]]
+
         self._apply()
 
 
