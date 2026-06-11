@@ -5,6 +5,7 @@ from PyQt6.QtWidgets import (QWidget, QLabel, QVBoxLayout, QHBoxLayout, QLineEdi
                              QGroupBox, QFormLayout, QFrame, QAbstractItemView, QScrollArea)
 from PyQt6.QtCore import Qt
 from css.styles import AppStyles
+from util.field_format import SmartDateEdit
 from util.formula_table_delegate import MaterialDelegate, NumericDelegate
 
 
@@ -62,7 +63,7 @@ class DCFormula(QWidget):
         self.txt_customer = QLineEdit()
         self.txt_resin = QLineEdit()
         self.txt_color = QLineEdit()
-        self.txt_date_matched = QLineEdit()
+        self.txt_date_matched = SmartDateEdit()
         self.txt_dosage = QLineEdit()
         self.txt_sample_size = QLineEdit()
         self.txt_product_used = QLineEdit()

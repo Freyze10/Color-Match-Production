@@ -112,14 +112,6 @@
       <option name="presentableId" value="Default" />
       <updated>1780293734655</updated>
     </task>
-    <task id="LOCAL-00033" summary="adjusted the getting of lastest prod id for more faster query">
-      <option name="closed" value="true" />
-      <created>1780623878430</created>
-      <option name="number" value="00033" />
-      <option name="presentableId" value="LOCAL-00033" />
-      <option name="project" value="LOCAL" />
-      <updated>1780623878430</updated>
-    </task>
     <task id="LOCAL-00034" summary="added a simple entry for cmf">
       <option name="closed" value="true" />
       <created>1780624554368</created>
@@ -504,7 +496,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781158808416</updated>
     </task>
-    <option name="localTasksCounter" value="82" />
+    <task id="LOCAL-00082" summary="updated the position for the color requirements too">
+      <option name="closed" value="true" />
+      <created>1781159471397</created>
+      <option name="number" value="00082" />
+      <option name="presentableId" value="LOCAL-00082" />
+      <option name="project" value="LOCAL" />
+      <updated>1781159471397</updated>
+    </task>
+    <option name="localTasksCounter" value="83" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -519,7 +519,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="added validation in the total weight field for the mb" />
     <MESSAGE value="updated the dc formula to match the validation of the mb formula" />
     <MESSAGE value="modified css to fit more button for navigation" />
     <MESSAGE value="pepare to add the widget for cmf records tab" />
@@ -544,7 +543,8 @@
     <MESSAGE value="updated the smart date edit class to accept multiple dates" />
     <MESSAGE value="modified the smart date edit to display the calendar if the user wants it" />
     <MESSAGE value="updated the positioning of the process coises" />
-    <option name="LAST_COMMIT_MESSAGE" value="updated the positioning of the process coises" />
+    <MESSAGE value="updated the position for the color requirements too" />
+    <option name="LAST_COMMIT_MESSAGE" value="updated the position for the color requirements too" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

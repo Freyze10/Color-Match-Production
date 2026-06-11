@@ -61,8 +61,7 @@ class CMFForm(QWidget):
         # ─── DATE ROW 2: Received (LineEdit) & Due (SmartDateEdit) ───
         date_row_2 = QHBoxLayout()
         date_row_2.setSpacing(10)
-        self.txt_date_received = QLineEdit()
-        self.txt_date_received.setPlaceholderText("MM/DD/YYYY")
+        self.txt_date_received = SmartDateEdit(allow_multiple=True)
         self.date_due = SmartDateEdit()
         date_row_2.addWidget(self.txt_date_received, 1)
         date_row_2.addWidget(QLabel("Due Date:"), 0)

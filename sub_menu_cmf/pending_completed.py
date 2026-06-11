@@ -4,6 +4,7 @@ from PyQt6.QtWidgets import (QWidget, QLabel, QVBoxLayout, QHBoxLayout, QLineEdi
                              QScrollArea, QDateEdit, QComboBox)
 from PyQt6.QtCore import Qt, QDate
 from css.styles import AppStyles
+from util.field_format import SmartDateEdit
 
 
 class PendingCompleted(QWidget):
@@ -43,10 +44,11 @@ class PendingCompleted(QWidget):
         self.txt_cmf_no = QLineEdit()
         self.txt_cmf_no.setReadOnly(True)
         self.txt_customer = QLineEdit()
-        self.date_made = QDateEdit(calendarPopup=True, date=QDate.currentDate())
-        self.date_received = QDateEdit(calendarPopup=True, date=QDate.currentDate())
-        self.date_required = QDateEdit(calendarPopup=True, date=QDate.currentDate())
-        self.date_due = QDateEdit(calendarPopup=True, date=QDate.currentDate())
+        self.date_made = SmartDateEdit()
+        self.date_received = SmartDateEdit(allow_multiple=True)
+        self.date_required = QLineEdit()
+        self.date_required.setPlaceholderText("MM/DD/YYYY")
+        self.date_due = SmartDateEdit()
         self.txt_finished_prod = QLineEdit()
         self.txt_color_desc = QLineEdit()
 
@@ -71,9 +73,9 @@ class PendingCompleted(QWidget):
         self.txt_reason = QLineEdit()
         self.txt_prod_code = QLineEdit()
         self.txt_prod_code_desc = QLineEdit()  # NEW FIELD
-        self.date_submitted = QDateEdit(calendarPopup=True, date=QDate.currentDate())
+        self.date_submitted = SmartDateEdit()
         self.txt_ar_no = QLineEdit()
-        self.date_ar = QDateEdit(calendarPopup=True, date=QDate.currentDate())
+        self.date_ar = SmartDateEdit()
 
         right_col.addRow("Current Status:", self.cmb_status)
         right_col.addRow("Matching Type:", self.txt_match_type)

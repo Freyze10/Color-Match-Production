@@ -6,6 +6,7 @@ from PyQt6.QtWidgets import (QWidget, QLabel, QVBoxLayout, QHBoxLayout, QLineEdi
                              QStyledItemDelegate, QComboBox, QCompleter)
 from PyQt6.QtCore import Qt
 from css.styles import AppStyles
+from util.field_format import SmartDateEdit
 from util.formula_table_delegate import MaterialDelegate, NumericDelegate
 
 
@@ -55,7 +56,7 @@ class MBFormula(QWidget):
         gen_group = QGroupBox("General Information")
         gen_form = QFormLayout(gen_group)
         gen_form.setContentsMargins(10, 25, 10, 10)
-        self.txt_date = QLineEdit()
+        self.txt_date = SmartDateEdit()
         self.txt_cm_form_no = QLineEdit()
         gen_form.addRow("Date:", self.txt_date)
         gen_form.addRow("CM Form #:", self.txt_cm_form_no)
