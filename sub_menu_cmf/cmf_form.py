@@ -5,6 +5,7 @@ from PyQt6.QtWidgets import (QWidget, QLabel, QVBoxLayout, QHBoxLayout, QLineEdi
                              QButtonGroup, QGridLayout, QSizePolicy, QComboBox)
 from PyQt6.QtCore import Qt, QDate
 from css.styles import AppStyles
+from util.field_format import SmartDateEdit
 
 
 class CMFForm(QWidget):
@@ -65,6 +66,8 @@ class CMFForm(QWidget):
         date_row_2.setSpacing(10)
         self.txt_date_received = QLineEdit()
         self.txt_date_received.setPlaceholderText("MM/DD/YYYY")
+        self.txt_date_received = SmartDateEdit(allow_multiple=True)
+        # list_of_dates = self.txt_date_received.get_dates_list()
 
         self.date_due = QDateEdit(calendarPopup=True, date=QDate.currentDate().addDays(5))
         self.date_due.setDisplayFormat("MM/dd/yyyy")  # Set Format

@@ -160,129 +160,140 @@ def setup_auto_completers(customer_widget=None,
     return lot_list_from_db
 
 
-class SmartDateEdit(QLineEdit):
-    """
-    A QLineEdit that auto-formats numeric input into MM/DD/YYYY.
-    Supports single or multiple dates separated by commas.
-    """
+import qtawesome as fa
+from PyQt6.QtWidgets import QLineEdit, QCalendarWidget, QDialog, QVBoxLayout
+from PyQt6.QtCore import Qt, QPoint
+from PyQt6.QtGui import QKeyEvent
 
+
+class SmartDateEdit(QLineEdit):
     def __init__(self, parent=None, allow_multiple=False):
         super().__init__(parent)
         self.allow_multiple = allow_multiple
-        # List of strings, where each string contains the raw digits for one date
         self._segments = [""]
 
-        placeholder = "MM/DD/YYYY"
-        if allow_multiple:
-            placeholder += ", MM/DD/YYYY..."
-
-        self.setPlaceholderText(placeholder)
-        # Max length is dynamic for multiple dates, so we remove the fixed 10
+        # Setup Styling & Placeholder
+        self.setPlaceholderText("MM/DD/YYYY" + (", ..." if allow_multiple else ""))
         if not allow_multiple:
             self.setMaxLength(10)
 
-    # ── Internal helpers ──────────────────────────────────────────────────────
+        # ─── ADD CALENDAR ICON ───
+        # Uses your existing qtawesome (fa) setup
+        self.calendar_action = self.addAction(
+            fa.icon('fa5s.calendar-alt', color='#64748B'),
+            QLineEdit.ActionPosition.TrailingPosition
+        )
+        self.calendar_action.triggered.connect(self.show_calendar_popup)
+
+    # ── Internal formatting logic (same as before) ────────────────────────────
 
     def _format_segment(self, digits: str) -> str:
-        """Convert a single raw digit string (up to 8 chars) into MM/DD/YYYY."""
         d = digits[:8]
         result = ""
-        if len(d) >= 1:
-            result += d[:2]  # MM
-        if len(d) >= 3:
-            result += "/" + d[2:4]  # /DD
+        if len(d) >= 1: result += d[:2]
+        if len(d) >= 3: result += "/" + d[2:4]
         if len(d) >= 5:
-            result += "/" + d[4:8]  # /YYYY
+            result += "/" + d[4:8]
         elif len(d) == 3 or len(d) == 4:
-            result += "/"  # trailing slash after DD digits start
+            result += "/"
         return result
 
     def _apply(self):
-        """Join all segments with commas and update the text field."""
         self.blockSignals(True)
-
-        formatted_segments = [self._format_segment(s) for s in self._segments]
-        # Filter out empty segments at the end unless it's the only one
-        display_text = ", ".join(formatted_segments)
-
-        self.setText(display_text)
+        formatted_segments = [self._format_segment(s) for s in self._segments if s or len(self._segments) == 1]
+        self.setText(", ".join(formatted_segments))
         self.setCursorPosition(len(self.text()))
         self.blockSignals(False)
 
-    # ── Event override ────────────────────────────────────────────────────────
+    # ── Calendar Logic ────────────────────────────────────────────────────────
+
+    def show_calendar_popup(self):
+        # Create a frameless popup dialog
+        popup = QDialog(self)
+        popup.setWindowFlags(Qt.WindowType.Popup | Qt.WindowType.FramelessWindowHint)
+        layout = QVBoxLayout(popup)
+        layout.setContentsMargins(0, 0, 0, 0)
+
+        cal = QCalendarWidget()
+        cal.setGridVisible(True)
+        # Select the date currently in the last segment if possible
+        layout.addWidget(cal)
+
+        # When a date is clicked
+        cal.clicked.connect(lambda qdate: self.handle_calendar_selection(qdate, popup))
+
+        # Position the popup below the line edit
+        pos = self.mapToGlobal(QPoint(0, self.height()))
+        popup.move(pos)
+        popup.exec()
+
+    def handle_calendar_selection(self, qdate, popup):
+        # Format the selected date into 8 digits: MMDDYYYY
+        date_digits = qdate.toString("MMddyyyy")
+
+        if self.allow_multiple:
+            # If the current last segment is empty, fill it
+            if not self._segments[-1]:
+                self._segments[-1] = date_digits
+            # If the last segment is already full, add a new one
+            elif len(self._segments[-1]) == 8:
+                self._segments.append(date_digits)
+            # If the last segment is partially typed, overwrite it
+            else:
+                self._segments[-1] = date_digits
+        else:
+            # Single mode: overwrite everything
+            self._segments = [date_digits]
+
+        self._apply()
+        popup.accept()
+
+    # ── Key Events (Manual Typing) ────────────────────────────────────────────
 
     def keyPressEvent(self, event: QKeyEvent):
         key = event.key()
         text = event.text()
 
-        # 1. Handle Backspace
         if key == Qt.Key.Key_Backspace:
             if self._segments:
-                # If current segment is empty and we have previous segments,
-                # remove the empty segment and the comma
                 if self._segments[-1] == "" and len(self._segments) > 1:
                     self._segments.pop()
-                # Otherwise remove last digit of current segment
                 elif self._segments[-1] != "":
                     self._segments[-1] = self._segments[-1][:-1]
-
                 self._apply()
             return
 
-        # 2. Handle Comma (Only if multiple dates allowed and current date is full)
         if self.allow_multiple and text == ",":
             if len(self._segments[-1]) == 8:
                 self._segments.append("")
                 self._apply()
             return
 
-        # 3. Handle Digits 0-9
         if text.isdigit():
-            # If current segment is full (8 digits), don't allow more digits
-            # User MUST type a comma first to start a new segment
             if len(self._segments[-1]) < 8:
                 self._segments[-1] += text
                 self._apply()
             return
 
-        # 4. Standard navigation keys
+        # Allow basic navigation
         if key in (Qt.Key.Key_Tab, Qt.Key.Key_Backtab, Qt.Key.Key_Return,
-                   Qt.Key.Key_Enter, Qt.Key.Key_Left, Qt.Key.Key_Right,
-                   Qt.Key.Key_Home, Qt.Key.Key_End):
+                   Qt.Key.Key_Enter, Qt.Key.Key_Left, Qt.Key.Key_Right):
             super().keyPressEvent(event)
-            return
 
-        # 5. Allow standard copy/paste modifiers
-        if event.modifiers() == Qt.KeyboardModifier.ControlModifier:
-            super().keyPressEvent(event)
-            return
-
-    # ── Public helpers ────────────────────────────────────────────────────────
+    # ── Public Helpers ────────────────────────────────────────────────────────
 
     def get_dates_list(self):
-        """Returns a list of complete MM/DD/YYYY strings."""
         return [self._format_segment(s) for s in self._segments if len(s) == 8]
 
-    def clear_date(self):
-        self._segments = [""]
-        self._apply()
-
     def set_date_text(self, date_str: str):
-        """
-        Parses a string like '01/01/2023, 02/02/2024' into segments.
-        """
         if not date_str:
-            self.clear_date()
-            return
-
-        # Split by comma if multiple allowed
-        if self.allow_multiple:
-            parts = date_str.split(",")
-            self._segments = ["".join(filter(str.isdigit, p))[:8] for p in parts]
+            self._segments = [""]
         else:
-            digits = "".join(filter(str.isdigit, date_str))
-            self._segments = [digits[:8]]
-
+            if self.allow_multiple:
+                parts = date_str.split(",")
+                self._segments = ["".join(filter(str.isdigit, p))[:8] for p in parts]
+            else:
+                self._segments = ["".join(filter(str.isdigit, date_str))[:8]]
         self._apply()
 
 

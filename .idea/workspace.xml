@@ -112,14 +112,6 @@
       <option name="presentableId" value="Default" />
       <updated>1780293734655</updated>
     </task>
-    <task id="LOCAL-00030" summary="fixed the naming of the directory to import the desired pages">
-      <option name="closed" value="true" />
-      <created>1780555523010</created>
-      <option name="number" value="00030" />
-      <option name="presentableId" value="LOCAL-00030" />
-      <option name="project" value="LOCAL" />
-      <updated>1780555523010</updated>
-    </task>
     <task id="LOCAL-00031" summary="added all the cmf module for integration">
       <option name="closed" value="true" />
       <created>1780562983217</created>
@@ -504,7 +496,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781145340635</updated>
     </task>
-    <option name="localTasksCounter" value="79" />
+    <task id="LOCAL-00079" summary="updated the smart date edit class to accept multiple dates">
+      <option name="closed" value="true" />
+      <created>1781146288567</created>
+      <option name="number" value="00079" />
+      <option name="presentableId" value="LOCAL-00079" />
+      <option name="project" value="LOCAL" />
+      <updated>1781146288567</updated>
+    </task>
+    <option name="localTasksCounter" value="80" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -519,7 +519,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="seperate the delegate file to reuse the other formula table" />
     <MESSAGE value="updated the dc formula to use the delegate to limit  the errors on entry in the table" />
     <MESSAGE value="updated the numeric delegate to accept 7 decimal" />
     <MESSAGE value="added validation in the total weight field for the mb" />
@@ -544,7 +543,8 @@
     <MESSAGE value="updated the passing of the mac address access" />
     <MESSAGE value="update database schema" />
     <MESSAGE value="updated the column name in the tbl user" />
-    <option name="LAST_COMMIT_MESSAGE" value="updated the column name in the tbl user" />
+    <MESSAGE value="updated the smart date edit class to accept multiple dates" />
+    <option name="LAST_COMMIT_MESSAGE" value="updated the smart date edit class to accept multiple dates" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
