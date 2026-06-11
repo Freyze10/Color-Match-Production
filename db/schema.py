@@ -1,6 +1,5 @@
 from db.connection import get_connection
 
-
 def create_table():
     con = get_connection()
     cursor = con.cursor()
@@ -53,7 +52,6 @@ def create_table():
             UNIQUE(role_id, access_id)
         );
 
-        -- Default Admin Permissions
         INSERT INTO tbl_role_permissions (role_id, access_id, is_enabled)
             SELECT r.role_id, a.access_id, TRUE
             FROM tbl_role r, tbl_access_point a
@@ -70,7 +68,24 @@ def create_table():
     """)
 
     # ==========================================
-    # 2. CMF (COLOR MATCHING) MODULE
+    # 2. PRODUCT CODES (Required for FKs below)
+    # ==========================================
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS tbl_internal_color_code(
+            in_code_no SERIAL PRIMARY KEY,
+            color VARCHAR(100),
+            code VARCHAR(100) UNIQUE
+        );
+
+        CREATE TABLE IF NOT EXISTS tbl_generated_prod_code(
+            code_no SERIAL PRIMARY KEY,
+            product_code VARCHAR(100) UNIQUE,
+            in_code_no INT REFERENCES tbl_internal_color_code(in_code_no)
+        );
+    """)
+
+    # ==========================================
+    # 3. CMF (COLOR MATCHING) MODULE
     # ==========================================
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS tbl_cmf_salesman(
@@ -172,7 +187,7 @@ def create_table():
     """)
 
     # ==========================================
-    # 3. RS & FEEDBACK (NEW FROM ERD)
+    # 4. RS & FEEDBACK
     # ==========================================
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS tbl_rs(
@@ -213,21 +228,9 @@ def create_table():
     """)
 
     # ==========================================
-    # 4. PRODUCT CODES & EXTRUDER
+    # 5. EXTRUDER FORMULAS
     # ==========================================
     cursor.execute("""
-        CREATE TABLE IF NOT EXISTS tbl_internal_color_code(
-            in_code_no SERIAL PRIMARY KEY,
-            color VARCHAR(100),
-            code VARCHAR(100) UNIQUE
-        );
-
-        CREATE TABLE IF NOT EXISTS tbl_generated_prod_code(
-            code_no SERIAL PRIMARY KEY,
-            product_code VARCHAR(100) UNIQUE,
-            in_code_no INT REFERENCES tbl_internal_color_code(in_code_no)
-        );
-
         CREATE TABLE IF NOT EXISTS tbl_mb_extruder_formula(
             mb_no SERIAL PRIMARY KEY,
             date DATE,
@@ -273,7 +276,7 @@ def create_table():
     """)
 
     # ==========================================
-    # 5. MASTER & DAILY FORMULAS
+    # 6. MASTER & DAILY FORMULAS
     # ==========================================
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS tbl_master_formula(
@@ -281,7 +284,7 @@ def create_table():
             index_no VARCHAR(100),
             date DATE,
             customer VARCHAR(150),
-            code_no_prod_code VARCHAR(100),
+            product_code VARCHAR(100) REFERENCES tbl_generated_prod_code(product_code),
             prod_color VARCHAR(150),
             dosage DECIMAL(12,6),
             total_concentration DECIMAL(12,6),
@@ -324,7 +327,7 @@ def create_table():
             index_no VARCHAR(100),
             date DATE,
             customer VARCHAR(150),
-            code_no_prod_code VARCHAR(100),
+            product_code VARCHAR(100) REFERENCES tbl_generated_prod_code(product_code),
             prod_color VARCHAR(150),
             dosage DECIMAL(12,6),
             total_concentration DECIMAL(12,6),
@@ -359,7 +362,7 @@ def create_table():
     """)
 
     # ==========================================
-    # 6. DAILY PRODUCTION
+    # 7. DAILY PRODUCTION
     # ==========================================
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS tbl_production01(
@@ -389,7 +392,7 @@ def create_table():
         CREATE TABLE IF NOT EXISTS tbl_production02(
             id SERIAL PRIMARY KEY,
             sequence_no INT,
-            material_code VARCHAR(100),
+            material_code VARCHAR(32),
             large_scale DECIMAL(12,6),
             small_scale DECIMAL(12,6),
             total_weight DECIMAL(12,6),
@@ -410,15 +413,15 @@ def create_table():
         CREATE TABLE IF NOT EXISTS tbl_production_encode(
             encode_id SERIAL PRIMARY KEY,
             prod_id INT REFERENCES tbl_production01(prod_id) ON DELETE CASCADE,
-            prepared_by VARCHAR(100),
-            encoded_by VARCHAR(100),
+            prepared_by VARCHAR(128),
+            encoded_by VARCHAR(128),
             encoded_on TIMESTAMP,
             confirmation_encoded_on TIMESTAMP
         );
     """)
 
     # ==========================================
-    # 7. RAW MATERIALS
+    # 8. RAW MATERIALS
     # ==========================================
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS tbl_raw_material_list(
@@ -435,7 +438,7 @@ def create_table():
     """)
 
     # ==========================================
-    # 8. PERFORMANCE INDEXES
+    # 9. PERFORMANCE INDEXES
     # ==========================================
     cursor.execute("""
         CREATE INDEX IF NOT EXISTS idx_cmf_cm_no ON tbl_cmf(cm_no);
@@ -443,7 +446,8 @@ def create_table():
         CREATE INDEX IF NOT EXISTS idx_prod01_date ON tbl_production01(prod_date);
         CREATE INDEX IF NOT EXISTS idx_prod01_code ON tbl_production01(prod_code);
         CREATE INDEX IF NOT EXISTS idx_prod01_cust ON tbl_production01(customer);
-        CREATE INDEX IF NOT EXISTS idx_formula01_code ON tbl_formula01(code_no_prod_code);
+        CREATE INDEX IF NOT EXISTS idx_formula01_code ON tbl_formula01(product_code);
+        CREATE INDEX IF NOT EXISTS idx_master_formula_code ON tbl_master_formula(product_code);
         CREATE INDEX IF NOT EXISTS idx_rs_rs_no ON tbl_rs(rs_no);
     """)
 
