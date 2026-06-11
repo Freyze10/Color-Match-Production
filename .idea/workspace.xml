@@ -112,14 +112,6 @@
       <option name="presentableId" value="Default" />
       <updated>1780293734655</updated>
     </task>
-    <task id="LOCAL-00031" summary="added all the cmf module for integration">
-      <option name="closed" value="true" />
-      <created>1780562983217</created>
-      <option name="number" value="00031" />
-      <option name="presentableId" value="LOCAL-00031" />
-      <option name="project" value="LOCAL" />
-      <updated>1780562983217</updated>
-    </task>
     <task id="LOCAL-00032" summary="added all the cmf module for integration">
       <option name="closed" value="true" />
       <created>1780623109955</created>
@@ -504,7 +496,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781146288567</updated>
     </task>
-    <option name="localTasksCounter" value="80" />
+    <task id="LOCAL-00080" summary="modified the smart date edit to display the calendar if the user wants it">
+      <option name="closed" value="true" />
+      <created>1781156706116</created>
+      <option name="number" value="00080" />
+      <option name="presentableId" value="LOCAL-00080" />
+      <option name="project" value="LOCAL" />
+      <updated>1781156706117</updated>
+    </task>
+    <option name="localTasksCounter" value="81" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -519,7 +519,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="updated the dc formula to use the delegate to limit  the errors on entry in the table" />
     <MESSAGE value="updated the numeric delegate to accept 7 decimal" />
     <MESSAGE value="added validation in the total weight field for the mb" />
     <MESSAGE value="updated the dc formula to match the validation of the mb formula" />
@@ -544,7 +543,8 @@
     <MESSAGE value="update database schema" />
     <MESSAGE value="updated the column name in the tbl user" />
     <MESSAGE value="updated the smart date edit class to accept multiple dates" />
-    <option name="LAST_COMMIT_MESSAGE" value="updated the smart date edit class to accept multiple dates" />
+    <MESSAGE value="modified the smart date edit to display the calendar if the user wants it" />
+    <option name="LAST_COMMIT_MESSAGE" value="modified the smart date edit to display the calendar if the user wants it" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

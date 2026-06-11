@@ -48,12 +48,10 @@ class CMFForm(QWidget):
         self.txt_cm_no = QLineEdit()
         self.txt_customer = QLineEdit()
 
-        # ─── DATE ROW 1: Submitted (DateEdit) & Required (LineEdit) ───
+        # ─── DATE ROW 1: Submitted (SmartDateEdit) & Required (LineEdit) ───
         date_row_1 = QHBoxLayout()
         date_row_1.setSpacing(10)
-        self.date_submitted = QDateEdit(calendarPopup=True, date=QDate.currentDate())
-        self.date_submitted.setDisplayFormat("MM/dd/yyyy")  # Set Format
-
+        self.date_submitted = SmartDateEdit()
         self.txt_date_required = QLineEdit()
         self.txt_date_required.setPlaceholderText("MM/DD/YYYY")
 
@@ -61,16 +59,11 @@ class CMFForm(QWidget):
         date_row_1.addWidget(QLabel("Required Date:"), 0)
         date_row_1.addWidget(self.txt_date_required, 1)
 
-        # ─── DATE ROW 2: Received (LineEdit) & Due (DateEdit) ───
+        # ─── DATE ROW 2: Received (LineEdit) & Due (SmartDateEdit) ───
         date_row_2 = QHBoxLayout()
         date_row_2.setSpacing(10)
-        self.txt_date_received = QLineEdit()
-        self.txt_date_received.setPlaceholderText("MM/DD/YYYY")
         self.txt_date_received = SmartDateEdit(allow_multiple=True)
-        # list_of_dates = self.txt_date_received.get_dates_list()
-
-        self.date_due = QDateEdit(calendarPopup=True, date=QDate.currentDate().addDays(5))
-        self.date_due.setDisplayFormat("MM/dd/yyyy")  # Set Format
+        self.date_due = SmartDateEdit()
 
         date_row_2.addWidget(self.txt_date_received, 1)
         date_row_2.addWidget(QLabel("Due Date:"), 0)
@@ -101,7 +94,6 @@ class CMFForm(QWidget):
         color_row.addWidget(QLabel("Description:"), 0)
         color_row.addWidget(self.txt_color_desc, 1)
 
-        # Adding to Form
         gen_form.addRow("Color Matching No:", self.txt_cm_no)
         gen_form.addRow("Customer:", self.txt_customer)
         gen_form.addRow("Date Submitted:", date_row_1)
@@ -118,33 +110,41 @@ class CMFForm(QWidget):
         for i, name in enumerate(requirements):
             rad = QRadioButton(name)
             self.color_bg.addButton(rad)
-            color_grid.addWidget(rad, i // 3, i % 3)
+            color_grid.addWidget(rad, i // 4, i % 4)
 
         self.rad_col_others = QRadioButton("Others:")
         self.color_bg.addButton(self.rad_col_others)
         self.txt_col_req_others = QLineEdit()
-        color_grid.addWidget(self.rad_col_others, 2, 0)
-        color_grid.addWidget(self.txt_col_req_others, 2, 1, 1, 2)
+        color_grid.addWidget(self.rad_col_others, 1, 2)
+        color_grid.addWidget(self.txt_col_req_others, 1, 3)
 
         left_col.addWidget(gen_group)
         left_col.addWidget(color_group)
 
-        # --- RIGHT COLUMN ---
+        # --- RIGHT COLUMN (Stretch 2) ---
         right_col = QVBoxLayout()
         tech_group = QGroupBox("Process & Technical Specifications")
         tech_form = QFormLayout(tech_group)
         tech_form.setSpacing(10)
 
         self.txt_resin = QLineEdit()
+
+        # ─── PROCESS GRID WITH OTHERS ───
         proc_grid = QGridLayout()
-        self.chk_inj = QCheckBox("Injection");
+        self.chk_inj = QCheckBox("Injection")
         self.chk_blow = QCheckBox("Blow-Molding")
-        self.chk_film = QCheckBox("Film");
+        self.chk_film = QCheckBox("Film")
         self.chk_pipe = QCheckBox("Pipe Extrusion")
-        proc_grid.addWidget(self.chk_inj, 0, 0);
+        self.chk_proc_others = QCheckBox("Others:")
+        self.txt_proc_others = QLineEdit()
+        self.txt_proc_others.setPlaceholderText("Specify process...")
+
+        proc_grid.addWidget(self.chk_inj, 0, 0)
         proc_grid.addWidget(self.chk_blow, 0, 1)
-        proc_grid.addWidget(self.chk_film, 1, 0);
-        proc_grid.addWidget(self.chk_pipe, 1, 1)
+        proc_grid.addWidget(self.chk_film, 0, 2)
+        proc_grid.addWidget(self.chk_pipe, 1, 0)
+        proc_grid.addWidget(self.chk_proc_others, 1, 1)
+        proc_grid.addWidget(self.txt_proc_others, 1, 2)
 
         self.txt_qty_resin = QLineEdit()
 
@@ -195,7 +195,7 @@ class CMFForm(QWidget):
 
         self.txt_remarks = QTextEdit()
         self.txt_remarks.setPlaceholderText("Remarks...")
-        self.txt_remarks.setMaximumHeight(40)
+        self.txt_remarks.setMaximumHeight(60)
 
         tech_form.addRow("Resin Type:", self.txt_resin)
         tech_form.addRow("Process:", proc_grid)
@@ -226,7 +226,7 @@ class CMFForm(QWidget):
         self.txt_additional_info = QTextEdit()
         self.txt_additional_info.setPlaceholderText("Detailed technical info, special instructions, etc...")
         self.txt_additional_info.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-        self.txt_additional_info.setMinimumHeight(200)
+        self.txt_additional_info.setMinimumHeight(150)
         notes_layout.addWidget(self.txt_additional_info)
 
         self.container_layout.addLayout(columns_layout, 0)
@@ -270,3 +270,7 @@ class CMFForm(QWidget):
         button_layout.addWidget(self.btn_save)
 
         self.main_layout.addLayout(button_layout)
+
+    def load_cmf_data(self, cmf_no):
+        """Fetch data from DB and fill the CMF Form fields"""
+        self.txt_cm_no.setText(cmf_no)
