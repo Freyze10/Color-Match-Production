@@ -54,7 +54,6 @@ class CMFForm(QWidget):
         self.date_submitted = SmartDateEdit()
         self.txt_date_required = QLineEdit()
         self.txt_date_required.setPlaceholderText("MM/DD/YYYY")
-
         date_row_1.addWidget(self.date_submitted, 1)
         date_row_1.addWidget(QLabel("Required Date:"), 0)
         date_row_1.addWidget(self.txt_date_required, 1)
@@ -62,9 +61,9 @@ class CMFForm(QWidget):
         # ─── DATE ROW 2: Received (LineEdit) & Due (SmartDateEdit) ───
         date_row_2 = QHBoxLayout()
         date_row_2.setSpacing(10)
-        self.txt_date_received = SmartDateEdit(allow_multiple=True)
+        self.txt_date_received = QLineEdit()
+        self.txt_date_received.setPlaceholderText("MM/DD/YYYY")
         self.date_due = SmartDateEdit()
-
         date_row_2.addWidget(self.txt_date_received, 1)
         date_row_2.addWidget(QLabel("Due Date:"), 0)
         date_row_2.addWidget(self.date_due, 1)
@@ -83,13 +82,10 @@ class CMFForm(QWidget):
         # ─── COLOR ROW: Primary & Description ───
         color_row = QHBoxLayout()
         self.cmb_primary_color = QComboBox()
-        self.cmb_primary_color.addItems(
-            ["", "Red", "Blue", "Yellow", "Green", "Orange", "Purple", "Brown", "Black", "White", "Grey"])
+        self.cmb_primary_color.addItems(["", "Red", "Blue", "Yellow", "Green", "Orange", "Purple", "Brown", "Black", "White", "Grey"])
         self.cmb_primary_color.setFixedWidth(120)
-
         self.txt_color_desc = QLineEdit()
         self.txt_color_desc.setPlaceholderText("Enter color description...")
-
         color_row.addWidget(self.cmb_primary_color)
         color_row.addWidget(QLabel("Description:"), 0)
         color_row.addWidget(self.txt_color_desc, 1)
@@ -103,20 +99,39 @@ class CMFForm(QWidget):
         gen_form.addRow("Finished Product:", self.txt_finished_product)
         gen_form.addRow("Primary Color:", color_row)
 
+        # ─── COLOR REQUIREMENT GRID (MANUAL POSITIONING) ───
         color_group = QGroupBox("Color Requirement")
         color_grid = QGridLayout(color_group)
         self.color_bg = QButtonGroup(self)
-        requirements = ["Transparent", "Opaque", "Translucent", "Metallic", "Fluorescent", "Pearlescent"]
-        for i, name in enumerate(requirements):
-            rad = QRadioButton(name)
-            self.color_bg.addButton(rad)
-            color_grid.addWidget(rad, i // 4, i % 4)
 
+        # Initialize Radios
+        self.rad_transparent = QRadioButton("Transparent")
+        self.rad_opaque = QRadioButton("Opaque")
+        self.rad_translucent = QRadioButton("Translucent")
+        self.rad_metallic = QRadioButton("Metallic")
+        self.rad_fluorescent = QRadioButton("Fluorescent")
+        self.rad_pearlescent = QRadioButton("Pearlescent")
         self.rad_col_others = QRadioButton("Others:")
-        self.color_bg.addButton(self.rad_col_others)
         self.txt_col_req_others = QLineEdit()
-        color_grid.addWidget(self.rad_col_others, 1, 2)
-        color_grid.addWidget(self.txt_col_req_others, 1, 3)
+        self.txt_col_req_others.setPlaceholderText("Specify other requirement...")
+
+        # Add to ButtonGroup
+        radios = [self.rad_transparent, self.rad_opaque, self.rad_translucent,
+                  self.rad_metallic, self.rad_fluorescent, self.rad_pearlescent, self.rad_col_others]
+        for r in radios: self.color_bg.addButton(r)
+
+        # Row 0: 5 items
+        color_grid.addWidget(self.rad_transparent, 0, 0)
+        color_grid.addWidget(self.rad_opaque,      0, 1)
+        color_grid.addWidget(self.rad_translucent, 0, 2)
+        color_grid.addWidget(self.rad_metallic,    0, 3)
+        color_grid.addWidget(self.rad_fluorescent, 0, 4)
+
+        # Row 1: Start 6th item, then Others, then span the text field
+        color_grid.addWidget(self.rad_pearlescent, 1, 0)
+        color_grid.addWidget(self.rad_col_others,  1, 1)
+        # addWidget(widget, row, col, rowSpan, colSpan)
+        color_grid.addWidget(self.txt_col_req_others, 1, 2, 1, 3) # Spans Col 2, 3, and 4
 
         left_col.addWidget(gen_group)
         left_col.addWidget(color_group)
@@ -128,35 +143,21 @@ class CMFForm(QWidget):
         tech_form.setSpacing(10)
 
         self.txt_resin = QLineEdit()
-
-        # ─── PROCESS GRID WITH OTHERS ───
         proc_grid = QGridLayout()
-        self.chk_inj = QCheckBox("Injection")
-        self.chk_blow = QCheckBox("Blow-Molding")
-        self.chk_film = QCheckBox("Film")
-        self.chk_pipe = QCheckBox("Pipe Extrusion")
-        self.chk_proc_others = QCheckBox("Others:")
-        self.txt_proc_others = QLineEdit()
-        self.txt_proc_others.setPlaceholderText("Specify process...")
+        self.chk_inj = QCheckBox("Injection"); self.chk_blow = QCheckBox("Blow-Molding"); self.chk_film = QCheckBox("Film")
+        self.chk_pipe = QCheckBox("Pipe Extrusion"); self.chk_proc_others = QCheckBox("Others:")
+        self.txt_proc_others = QLineEdit(); self.txt_proc_others.setPlaceholderText("Specify process...")
 
-        proc_grid.addWidget(self.chk_inj, 0, 0)
-        proc_grid.addWidget(self.chk_blow, 0, 1)
-        proc_grid.addWidget(self.chk_film, 0, 2)
-        proc_grid.addWidget(self.chk_pipe, 1, 0)
-        proc_grid.addWidget(self.chk_proc_others, 1, 1)
-        proc_grid.addWidget(self.txt_proc_others, 1, 2)
+        proc_grid.addWidget(self.chk_inj, 0, 0); proc_grid.addWidget(self.chk_blow, 0, 1); proc_grid.addWidget(self.chk_film, 0, 2)
+        proc_grid.addWidget(self.chk_pipe, 1, 0); proc_grid.addWidget(self.chk_proc_others, 1, 1); proc_grid.addWidget(self.txt_proc_others, 1, 2)
 
         self.txt_qty_resin = QLineEdit()
 
         def yes_no_layout():
-            lay = QHBoxLayout();
-            bg = QButtonGroup(self)
+            lay = QHBoxLayout(); bg = QButtonGroup(self)
             y, n = QRadioButton("Yes"), QRadioButton("No")
-            bg.addButton(y);
-            bg.addButton(n)
-            lay.addWidget(y);
-            lay.addWidget(n);
-            lay.addStretch()
+            bg.addButton(y); bg.addButton(n)
+            lay.addWidget(y); lay.addWidget(n); lay.addStretch()
             return lay, y, n
 
         res_lay, self.res_y, self.res_n = yes_no_layout()
@@ -165,37 +166,22 @@ class CMFForm(QWidget):
 
         colorant_lay = QHBoxLayout()
         self.colorant_bg = QButtonGroup(self)
-        self.rad_mb = QRadioButton("MB");
-        self.rad_dc = QRadioButton("DC");
-        self.rad_colorant_others = QRadioButton("Others:")
-        self.colorant_bg.addButton(self.rad_mb);
-        self.colorant_bg.addButton(self.rad_dc);
-        self.colorant_bg.addButton(self.rad_colorant_others)
+        self.rad_mb = QRadioButton("MB"); self.rad_dc = QRadioButton("DC"); self.rad_colorant_others = QRadioButton("Others:")
+        self.colorant_bg.addButton(self.rad_mb); self.colorant_bg.addButton(self.rad_dc); self.colorant_bg.addButton(self.rad_colorant_others)
         self.txt_colorant_others = QLineEdit()
-        colorant_lay.addWidget(self.rad_mb);
-        colorant_lay.addWidget(self.rad_dc);
-        colorant_lay.addWidget(self.rad_colorant_others);
-        colorant_lay.addWidget(self.txt_colorant_others)
+        colorant_lay.addWidget(self.rad_mb); colorant_lay.addWidget(self.rad_dc); colorant_lay.addWidget(self.rad_colorant_others); colorant_lay.addWidget(self.txt_colorant_others)
 
         self.txt_dosage = QLineEdit()
 
         spec_lay = QHBoxLayout()
-        self.chk_food = QCheckBox("Food Contact");
-        self.chk_sunlight = QCheckBox("Sunlight Exposure");
-        self.chk_spec_others = QCheckBox("Others:")
+        self.chk_food = QCheckBox("Food Contact"); self.chk_sunlight = QCheckBox("Sunlight Exposure"); self.chk_spec_others = QCheckBox("Others:")
         self.txt_spec_others = QLineEdit()
-        spec_lay.addWidget(self.chk_food);
-        spec_lay.addWidget(self.chk_sunlight);
-        spec_lay.addWidget(self.chk_spec_others);
-        spec_lay.addWidget(self.txt_spec_others)
+        spec_lay.addWidget(self.chk_food); spec_lay.addWidget(self.chk_sunlight); spec_lay.addWidget(self.chk_spec_others); spec_lay.addWidget(self.txt_spec_others)
 
         guide_lay, self.guide_y, self.guide_n = yes_no_layout()
         self.txt_temp = QLineEdit()
         low_lay, self.low_y, self.low_n = yes_no_layout()
-
-        self.txt_remarks = QTextEdit()
-        self.txt_remarks.setPlaceholderText("Remarks...")
-        self.txt_remarks.setMaximumHeight(60)
+        self.txt_remarks = QTextEdit(); self.txt_remarks.setPlaceholderText("Remarks..."); self.txt_remarks.setMaximumHeight(60)
 
         tech_form.addRow("Resin Type:", self.txt_resin)
         tech_form.addRow("Process:", proc_grid)
@@ -216,16 +202,12 @@ class CMFForm(QWidget):
         columns_layout.addLayout(left_col, 3)
         columns_layout.addLayout(right_col, 2)
 
-        # =========================================================================
-        # BOTTOM PART: NOTES
-        # =========================================================================
+        # --- BOTTOM NOTES ---
         notes_group = QGroupBox("Additional Information")
         notes_group.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         notes_layout = QVBoxLayout(notes_group)
-
         self.txt_additional_info = QTextEdit()
-        self.txt_additional_info.setPlaceholderText("Detailed technical info, special instructions, etc...")
-        self.txt_additional_info.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        self.txt_additional_info.setPlaceholderText("Detailed technical info...")
         self.txt_additional_info.setMinimumHeight(150)
         notes_layout.addWidget(self.txt_additional_info)
 
@@ -242,35 +224,24 @@ class CMFForm(QWidget):
         scroll.setWidget(container)
         self.main_layout.addWidget(scroll)
 
-        # =========================================================================
-        # BUTTON BAR
-        # =========================================================================
+        # Button Bar
         button_layout = QHBoxLayout()
         button_layout.setContentsMargins(0, 10, 0, 10)
-
         self.btn_upload = QPushButton(" Upload", objectName="PrimaryButton")
         self.btn_upload.setIcon(fa.icon('mdi6.text-box-remove', color='white'))
-
         self.btn_print = QPushButton(" Print", objectName="SecondaryButton")
         self.btn_print.setIcon(fa.icon('fa5s.print', color='white'))
-
         self.btn_new = QPushButton(" New", objectName="InfoButton")
         self.btn_new.setIcon(fa.icon('fa5s.file', color='white'))
-
         self.btn_save = QPushButton(" Save", objectName="SuccessButton")
         self.btn_save.setIcon(fa.icon('fa5s.save', color='white'))
 
         for btn in [self.btn_upload, self.btn_print, self.btn_new, self.btn_save]:
             btn.setMinimumHeight(40)
 
-        button_layout.addWidget(self.btn_upload)
-        button_layout.addStretch()
-        button_layout.addWidget(self.btn_print)
-        button_layout.addWidget(self.btn_new)
-        button_layout.addWidget(self.btn_save)
-
+        button_layout.addWidget(self.btn_upload); button_layout.addStretch()
+        button_layout.addWidget(self.btn_print); button_layout.addWidget(self.btn_new); button_layout.addWidget(self.btn_save)
         self.main_layout.addLayout(button_layout)
 
     def load_cmf_data(self, cmf_no):
-        """Fetch data from DB and fill the CMF Form fields"""
         self.txt_cm_no.setText(cmf_no)
