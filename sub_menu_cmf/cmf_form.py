@@ -91,7 +91,7 @@ class CMFForm(QWidget):
 
         gen_form.addRow("Color Matching No:", self.txt_cm_no)
         gen_form.addRow("Customer:", self.txt_customer)
-        gen_form.addRow("Date Submitted:", date_row_1)
+        gen_form.addRow("Date Created:", date_row_1)
         gen_form.addRow("Date Received:", date_row_2)
         gen_form.addRow("Matching Type:", type_lay)
         gen_form.addRow("Sales Person:", self.txt_sales_person)

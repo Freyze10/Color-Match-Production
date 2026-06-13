@@ -75,7 +75,7 @@ class PendingCompleted(QWidget):
 
         left_col.addRow("Matching No:", self.txt_cmf_no)
         left_col.addRow("Customer:", self.txt_customer)
-        left_col.addRow("Date Submitted:", date_row_1)
+        left_col.addRow("Date Created:", date_row_1)
         left_col.addRow("Date Received:", date_row_2)
         left_col.addRow("Finished Product:", self.txt_finished_prod)
         left_col.addRow("Color Description:", self.txt_color_desc)
@@ -112,6 +112,7 @@ class PendingCompleted(QWidget):
         sample_row.addWidget(self.txt_qty_given, 1)
 
         self.date_submitted_right = SmartDateEdit()  # Date sample was submitted
+        self.txt_lot_no = QLineEdit()
         self.txt_ar_no = QLineEdit()
         self.date_ar = SmartDateEdit()
 
@@ -121,7 +122,8 @@ class PendingCompleted(QWidget):
         right_col.addRow("Code Description:", self.txt_prod_code_desc)
         right_col.addRow("Set-Pc / Qty:", sample_row)
         right_col.addRow("Date Submitted:", self.date_submitted_right)
-        right_col.addRow("AR Number:", self.txt_ar_no)
+        right_col.addRow("Lot No.:", self.txt_lot_no)
+        right_col.addRow("AR No.:", self.txt_ar_no)
         right_col.addRow("AR Date:", self.date_ar)
 
         grid_layout.addLayout(left_col, 1)

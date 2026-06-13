@@ -57,7 +57,7 @@ class RSEntry(QWidget):
         self.txt_date_required = QLineEdit()
         self.txt_date_required.setPlaceholderText("MM/DD/YYYY")
         date_row_1.addWidget(self.date_submitted, 1)
-        date_row_1.addWidget(QLabel("<b>Required:</b>"), 0)
+        date_row_1.addWidget(QLabel("Required:"), 0)
         date_row_1.addWidget(self.txt_date_required, 1)
 
         # ─── DATE ROW 2: Received & Due ───
@@ -66,7 +66,7 @@ class RSEntry(QWidget):
         self.date_received = SmartDateEdit(allow_multiple=True)
         self.date_due = SmartDateEdit()
         date_row_2.addWidget(self.date_received, 1)
-        date_row_2.addWidget(QLabel("<b>Due Date:</b>"), 0)
+        date_row_2.addWidget(QLabel("Due Date:"), 0)
         date_row_2.addWidget(self.date_due, 1)
 
         self.txt_product_codes = QLineEdit()
@@ -77,7 +77,7 @@ class RSEntry(QWidget):
 
         left_col.addRow("RS Number:", self.txt_rs_no)
         left_col.addRow("Customer:", self.txt_customer)
-        left_col.addRow("Date Submitted:", date_row_1)
+        left_col.addRow("Date Created:", date_row_1)
         left_col.addRow("Date Received:", date_row_2)
         left_col.addRow("Product Code(s):", self.txt_product_codes)
         left_col.addRow("Color Description:", self.txt_color_desc)
