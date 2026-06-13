@@ -1,9 +1,9 @@
 import qtawesome as fa
 from PyQt6.QtWidgets import (QWidget, QLabel, QVBoxLayout, QHBoxLayout, QLineEdit,
                              QPushButton, QGroupBox, QFormLayout, QFrame,
-                             QScrollArea, QDateEdit, QComboBox)
-from PyQt6.QtGui import QIntValidator, QDoubleValidator  # Added Validators
-from PyQt6.QtCore import Qt, QDate
+                             QScrollArea, QComboBox)
+from PyQt6.QtGui import QIntValidator, QDoubleValidator
+from PyQt6.QtCore import Qt
 from css.styles import AppStyles
 from util.field_format import SmartDateEdit
 
@@ -39,36 +39,52 @@ class PendingCompleted(QWidget):
         grid_layout.setContentsMargins(20, 20, 20, 20)
         grid_layout.setSpacing(40)
 
-        # --- LEFT COLUMN (Request & Personal) ---
+        # ==========================================
+        # LEFT COLUMN: Timelines & Specs
+        # ==========================================
         left_col = QFormLayout()
         left_col.setVerticalSpacing(15)
 
         self.txt_cmf_no = QLineEdit();
         self.txt_cmf_no.setReadOnly(True)
         self.txt_customer = QLineEdit()
-        self.txt_salesperson = QLineEdit()  # Moved from Right
-        self.txt_match_type = QLineEdit()  # Moved from Right
 
-        self.date_made = SmartDateEdit()
+        # ─── DATE ROW 1: Date Submitted & Required ───
+        date_row_1 = QHBoxLayout()
+        date_row_1.setSpacing(10)
+        self.date_submitted_left = SmartDateEdit()  # Renamed from Form Made
+        self.txt_date_required = QLineEdit()
+        self.txt_date_required.setPlaceholderText("MM/DD/YYYY")
+        date_row_1.addWidget(self.date_submitted_left, 1)
+        date_row_1.addWidget(QLabel("Required:"), 0)
+        date_row_1.addWidget(self.txt_date_required, 1)
+
+        # ─── DATE ROW 2: Date Received & Due ───
+        date_row_2 = QHBoxLayout()
+        date_row_2.setSpacing(10)
         self.date_received = SmartDateEdit(allow_multiple=True)
-        self.date_required = QLineEdit();
-        self.date_required.setPlaceholderText("MM/DD/YYYY")
         self.date_due = SmartDateEdit()
+        date_row_2.addWidget(self.date_received, 1)
+        date_row_2.addWidget(QLabel("Due Date:"), 0)
+        date_row_2.addWidget(self.date_due, 1)
+
         self.txt_finished_prod = QLineEdit()
         self.txt_color_desc = QLineEdit()
+        self.txt_match_type = QLineEdit()
+        self.txt_salesperson = QLineEdit()
 
         left_col.addRow("Matching No:", self.txt_cmf_no)
         left_col.addRow("Customer:", self.txt_customer)
-        left_col.addRow("Sales Person:", self.txt_salesperson)  # Added here
-        left_col.addRow("Matching Type:", self.txt_match_type)  # Added here
-        left_col.addRow("Form Made Date:", self.date_made)
-        left_col.addRow("Received by Lab:", self.date_received)
-        left_col.addRow("Date Required:", self.date_required)
-        left_col.addRow("Due Date:", self.date_due)
+        left_col.addRow("Date Submitted:", date_row_1)
+        left_col.addRow("Date Received:", date_row_2)
         left_col.addRow("Finished Product:", self.txt_finished_prod)
         left_col.addRow("Color Description:", self.txt_color_desc)
+        left_col.addRow("Matching Type:", self.txt_match_type)
+        left_col.addRow("Sales Person:", self.txt_salesperson)
 
-        # --- RIGHT COLUMN (Status & Results) ---
+        # ==========================================
+        # RIGHT COLUMN: Results & Submission
+        # ==========================================
         right_col = QFormLayout()
         right_col.setVerticalSpacing(15)
 
@@ -79,18 +95,23 @@ class PendingCompleted(QWidget):
         self.txt_prod_code = QLineEdit()
         self.txt_prod_code_desc = QLineEdit()
 
-        # Numeric Fields with Validators
+        # ─── SAMPLE ROW: Set/Pc & Qty ───
+        sample_row = QHBoxLayout()
+        sample_row.setSpacing(10)
         self.txt_set_pc = QLineEdit()
-        self.txt_set_pc.setPlaceholderText("Enter number only")
-        self.txt_set_pc.setValidator(QIntValidator(0, 999999))  # Only Integers
-
+        self.txt_set_pc.setPlaceholderText("Qty")
+        self.txt_set_pc.setValidator(QIntValidator(0, 999999))
         self.txt_qty_given = QLineEdit()
-        self.txt_qty_given.setPlaceholderText("0.000")
-        qty_validator = QDoubleValidator(0.0, 999999.999, 3)  # Only Floats, 3 decimals
+        self.txt_qty_given.setPlaceholderText("KG")
+        qty_validator = QDoubleValidator(0.0, 999999.999, 3)
         qty_validator.setNotation(QDoubleValidator.Notation.StandardNotation)
         self.txt_qty_given.setValidator(qty_validator)
 
-        self.date_submitted = SmartDateEdit()
+        sample_row.addWidget(self.txt_set_pc, 1)
+        sample_row.addWidget(QLabel("Quantity Given (KG):"), 0)
+        sample_row.addWidget(self.txt_qty_given, 1)
+
+        self.date_submitted_right = SmartDateEdit()  # Date sample was submitted
         self.txt_ar_no = QLineEdit()
         self.date_ar = SmartDateEdit()
 
@@ -98,12 +119,8 @@ class PendingCompleted(QWidget):
         right_col.addRow("Pending Reason:", self.txt_reason)
         right_col.addRow("Product Code:", self.txt_prod_code)
         right_col.addRow("Code Description:", self.txt_prod_code_desc)
-
-        # Sample Details Row
-        right_col.addRow("Set / Pc:", self.txt_set_pc)
-        right_col.addRow("Qty Given (kg):", self.txt_qty_given)
-
-        right_col.addRow("Date Submitted:", self.date_submitted)
+        right_col.addRow("Set-Pc / Qty:", sample_row)
+        right_col.addRow("Date Submitted:", self.date_submitted_right)
         right_col.addRow("AR Number:", self.txt_ar_no)
         right_col.addRow("AR Date:", self.date_ar)
 
@@ -126,5 +143,4 @@ class PendingCompleted(QWidget):
         self.main_layout.addLayout(footer)
 
     def load_cmf_data(self, cmf_no):
-        """Method to trigger database fetch and fill the form"""
         self.txt_cmf_no.setText(cmf_no)

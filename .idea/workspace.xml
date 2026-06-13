@@ -112,14 +112,6 @@
       <option name="presentableId" value="Default" />
       <updated>1780293734655</updated>
     </task>
-    <task id="LOCAL-00036" summary="updated the missing fields">
-      <option name="closed" value="true" />
-      <created>1780639153348</created>
-      <option name="number" value="00036" />
-      <option name="presentableId" value="LOCAL-00036" />
-      <option name="project" value="LOCAL" />
-      <updated>1780639153348</updated>
-    </task>
     <task id="LOCAL-00037" summary="updated the cmf fields">
       <option name="closed" value="true" />
       <created>1780643676505</created>
@@ -504,7 +496,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781165881858</updated>
     </task>
-    <option name="localTasksCounter" value="85" />
+    <task id="LOCAL-00085" summary="modified the pending/completed page to add a set/pc and a quantity sample given">
+      <option name="closed" value="true" />
+      <created>1781315748757</created>
+      <option name="number" value="00085" />
+      <option name="presentableId" value="LOCAL-00085" />
+      <option name="project" value="LOCAL" />
+      <updated>1781315748757</updated>
+    </task>
+    <option name="localTasksCounter" value="86" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -519,7 +519,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="pepare to add the widget for cmf records tab" />
     <MESSAGE value="created a cmf records display" />
     <MESSAGE value="updated the ui to include the product code and adjusted spacing" />
     <MESSAGE value="make the table for cmf report dynamicaly change based on the checkbbox" />
@@ -544,7 +543,8 @@
     <MESSAGE value="updated the position for the color requirements too" />
     <MESSAGE value="updated the tab pages to contain also the smartdate edt" />
     <MESSAGE value="added a new page for rs entry" />
-    <option name="LAST_COMMIT_MESSAGE" value="added a new page for rs entry" />
+    <MESSAGE value="modified the pending/completed page to add a set/pc and a quantity sample given" />
+    <option name="LAST_COMMIT_MESSAGE" value="modified the pending/completed page to add a set/pc and a quantity sample given" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
