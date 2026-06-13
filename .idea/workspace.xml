@@ -44,6 +44,11 @@
     ]
   }
 }</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Brant\PycharmProjects\ColorMatching\sub_menu_feedback" />
+    </key>
+  </component>
   <component name="RunManager" selected="Python.main">
     <configuration name="connection" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="ColorMatching" />
@@ -111,22 +116,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1780293734655</updated>
-    </task>
-    <task id="LOCAL-00043" summary="adjusted the groups spacing">
-      <option name="closed" value="true" />
-      <created>1780726550449</created>
-      <option name="number" value="00043" />
-      <option name="presentableId" value="LOCAL-00043" />
-      <option name="project" value="LOCAL" />
-      <updated>1780726550449</updated>
-    </task>
-    <task id="LOCAL-00044" summary="modify the stretch of the group">
-      <option name="closed" value="true" />
-      <created>1780726604029</created>
-      <option name="number" value="00044" />
-      <option name="presentableId" value="LOCAL-00044" />
-      <option name="project" value="LOCAL" />
-      <updated>1780726604029</updated>
     </task>
     <task id="LOCAL-00045" summary="updated the mb formula">
       <option name="closed" value="true" />
@@ -504,7 +493,23 @@
       <option name="project" value="LOCAL" />
       <updated>1781327708494</updated>
     </task>
-    <option name="localTasksCounter" value="92" />
+    <task id="LOCAL-00092" summary="updated the feedback entry form">
+      <option name="closed" value="true" />
+      <created>1781328124404</created>
+      <option name="number" value="00092" />
+      <option name="presentableId" value="LOCAL-00092" />
+      <option name="project" value="LOCAL" />
+      <updated>1781328124404</updated>
+    </task>
+    <task id="LOCAL-00093" summary="created a new menu for feedbacks">
+      <option name="closed" value="true" />
+      <created>1781334772994</created>
+      <option name="number" value="00093" />
+      <option name="presentableId" value="LOCAL-00093" />
+      <option name="project" value="LOCAL" />
+      <updated>1781334772994</updated>
+    </task>
+    <option name="localTasksCounter" value="94" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -519,8 +524,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="connected the two widget to display the pending update" />
-    <MESSAGE value="updated cmf records to have a  right click option" />
     <MESSAGE value="updated the pending completed with the supposed fields to modify forr records" />
     <MESSAGE value="modify the parent cmf to handle the transferring of signal/pages to pass the cmf no" />
     <MESSAGE value="passing the cmf no to smf form correctly" />
@@ -544,7 +547,9 @@
     <MESSAGE value="changed the name of the form created" />
     <MESSAGE value="adding feedback page" />
     <MESSAGE value="created a feedback page" />
-    <option name="LAST_COMMIT_MESSAGE" value="created a feedback page" />
+    <MESSAGE value="updated the feedback entry form" />
+    <MESSAGE value="created a new menu for feedbacks" />
+    <option name="LAST_COMMIT_MESSAGE" value="created a new menu for feedbacks" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

@@ -1,11 +1,9 @@
 import qtawesome as fa
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QTabWidget
-from PyQt6.QtCore import Qt
 from css.styles import AppStyles
 from sub_menu_cmf.cmf_form import CMFForm
 from sub_menu_cmf.cmf_records import CMFRecords
 from sub_menu_cmf.dc_formula import DCFormula
-from sub_menu_cmf.feedback_entry import FeedbackEntry
 from sub_menu_cmf.mb_formula import MBFormula
 from sub_menu_cmf.pending_completed import PendingCompleted
 from sub_menu_cmf.rs_entry import RSEntry
@@ -31,7 +29,6 @@ class CMFModule(QWidget):
         self.dc_formula_tab = DCFormula(self.mac_department, self.user_department)
         self.pending_completed_tab = PendingCompleted(self.mac_department, self.user_department)
         self.rs_tab = RSEntry(self.mac_department, self.user_department)
-        self.feedback_tab = FeedbackEntry(self.mac_department, self.user_department)
 
         # Connect the bridge signal
         self.cmf_records_tab.request_update.connect(self.go_to_update_tab)
@@ -43,7 +40,6 @@ class CMFModule(QWidget):
         self.tabs.addTab(self.dc_formula_tab, fa.icon('mdi.flask-empty-outline', color=AppStyles.SLATE_600), " DC Formula")
         self.tabs.addTab(self.pending_completed_tab, fa.icon('ri.file-edit-line', color=AppStyles.SLATE_600), " Pending/Completed")
         self.tabs.addTab(self.rs_tab, fa.icon('msc.git-pull-request-create', color=AppStyles.SLATE_600), " RS")
-        self.tabs.addTab(self.feedback_tab, fa.icon('msc.feedback', color=AppStyles.SLATE_600), " Feedback")
 
         self.tabs.setCurrentIndex(0)
         layout.addWidget(self.tabs)
