@@ -7,6 +7,8 @@ from sub_menu_cmf.cmf_records import CMFRecords
 from sub_menu_cmf.dc_formula import DCFormula
 from sub_menu_cmf.mb_formula import MBFormula
 from sub_menu_cmf.pending_completed import PendingCompleted
+from sub_menu_cmf.rs_entry import RSEntry
+
 
 class CMFModule(QWidget):
     def __init__(self, mac_department, user_department):
@@ -27,6 +29,7 @@ class CMFModule(QWidget):
         self.mb_formula_tab = MBFormula(self.mac_department, self.user_department)
         self.dc_formula_tab = DCFormula(self.mac_department, self.user_department)
         self.pending_completed_tab = PendingCompleted(self.mac_department, self.user_department)
+        self.rs_tab = RSEntry(self.mac_department, self.user_department)
 
         # Connect the bridge signal
         self.cmf_records_tab.request_update.connect(self.go_to_update_tab)
@@ -37,6 +40,7 @@ class CMFModule(QWidget):
         self.tabs.addTab(self.mb_formula_tab, fa.icon('mdi.flask-outline', color=AppStyles.SLATE_600), " MB Formula")
         self.tabs.addTab(self.dc_formula_tab, fa.icon('mdi.flask-empty-outline', color=AppStyles.SLATE_600), " DC Formula")
         self.tabs.addTab(self.pending_completed_tab, fa.icon('ri.file-edit-line', color=AppStyles.SLATE_600), " Pending/Completed")
+        self.tabs.addTab(self.rs_tab, fa.icon('msc.git-pull-request-create', color=AppStyles.SLATE_600), " RS")
 
         self.tabs.setCurrentIndex(0)
         layout.addWidget(self.tabs)

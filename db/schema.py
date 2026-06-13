@@ -174,7 +174,7 @@ def create_table():
 
         CREATE TABLE IF NOT EXISTS tbl_cmf_pending_completed(
             id SERIAL PRIMARY KEY,
-            cm_no VARCHAR(50) REFERENCES tbl_cmf(cm_no),
+            cm_no VARCHAR(50),
             matching_type VARCHAR(50),
             reason TEXT,
             prod_code VARCHAR(100),
@@ -216,6 +216,12 @@ def create_table():
             user_id INT REFERENCES tbl_user(user_id),
             cm_no VARCHAR(50) REFERENCES tbl_cmf(cm_no)
         );
+        
+        CREATE TABLE IF NOT EXISTS tbl_rs_prod_codes(
+            rs_code_no SERIAL PRIMARY KEY,
+            code_no INT REFERENCES tbl_generated_prod_code(code_no),
+            rs_no VARCHAR(50) REFERENCES tbl_rs(rs_no)
+        );
 
         CREATE TABLE IF NOT EXISTS tbl_feedback_details(
             feedback_no SERIAL PRIMARY KEY,
@@ -223,7 +229,7 @@ def create_table():
             status VARCHAR(50),
             comment TEXT,
             box_name VARCHAR(100),
-            cm_rs_no INT REFERENCES tbl_rs(id)
+            cm_rs_no VARCHAR(14)
         );
     """)
 

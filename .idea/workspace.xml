@@ -112,22 +112,6 @@
       <option name="presentableId" value="Default" />
       <updated>1780293734655</updated>
     </task>
-    <task id="LOCAL-00034" summary="added a simple entry for cmf">
-      <option name="closed" value="true" />
-      <created>1780624554368</created>
-      <option name="number" value="00034" />
-      <option name="presentableId" value="LOCAL-00034" />
-      <option name="project" value="LOCAL" />
-      <updated>1780624554368</updated>
-    </task>
-    <task id="LOCAL-00035" summary="updated new cmf">
-      <option name="closed" value="true" />
-      <created>1780626329018</created>
-      <option name="number" value="00035" />
-      <option name="presentableId" value="LOCAL-00035" />
-      <option name="project" value="LOCAL" />
-      <updated>1780626329018</updated>
-    </task>
     <task id="LOCAL-00036" summary="updated the missing fields">
       <option name="closed" value="true" />
       <created>1780639153348</created>
@@ -504,7 +488,23 @@
       <option name="project" value="LOCAL" />
       <updated>1781159471397</updated>
     </task>
-    <option name="localTasksCounter" value="83" />
+    <task id="LOCAL-00083" summary="updated the tab pages to contain also the smartdate edt">
+      <option name="closed" value="true" />
+      <created>1781162396240</created>
+      <option name="number" value="00083" />
+      <option name="presentableId" value="LOCAL-00083" />
+      <option name="project" value="LOCAL" />
+      <updated>1781162396240</updated>
+    </task>
+    <task id="LOCAL-00084" summary="added a new page for rs entry">
+      <option name="closed" value="true" />
+      <created>1781165881858</created>
+      <option name="number" value="00084" />
+      <option name="presentableId" value="LOCAL-00084" />
+      <option name="project" value="LOCAL" />
+      <updated>1781165881858</updated>
+    </task>
+    <option name="localTasksCounter" value="85" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -519,8 +519,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="updated the dc formula to match the validation of the mb formula" />
-    <MESSAGE value="modified css to fit more button for navigation" />
     <MESSAGE value="pepare to add the widget for cmf records tab" />
     <MESSAGE value="created a cmf records display" />
     <MESSAGE value="updated the ui to include the product code and adjusted spacing" />
@@ -544,7 +542,9 @@
     <MESSAGE value="modified the smart date edit to display the calendar if the user wants it" />
     <MESSAGE value="updated the positioning of the process coises" />
     <MESSAGE value="updated the position for the color requirements too" />
-    <option name="LAST_COMMIT_MESSAGE" value="updated the position for the color requirements too" />
+    <MESSAGE value="updated the tab pages to contain also the smartdate edt" />
+    <MESSAGE value="added a new page for rs entry" />
+    <option name="LAST_COMMIT_MESSAGE" value="added a new page for rs entry" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
