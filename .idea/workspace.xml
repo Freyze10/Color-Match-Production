@@ -112,14 +112,6 @@
       <option name="presentableId" value="Default" />
       <updated>1780293734655</updated>
     </task>
-    <task id="LOCAL-00040" summary="modified the mb extruder matching">
-      <option name="closed" value="true" />
-      <created>1780649276050</created>
-      <option name="number" value="00040" />
-      <option name="presentableId" value="LOCAL-00040" />
-      <option name="project" value="LOCAL" />
-      <updated>1780649276050</updated>
-    </task>
     <task id="LOCAL-00041" summary="added a style for formula page">
       <option name="closed" value="true" />
       <created>1780723990490</created>
@@ -504,7 +496,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781320932584</updated>
     </task>
-    <option name="localTasksCounter" value="89" />
+    <task id="LOCAL-00089" summary="changed the name of the form created">
+      <option name="closed" value="true" />
+      <created>1781321090103</created>
+      <option name="number" value="00089" />
+      <option name="presentableId" value="LOCAL-00089" />
+      <option name="project" value="LOCAL" />
+      <updated>1781321090103</updated>
+    </task>
+    <option name="localTasksCounter" value="90" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -519,7 +519,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="make the table for cmf report dynamicaly change based on the checkbbox" />
     <MESSAGE value="removed the wip tooltip in the table model" />
     <MESSAGE value="added a widget in the cmf main" />
     <MESSAGE value="connected the two widget to display the pending update" />
@@ -544,7 +543,8 @@
     <MESSAGE value="modified the pending/completed page to add a set/pc and a quantity sample given" />
     <MESSAGE value="adjusted the layouting on the pending/completed page" />
     <MESSAGE value="fixing the layout for the rs entry" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixing the layout for the rs entry" />
+    <MESSAGE value="changed the name of the form created" />
+    <option name="LAST_COMMIT_MESSAGE" value="changed the name of the form created" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
