@@ -112,14 +112,6 @@
       <option name="presentableId" value="Default" />
       <updated>1780293734655</updated>
     </task>
-    <task id="LOCAL-00037" summary="updated the cmf fields">
-      <option name="closed" value="true" />
-      <created>1780643676505</created>
-      <option name="number" value="00037" />
-      <option name="presentableId" value="LOCAL-00037" />
-      <option name="project" value="LOCAL" />
-      <updated>1780643676505</updated>
-    </task>
     <task id="LOCAL-00038" summary="added inital fields and table for mb extruder">
       <option name="closed" value="true" />
       <created>1780644532554</created>
@@ -504,7 +496,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781315748757</updated>
     </task>
-    <option name="localTasksCounter" value="86" />
+    <task id="LOCAL-00086" summary="adjusted the layouting on the pending/completed page">
+      <option name="closed" value="true" />
+      <created>1781317503615</created>
+      <option name="number" value="00086" />
+      <option name="presentableId" value="LOCAL-00086" />
+      <option name="project" value="LOCAL" />
+      <updated>1781317503615</updated>
+    </task>
+    <option name="localTasksCounter" value="87" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -519,7 +519,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="created a cmf records display" />
     <MESSAGE value="updated the ui to include the product code and adjusted spacing" />
     <MESSAGE value="make the table for cmf report dynamicaly change based on the checkbbox" />
     <MESSAGE value="removed the wip tooltip in the table model" />
@@ -544,7 +543,8 @@
     <MESSAGE value="updated the tab pages to contain also the smartdate edt" />
     <MESSAGE value="added a new page for rs entry" />
     <MESSAGE value="modified the pending/completed page to add a set/pc and a quantity sample given" />
-    <option name="LAST_COMMIT_MESSAGE" value="modified the pending/completed page to add a set/pc and a quantity sample given" />
+    <MESSAGE value="adjusted the layouting on the pending/completed page" />
+    <option name="LAST_COMMIT_MESSAGE" value="adjusted the layouting on the pending/completed page" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
