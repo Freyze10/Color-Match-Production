@@ -41,7 +41,7 @@ def create_table():
 
         INSERT INTO tbl_access_point (access_name) VALUES 
                 ('Production Records'), ('Manual Entry'), ('Auto Entry - MB'),
-                ('Auto Entry - DC'), ('Dashboard'), ('CMF'), ('Audit Trail'), ('Permission Access')
+                ('Auto Entry - DC'), ('Dashboard'), ('CMF'), ('Feedback'), ('Audit Trail'), ('Permission Access')
             ON CONFLICT (access_name) DO NOTHING;
 
         CREATE TABLE IF NOT EXISTS tbl_role_permissions(

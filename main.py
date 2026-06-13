@@ -14,6 +14,7 @@ from menu.audit_trail import AuditTrail
 from menu.cmf_main import CMFModule
 from menu.dashboard import Dashboard
 from menu.dc_auto_entry import DCAutoEntry
+from menu.feedback_main import FeedbackModule
 from menu.login import LoginWindow
 from menu.mb_auto_entry import MBAutoEntry
 from menu.mb_manual_entry import MBManualEntry
@@ -79,6 +80,7 @@ class MainWindow(QMainWindow):
         self.user_management = None
         self.dashboard = None
         self.cmf_module = None
+        self.feedback_module = None
 
         self.allowed_access = get_allowed_access_points(self.user_role, self.user_department)
 
@@ -102,7 +104,7 @@ class MainWindow(QMainWindow):
         self._init_pages()
 
     def _init_pages(self):
-        for _ in range(8):
+        for _ in range(9):
             self.stacked_widget.addWidget(QWidget())
 
         self.latest_production = get_latest_prod_id()
@@ -182,6 +184,7 @@ class MainWindow(QMainWindow):
 
         self.btn_dashboard = self.create_menu_button("  Dashboard", 'mdi.monitor-dashboard', 6)
         self.btn_cmf = self.create_menu_button("  CMF", 'fa6s.prescription-bottle', 7)
+        self.btn_feedback = self.create_menu_button("  Feedback", 'msc.feedback', 8)
 
         self.btn_logout = QPushButton("  Logout", icon=fa.icon('fa5s.sign-out-alt', color=AppStyles.RED_500))
         self.btn_logout.setStyleSheet(f"""QPushButton {{ color: {AppStyles.RED_500};}}""")
@@ -192,7 +195,8 @@ class MainWindow(QMainWindow):
         layout.addWidget(QLabel("Color Match", objectName="MenuLabel"))
         lab_button_mapping = [
             (self.btn_dashboard, "Dashboard"),
-            (self.btn_cmf, "CMF")
+            (self.btn_cmf, "CMF"),
+            (self.btn_feedback, "Feedback")
         ]
         for btn, access_name in lab_button_mapping:
             if access_name in self.allowed_access:
@@ -276,6 +280,9 @@ class MainWindow(QMainWindow):
                 new_widget = self.dashboard
             elif index == 7:  # Assuming 7 is your new index for CMF
                 self.cmf_module = CMFModule(self.mac_department, self.user_department)
+                new_widget = self.cmf_module
+            elif index == 7:  # Assuming 8 is your new index for Feedback
+                self.feedback_module = FeedbackModule(self.mac_department, self.user_department)
                 new_widget = self.cmf_module
 
             if new_widget:

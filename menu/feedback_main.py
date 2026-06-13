@@ -6,7 +6,7 @@ from sub_menu_feedback.feedback_entry import FeedbackEntry
 from sub_menu_feedback.feedback_records import FeedbackRecords
 
 
-class CMFModule(QWidget):
+class FeedbackModule(QWidget):
     def __init__(self, mac_department, user_department):
         super().__init__()
         self.mac_department = mac_department
