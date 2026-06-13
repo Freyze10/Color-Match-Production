@@ -112,14 +112,6 @@
       <option name="presentableId" value="Default" />
       <updated>1780293734655</updated>
     </task>
-    <task id="LOCAL-00038" summary="added inital fields and table for mb extruder">
-      <option name="closed" value="true" />
-      <created>1780644532554</created>
-      <option name="number" value="00038" />
-      <option name="presentableId" value="LOCAL-00038" />
-      <option name="project" value="LOCAL" />
-      <updated>1780644532554</updated>
-    </task>
     <task id="LOCAL-00039" summary="modified the mb extruder matching">
       <option name="closed" value="true" />
       <created>1780644548513</created>
@@ -504,7 +496,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781317503615</updated>
     </task>
-    <option name="localTasksCounter" value="87" />
+    <task id="LOCAL-00087" summary="fixing the layout for the rs entry">
+      <option name="closed" value="true" />
+      <created>1781318776543</created>
+      <option name="number" value="00087" />
+      <option name="presentableId" value="LOCAL-00087" />
+      <option name="project" value="LOCAL" />
+      <updated>1781318776543</updated>
+    </task>
+    <option name="localTasksCounter" value="88" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -519,7 +519,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="updated the ui to include the product code and adjusted spacing" />
     <MESSAGE value="make the table for cmf report dynamicaly change based on the checkbbox" />
     <MESSAGE value="removed the wip tooltip in the table model" />
     <MESSAGE value="added a widget in the cmf main" />
@@ -544,7 +543,8 @@
     <MESSAGE value="added a new page for rs entry" />
     <MESSAGE value="modified the pending/completed page to add a set/pc and a quantity sample given" />
     <MESSAGE value="adjusted the layouting on the pending/completed page" />
-    <option name="LAST_COMMIT_MESSAGE" value="adjusted the layouting on the pending/completed page" />
+    <MESSAGE value="fixing the layout for the rs entry" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixing the layout for the rs entry" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
