@@ -112,22 +112,6 @@
       <option name="presentableId" value="Default" />
       <updated>1780293734655</updated>
     </task>
-    <task id="LOCAL-00041" summary="added a style for formula page">
-      <option name="closed" value="true" />
-      <created>1780723990490</created>
-      <option name="number" value="00041" />
-      <option name="presentableId" value="LOCAL-00041" />
-      <option name="project" value="LOCAL" />
-      <updated>1780723990490</updated>
-    </task>
-    <task id="LOCAL-00042" summary="changed the style of the md formula page">
-      <option name="closed" value="true" />
-      <created>1780725505647</created>
-      <option name="number" value="00042" />
-      <option name="presentableId" value="LOCAL-00042" />
-      <option name="project" value="LOCAL" />
-      <updated>1780725505647</updated>
-    </task>
     <task id="LOCAL-00043" summary="adjusted the groups spacing">
       <option name="closed" value="true" />
       <created>1780726550449</created>
@@ -504,7 +488,23 @@
       <option name="project" value="LOCAL" />
       <updated>1781321090103</updated>
     </task>
-    <option name="localTasksCounter" value="90" />
+    <task id="LOCAL-00090" summary="adding feedback page">
+      <option name="closed" value="true" />
+      <created>1781322948888</created>
+      <option name="number" value="00090" />
+      <option name="presentableId" value="LOCAL-00090" />
+      <option name="project" value="LOCAL" />
+      <updated>1781322948888</updated>
+    </task>
+    <task id="LOCAL-00091" summary="created a feedback page">
+      <option name="closed" value="true" />
+      <created>1781327708494</created>
+      <option name="number" value="00091" />
+      <option name="presentableId" value="LOCAL-00091" />
+      <option name="project" value="LOCAL" />
+      <updated>1781327708494</updated>
+    </task>
+    <option name="localTasksCounter" value="92" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -519,8 +519,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="removed the wip tooltip in the table model" />
-    <MESSAGE value="added a widget in the cmf main" />
     <MESSAGE value="connected the two widget to display the pending update" />
     <MESSAGE value="updated cmf records to have a  right click option" />
     <MESSAGE value="updated the pending completed with the supposed fields to modify forr records" />
@@ -544,7 +542,9 @@
     <MESSAGE value="adjusted the layouting on the pending/completed page" />
     <MESSAGE value="fixing the layout for the rs entry" />
     <MESSAGE value="changed the name of the form created" />
-    <option name="LAST_COMMIT_MESSAGE" value="changed the name of the form created" />
+    <MESSAGE value="adding feedback page" />
+    <MESSAGE value="created a feedback page" />
+    <option name="LAST_COMMIT_MESSAGE" value="created a feedback page" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

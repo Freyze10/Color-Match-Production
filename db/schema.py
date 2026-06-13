@@ -228,7 +228,7 @@ def create_table():
             rm_feedback_no VARCHAR(50),
             status VARCHAR(50),
             comment TEXT,
-            box_name VARCHAR(100),
+            storage_details VARCHAR(100),
             cm_rs_no VARCHAR(14)
         );
     """)
