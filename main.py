@@ -281,9 +281,9 @@ class MainWindow(QMainWindow):
             elif index == 7:  # Assuming 7 is your new index for CMF
                 self.cmf_module = CMFModule(self.mac_department, self.user_department)
                 new_widget = self.cmf_module
-            elif index == 7:  # Assuming 8 is your new index for Feedback
+            elif index == 8:  # Assuming 8 is your new index for Feedback
                 self.feedback_module = FeedbackModule(self.mac_department, self.user_department)
-                new_widget = self.cmf_module
+                new_widget = self.feedback_module
 
             if new_widget:
                 # Remove the placeholder and insert the real widget
