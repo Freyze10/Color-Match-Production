@@ -33,36 +33,35 @@ class FeedbackRecords(QWidget):
         self.main_layout.setContentsMargins(20, 20, 20, 20)
         self.main_layout.setSpacing(15)
 
+        # --- Search & Refresh ---
         header_layout = QHBoxLayout()
-        title_label = QLabel("Color Matching Records")
+        title_label = QLabel("Feedback Management")
         title_label.setStyleSheet("font-size: 24px; font-weight: bold; color: #0f172a;")
         header_layout.addWidget(title_label)
         header_layout.addStretch()
 
         self.txt_search = QLineEdit()
-        self.txt_search.setPlaceholderText(" Search records...")
-        self.txt_search.setFixedWidth(350)
-        self.txt_search.setClearButtonEnabled(True)
+        self.txt_search.setPlaceholderText(" Search for a record to give feedback...")
+        self.txt_search.setFixedWidth(400)
         self.txt_search.textChanged.connect(self.apply_filters)
 
         self.btn_refresh = QPushButton(" Refresh")
         self.btn_refresh.setIcon(fa.icon('fa5s.sync-alt', color=AppStyles.TEAL_600))
         self.btn_refresh.clicked.connect(self.load_data)
+
         header_layout.addWidget(self.txt_search)
         header_layout.addWidget(self.btn_refresh)
         self.main_layout.addLayout(header_layout)
 
+        # --- Table ---
         self.table_container = QFrame(objectName="FormCard")
         table_layout = QVBoxLayout(self.table_container)
 
         self.table_view = QTableView()
         self.table_view.setAlternatingRowColors(True)
         self.table_view.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
-        self.table_view.setSortingEnabled(True)
         self.table_view.verticalHeader().setVisible(False)
         self.table_view.setFrameShape(QFrame.Shape.NoFrame)
-
-        # --- CONTEXT MENU SETUP ---
         self.table_view.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.table_view.customContextMenuRequested.connect(self.show_context_menu)
 
@@ -76,15 +75,17 @@ class FeedbackRecords(QWidget):
         table_layout.addWidget(self.table_view)
         self.main_layout.addWidget(self.table_container)
 
+        # --- Bottom Filters ---
         bottom_bar = QHBoxLayout()
-        bottom_bar.addWidget(QLabel("<b>Filter Status:</b>"))
-        self.chk_completed = QCheckBox("Completed")
+        bottom_bar.addWidget(QLabel("<b>Filter:</b>"))
+        self.chk_completed = QCheckBox("Completed");
         self.chk_pending = QCheckBox("Pending")
-        self.chk_completed.setChecked(True)
+        self.chk_completed.setChecked(True);
         self.chk_pending.setChecked(True)
         self.chk_completed.stateChanged.connect(self.apply_filters)
         self.chk_pending.stateChanged.connect(self.apply_filters)
-        bottom_bar.addWidget(self.chk_completed)
+
+        bottom_bar.addWidget(self.chk_completed);
         bottom_bar.addWidget(self.chk_pending)
 
         bottom_bar.addSpacing(20)
@@ -92,47 +93,39 @@ class FeedbackRecords(QWidget):
         bottom_bar.addWidget(self.lbl_count)
         bottom_bar.addStretch()
 
-        self.btn_export = QPushButton(" Export to Excel")
+        self.btn_export = QPushButton(" Export")
         self.btn_export.setObjectName("SecondaryButton")
         self.btn_export.setIcon(fa.icon('fa5s.file-excel', color='white'))
-        self.btn_export.setFixedWidth(160)
         bottom_bar.addWidget(self.btn_export)
-
         self.main_layout.addLayout(bottom_bar)
 
     def show_context_menu(self, pos):
         index = self.table_view.indexAt(pos)
-        if not index.isValid():
-            return
+        if not index.isValid(): return
 
-        # Get CMF No from col 0
         cmf_no = str(self.model._data[index.row()][0])
-
         menu = QMenu(self)
-        edit_cmf = menu.addAction(fa.icon('fa5s.edit', color=AppStyles.TEAL_600), "Edit CMF Form")
+        # Context-relevant text
+        edit_action = menu.addAction(fa.icon('fa5s.comment-medical', color=AppStyles.TEAL_600), "Add / Update Feedback")
 
         action = menu.exec(self.table_view.mapToGlobal(pos))
-
-        if action == edit_cmf:
+        if action == edit_action:
             self.request_edit.emit(cmf_no)
 
     def _apply_column_visibility(self):
-        show_completed = self.chk_completed.isChecked()
-        show_pending = self.chk_pending.isChecked()
+        show_comp, show_pend = self.chk_completed.isChecked(), self.chk_pending.isChecked()
         visible_cols = COLS_BOTH
-        if show_completed and not show_pending:
+        if show_comp and not show_pend:
             visible_cols = COLS_COMPLETED
-        elif show_pending and not show_completed:
+        elif show_pend and not show_comp:
             visible_cols = COLS_PENDING
 
         header = self.table_view.horizontalHeader()
         for col in range(len(ALL_HEADERS)):
-            if col in visible_cols:
-                header.showSection(col)
-            else:
-                header.hideSection(col)
+            header.showSection(col) if col in visible_cols else header.hideSection(col)
 
     def load_data(self):
+        # Simulated Data
         self.all_data = [
             ["CMF-24-001", "Masterbatch PH", "Red", "Gloss", "Cap", "10/25/24", "10/30/24", "New", "PC-001",
              "Completed", "10/31/24", "AR-001", ""],
