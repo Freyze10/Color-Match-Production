@@ -7,12 +7,12 @@ from css.styles import AppStyles
 from table_model.model import TableModel
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Updated Header List for Feedback Monitoring
+# Updated Header List (11 Columns Total)
 # ─────────────────────────────────────────────────────────────────────────────
 FEEDBACK_HEADERS = [
     "Matching No.", "Customer", "Product Code", "Color Description",
-    "Finished Product", "Date Received", "Date Required", "Due Date",
-    "Type of Colorant", "Status", "Status Details", "Package Details"
+    "Finished Product", "Date Required", "Due Date",
+    "Matching Type", "Status", "Status Details", "Package Details"
 ]
 
 
@@ -65,28 +65,33 @@ class FeedbackRecords(QWidget):
         self.table_view.verticalHeader().setVisible(False)
         self.table_view.setFrameShape(QFrame.Shape.NoFrame)
 
-        # Context Menu for actions
+        # Context Menu
         self.table_view.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.table_view.customContextMenuRequested.connect(self.show_context_menu)
 
         self.model = TableModel([], FEEDBACK_HEADERS)
         self.table_view.setModel(self.model)
 
-        # Column Sizing Logic
+        # ─── COLUMN SIZING & RESIZABILITY ───
         header = self.table_view.horizontalHeader()
-        header.setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
-        header.setSectionResizeMode(1, QHeaderView.ResizeMode.Stretch)  # Customer Stretches
+
+        # 1. Allow all columns to be manually resized by the user
+        header.setSectionResizeMode(QHeaderView.ResizeMode.Interactive)
+
+        # 2. Set initial widths to fit contents so the user has a good starting point
+        self.table_view.resizeColumnsToContents()
+
+        # 3. Ensure the Customer column (Index 1) stretches to fill remaining empty space
+        header.setSectionResizeMode(1, QHeaderView.ResizeMode.Stretch)
 
         table_layout.addWidget(self.table_view)
         self.main_layout.addWidget(self.table_container)
 
-        # --- BOTTOM SECTION: COUNT & EXPORT ---
+        # --- BOTTOM SECTION ---
         bottom_bar = QHBoxLayout()
-
         self.lbl_count = QLabel("Showing 0 records")
         self.lbl_count.setStyleSheet(f"color: {AppStyles.SLATE_500};")
         bottom_bar.addWidget(self.lbl_count)
-
         bottom_bar.addStretch()
 
         self.btn_export = QPushButton(" Export to Excel")
@@ -103,33 +108,28 @@ class FeedbackRecords(QWidget):
         cmf_no = str(self.model._data[index.row()][0])
         menu = QMenu(self)
         edit_action = menu.addAction(fa.icon('fa5s.comment-medical', color=AppStyles.TEAL_600),
-                                     "Update Feedback/Storage")
+                                     "Update Feedback")
 
         action = menu.exec(self.table_view.mapToGlobal(pos))
         if action == edit_action:
             self.request_edit.emit(cmf_no)
 
     def load_data(self):
-        """
-        Fetch data from DB.
-        The list items must match the 12 columns in FEEDBACK_HEADERS.
-        """
-        # [Matching No, Customer, P-Code, Desc, Product, RecDate, ReqDate, DueDate, Colorant, Status, Details, Package]
+        """Fetch data from DB matching the 11 columns in FEEDBACK_HEADERS."""
+        # Row format: [Matching No, Customer, P-Code, Desc, Product, ReqDate, DueDate, MatchType, Status, Details, Package]
         self.all_data = [
-            ["CMF-24-001", "Masterbatch PH", "PC-RED-01", "Gloss Red", "Cap", "10/20/24", "10/25/24", "10/25/24", "MB",
-             "Passed", "Passed QC testing", "Box 104"],
-            ["CMF-24-002", "Generic Co.", "PC-BLU-99", "Matte Blue", "Tray", "11/01/24", "11/05/24", "11/06/24", "DC",
+            ["CMF-24-001", "Masterbatch PH", "PC-RED-01", "Gloss Red", "Cap", "10/25/24", "10/25/24", "New", "Passed",
+             "Passed QC testing", "Box 104"],
+            ["CMF-24-002", "Generic Co.", "PC-BLU-99", "Matte Blue", "Tray", "11/05/24", "11/06/24", "Re-Match",
              "Pending", "Waiting for final check", "Bin A-2"],
-            ["CMF-24-003", "Example Corp", "PC-BLK-05", "Jet Black", "Case", "10/20/24", "10/22/24", "10/22/24", "MB",
-             "Failed", "Color too dark", "Shelf 4"],
+            ["CMF-24-003", "Example Corp", "PC-BLK-05", "Jet Black", "Case", "10/22/24", "10/22/24", "New", "Failed",
+             "Color too dark", "Shelf 4"],
         ]
         self.model.set_data(self.all_data)
         self.apply_filters()
 
     def apply_filters(self):
-        """Simple keyword filter across all visible feedback columns."""
         search_kw = self.txt_search.text().lower().strip()
-
         if not search_kw:
             filtered_list = self.all_data[:]
         else:
@@ -141,5 +141,4 @@ class FeedbackRecords(QWidget):
         self.model.beginResetModel()
         self.model._data = filtered_list
         self.model.endResetModel()
-
         self.lbl_count.setText(f"Showing {len(filtered_list)} records")

@@ -117,14 +117,6 @@
       <option name="presentableId" value="Default" />
       <updated>1780293734655</updated>
     </task>
-    <task id="LOCAL-00050" summary="removed the minimun height foir the header">
-      <option name="closed" value="true" />
-      <created>1780729372796</created>
-      <option name="number" value="00050" />
-      <option name="presentableId" value="LOCAL-00050" />
-      <option name="project" value="LOCAL" />
-      <updated>1780729372796</updated>
-    </task>
     <task id="LOCAL-00051" summary="removed the minimun height foir the header">
       <option name="closed" value="true" />
       <created>1780734517890</created>
@@ -509,7 +501,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781338440383</updated>
     </task>
-    <option name="localTasksCounter" value="99" />
+    <task id="LOCAL-00099" summary="updated the feedback records">
+      <option name="closed" value="true" />
+      <created>1781596504842</created>
+      <option name="number" value="00099" />
+      <option name="presentableId" value="LOCAL-00099" />
+      <option name="project" value="LOCAL" />
+      <updated>1781596504842</updated>
+    </task>
+    <option name="localTasksCounter" value="100" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -524,7 +524,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="updated the cmf form to already have a date received by lab field immediately" />
     <MESSAGE value="updated the uwi for more better" />
     <MESSAGE value="updated the database schema to add the feedback" />
     <MESSAGE value="updated the passing of the mac address access" />
@@ -549,7 +548,8 @@
     <MESSAGE value="fix the displaying of the contents" />
     <MESSAGE value="adjusted the displaying of the feedback module and the records" />
     <MESSAGE value="fix the selection of the navigation menu baar" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix the selection of the navigation menu baar" />
+    <MESSAGE value="updated the feedback records" />
+    <option name="LAST_COMMIT_MESSAGE" value="updated the feedback records" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
