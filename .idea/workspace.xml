@@ -117,14 +117,6 @@
       <option name="presentableId" value="Default" />
       <updated>1780293734655</updated>
     </task>
-    <task id="LOCAL-00054" summary="seperate the delegate file to reuse the other formula table">
-      <option name="closed" value="true" />
-      <created>1780898818179</created>
-      <option name="number" value="00054" />
-      <option name="presentableId" value="LOCAL-00054" />
-      <option name="project" value="LOCAL" />
-      <updated>1780898818179</updated>
-    </task>
     <task id="LOCAL-00055" summary="updated the dc formula to use the delegate to limit  the errors on entry in the table">
       <option name="closed" value="true" />
       <created>1780899331133</created>
@@ -509,7 +501,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781661055693</updated>
     </task>
-    <option name="localTasksCounter" value="103" />
+    <task id="LOCAL-00103" summary="changed the layout and  remove the unecessary bold">
+      <option name="closed" value="true" />
+      <created>1781661146149</created>
+      <option name="number" value="00103" />
+      <option name="presentableId" value="LOCAL-00103" />
+      <option name="project" value="LOCAL" />
+      <updated>1781661146149</updated>
+    </task>
+    <option name="localTasksCounter" value="104" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -524,7 +524,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="update database schema" />
     <MESSAGE value="updated the column name in the tbl user" />
     <MESSAGE value="updated the smart date edit class to accept multiple dates" />
     <MESSAGE value="modified the smart date edit to display the calendar if the user wants it" />
@@ -549,7 +548,8 @@
     <MESSAGE value="modified the columns and the action menu" />
     <MESSAGE value="updated the feedback entry" />
     <MESSAGE value="changed the fields to add only the one for the feedback" />
-    <option name="LAST_COMMIT_MESSAGE" value="changed the fields to add only the one for the feedback" />
+    <MESSAGE value="changed the layout and  remove the unecessary bold" />
+    <option name="LAST_COMMIT_MESSAGE" value="changed the layout and  remove the unecessary bold" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

@@ -154,22 +154,13 @@ class FeedbackEntry(QWidget):
         button_layout = QHBoxLayout()
         button_layout.setContentsMargins(0, 10, 0, 10)
 
-        self.btn_upload = QPushButton(" Upload", objectName="PrimaryButton")
-        self.btn_upload.setIcon(fa.icon('mdi6.text-box-remove', color='white'))
-        self.btn_print = QPushButton(" Print", objectName="SecondaryButton")
-        self.btn_print.setIcon(fa.icon('fa5s.print', color='white'))
-        self.btn_new = QPushButton(" New", objectName="InfoButton")
-        self.btn_new.setIcon(fa.icon('fa5s.file', color='white'))
         self.btn_save = QPushButton(" Save Update", objectName="SuccessButton")
         self.btn_save.setIcon(fa.icon('fa5s.save', color='white'))
 
-        for btn in [self.btn_upload, self.btn_print, self.btn_new, self.btn_save]:
+        for btn in [self.btn_save]:
             btn.setFixedSize(140, 45)
 
-        button_layout.addWidget(self.btn_upload);
         button_layout.addStretch()
-        button_layout.addWidget(self.btn_print);
-        button_layout.addWidget(self.btn_new);
         button_layout.addWidget(self.btn_save)
         self.main_layout.addLayout(button_layout)
 
