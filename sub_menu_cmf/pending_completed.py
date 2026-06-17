@@ -120,7 +120,7 @@ class PendingCompleted(QWidget):
         right_col.addRow("Pending Reason:", self.txt_reason)
         right_col.addRow("Product Code:", self.txt_prod_code)
         right_col.addRow("Code Description:", self.txt_prod_code_desc)
-        right_col.addRow("Set-Pc / Qty:", sample_row)
+        right_col.addRow("Set-Pc:", sample_row)
         right_col.addRow("Date Submitted:", self.date_submitted_right)
         right_col.addRow("Lot No.:", self.txt_lot_no)
         right_col.addRow("AR No.:", self.txt_ar_no)
