@@ -117,14 +117,6 @@
       <option name="presentableId" value="Default" />
       <updated>1780293734655</updated>
     </task>
-    <task id="LOCAL-00053" summary="added a material delegate for drop down on the material codes">
-      <option name="closed" value="true" />
-      <created>1780898656428</created>
-      <option name="number" value="00053" />
-      <option name="presentableId" value="LOCAL-00053" />
-      <option name="project" value="LOCAL" />
-      <updated>1780898656428</updated>
-    </task>
     <task id="LOCAL-00054" summary="seperate the delegate file to reuse the other formula table">
       <option name="closed" value="true" />
       <created>1780898818179</created>
@@ -509,7 +501,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781660694979</updated>
     </task>
-    <option name="localTasksCounter" value="102" />
+    <task id="LOCAL-00102" summary="changed the fields to add only the one for the feedback">
+      <option name="closed" value="true" />
+      <created>1781661055693</created>
+      <option name="number" value="00102" />
+      <option name="presentableId" value="LOCAL-00102" />
+      <option name="project" value="LOCAL" />
+      <updated>1781661055693</updated>
+    </task>
+    <option name="localTasksCounter" value="103" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -524,7 +524,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="updated the passing of the mac address access" />
     <MESSAGE value="update database schema" />
     <MESSAGE value="updated the column name in the tbl user" />
     <MESSAGE value="updated the smart date edit class to accept multiple dates" />
@@ -549,7 +548,8 @@
     <MESSAGE value="updated the feedback records" />
     <MESSAGE value="modified the columns and the action menu" />
     <MESSAGE value="updated the feedback entry" />
-    <option name="LAST_COMMIT_MESSAGE" value="updated the feedback entry" />
+    <MESSAGE value="changed the fields to add only the one for the feedback" />
+    <option name="LAST_COMMIT_MESSAGE" value="changed the fields to add only the one for the feedback" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

@@ -40,10 +40,10 @@ class FeedbackEntry(QWidget):
         form_card = QFrame(objectName="FormCard")
         grid_layout = QHBoxLayout(form_card)
         grid_layout.setContentsMargins(20, 20, 20, 20)
-        grid_layout.setSpacing(40)  # Matched column spacing
+        grid_layout.setSpacing(40)
 
         # ==========================================
-        # LEFT COLUMN: CMF Details & Timelines
+        # LEFT COLUMN: CMF Details + FEEDBACK
         # ==========================================
         left_col = QFormLayout()
         left_col.setVerticalSpacing(15)
@@ -58,7 +58,7 @@ class FeedbackEntry(QWidget):
         self.txt_date_required = QLineEdit();
         self.txt_date_required.setPlaceholderText("MM/DD/YYYY")
         date_row_1.addWidget(self.date_created, 1)
-        date_row_1.addWidget(QLabel("<b>Required:</b>"), 0)
+        date_row_1.addWidget(QLabel("Required:"), 0)
         date_row_1.addWidget(self.txt_date_required, 1)
 
         # Date Row 2: Received & Due
@@ -66,7 +66,7 @@ class FeedbackEntry(QWidget):
         self.date_received = SmartDateEdit(allow_multiple=True)
         self.date_due = SmartDateEdit()
         date_row_2.addWidget(self.date_received, 1)
-        date_row_2.addWidget(QLabel("<b>Due Date:</b>"), 0)
+        date_row_2.addWidget(QLabel("Due Date:"), 0)
         date_row_2.addWidget(self.date_due, 1)
 
         self.txt_finished_prod = QLineEdit()
@@ -74,6 +74,15 @@ class FeedbackEntry(QWidget):
         self.txt_match_type = QLineEdit()
         self.txt_salesperson = QLineEdit()
 
+        # --- FEEDBACK FIELDS (Moved to Left) ---
+        self.cmb_feedback_status = QComboBox()
+        self.cmb_feedback_status.addItems(["Pending", "Passed", "Failed"])
+        self.txt_feedback_comments = QLineEdit()
+        self.txt_feedback_comments.setPlaceholderText("Enter feedback observations...")
+        self.txt_storage_details = QLineEdit()
+        self.txt_storage_details.setPlaceholderText("Box #, Plastic Bin location...")
+
+        # Add to left layout
         left_col.addRow("Matching No:", self.txt_cm_no)
         left_col.addRow("Customer:", self.txt_customer)
         left_col.addRow("Date Created:", date_row_1)
@@ -83,22 +92,25 @@ class FeedbackEntry(QWidget):
         left_col.addRow("Matching Type:", self.txt_match_type)
         left_col.addRow("Sales Person:", self.txt_salesperson)
 
+        # Feedback Separator and Fields
+        left_col.addRow(QLabel("<br><b>FEEDBACK & MONITORING</b>"))
+        left_col.addRow("Feedback Status:", self.cmb_feedback_status)
+        left_col.addRow("Comments:", self.txt_feedback_comments)
+        left_col.addRow("Storage Details:", self.txt_storage_details)
+
         # ==========================================
-        # RIGHT COLUMN: Results, Status & Feedback
+        # RIGHT COLUMN: Results & Submission
         # ==========================================
         right_col = QFormLayout()
         right_col.setVerticalSpacing(15)
 
-        # Status Tracking
         self.cmb_current_status = QComboBox()
         self.cmb_current_status.addItems(["Pending", "Completed"])
         self.txt_reason = QLineEdit()
-
-        # Product Result
         self.txt_prod_code = QLineEdit()
         self.txt_prod_code_desc = QLineEdit()
 
-        # Sample Details (Combined Row)
+        # Sample Row: Set/Pc & Qty
         sample_row = QHBoxLayout()
         self.txt_set_pc = QLineEdit();
         self.txt_set_pc.setPlaceholderText("Qty")
@@ -109,40 +121,23 @@ class FeedbackEntry(QWidget):
         qty_val.setNotation(QDoubleValidator.Notation.StandardNotation)
         self.txt_qty_given.setValidator(qty_val)
         sample_row.addWidget(self.txt_set_pc, 1);
-        sample_row.addWidget(QLabel("<b>KG:</b>"), 0);
+        sample_row.addWidget(QLabel("KG:"), 0);
         sample_row.addWidget(self.txt_qty_given, 1)
 
-        # Logistics
         self.date_submitted = SmartDateEdit()
         self.txt_lot_no = QLineEdit()
         self.txt_ar_no = QLineEdit()
         self.date_ar = SmartDateEdit()
 
-        # ─── NEW FEEDBACK FIELDS (QLineEdit as requested) ───
-        self.cmb_feedback_status = QComboBox()
-        self.cmb_feedback_status.addItems(["Pending", "Passed", "Failed"])
-
-        self.txt_feedback_comments = QLineEdit()
-        self.txt_feedback_comments.setPlaceholderText("Enter feedback observations...")
-
-        self.txt_storage_details = QLineEdit()
-        self.txt_storage_details.setPlaceholderText("Box #, Plastic Bin, Shelf location...")
-
         right_col.addRow("Current Status:", self.cmb_current_status)
         right_col.addRow("Pending Reason:", self.txt_reason)
         right_col.addRow("Product Code:", self.txt_prod_code)
         right_col.addRow("Code Description:", self.txt_prod_code_desc)
-        right_col.addRow("Set-Pc / Qty:", sample_row)
+        right_col.addRow("Set-Pc:", sample_row)
         right_col.addRow("Date Submitted:", self.date_submitted)
-        right_col.addRow("Lot / AR No.:", self.txt_lot_no)  # Grouped to save space
+        right_col.addRow("Lot No.:", self.txt_lot_no)
         right_col.addRow("AR Number:", self.txt_ar_no)
         right_col.addRow("AR Date:", self.date_ar)
-
-        # Feedback Section
-        right_col.addRow(QLabel("<br><b>FEEDBACK & MONITORING</b>"))
-        right_col.addRow("Feedback Status:", self.cmb_feedback_status)
-        right_col.addRow("Comments:", self.txt_feedback_comments)
-        right_col.addRow("Storage Details:", self.txt_storage_details)
 
         # Assemble Grid
         grid_layout.addLayout(left_col, 1)
@@ -171,13 +166,12 @@ class FeedbackEntry(QWidget):
         for btn in [self.btn_upload, self.btn_print, self.btn_new, self.btn_save]:
             btn.setFixedSize(140, 45)
 
-        button_layout.addWidget(self.btn_upload)
+        button_layout.addWidget(self.btn_upload);
         button_layout.addStretch()
-        button_layout.addWidget(self.btn_print)
-        button_layout.addWidget(self.btn_new)
+        button_layout.addWidget(self.btn_print);
+        button_layout.addWidget(self.btn_new);
         button_layout.addWidget(self.btn_save)
         self.main_layout.addLayout(button_layout)
 
     def load_cmf_data(self, cmf_no):
-        """Method to trigger database fetch and fill the form"""
         self.txt_cm_no.setText(cmf_no)
