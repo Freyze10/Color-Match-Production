@@ -117,14 +117,6 @@
       <option name="presentableId" value="Default" />
       <updated>1780293734655</updated>
     </task>
-    <task id="LOCAL-00055" summary="updated the dc formula to use the delegate to limit  the errors on entry in the table">
-      <option name="closed" value="true" />
-      <created>1780899331133</created>
-      <option name="number" value="00055" />
-      <option name="presentableId" value="LOCAL-00055" />
-      <option name="project" value="LOCAL" />
-      <updated>1780899331133</updated>
-    </task>
     <task id="LOCAL-00056" summary="updated the numeric delegate to accept 7 decimal">
       <option name="closed" value="true" />
       <created>1780901511520</created>
@@ -509,7 +501,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781661146149</updated>
     </task>
-    <option name="localTasksCounter" value="104" />
+    <task id="LOCAL-00104" summary="updated the schema for the legacy syncing databas3">
+      <option name="closed" value="true" />
+      <created>1781663273681</created>
+      <option name="number" value="00104" />
+      <option name="presentableId" value="LOCAL-00104" />
+      <option name="project" value="LOCAL" />
+      <updated>1781663273681</updated>
+    </task>
+    <option name="localTasksCounter" value="105" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -524,7 +524,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="updated the column name in the tbl user" />
     <MESSAGE value="updated the smart date edit class to accept multiple dates" />
     <MESSAGE value="modified the smart date edit to display the calendar if the user wants it" />
     <MESSAGE value="updated the positioning of the process coises" />
@@ -549,7 +548,8 @@
     <MESSAGE value="updated the feedback entry" />
     <MESSAGE value="changed the fields to add only the one for the feedback" />
     <MESSAGE value="changed the layout and  remove the unecessary bold" />
-    <option name="LAST_COMMIT_MESSAGE" value="changed the layout and  remove the unecessary bold" />
+    <MESSAGE value="updated the schema for the legacy syncing databas3" />
+    <option name="LAST_COMMIT_MESSAGE" value="updated the schema for the legacy syncing databas3" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

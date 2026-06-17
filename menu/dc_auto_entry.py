@@ -777,6 +777,11 @@ class DCAutoEntry(QWidget):
     def new_production(self):
         """Initialize a new production entry."""
         self.current_production_id = None
+
+        allowed = {"Production", "Information Technology"}
+        if self.mac_department in allowed and self.user_department in allowed:
+            self.remove_viewer_restrictions()
+
         try:
             latest_prod = get_latest_prod_id()
             self.production_id_input.setText(str(latest_prod + 1))
@@ -1100,6 +1105,36 @@ class DCAutoEntry(QWidget):
         # 4. Special case: Disable Table interactions
         self.materials_table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
         self.materials_table.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
+
+    def remove_viewer_restrictions(self):
+        """Re-enables all input fields and action buttons (reverses apply_viewer_restrictions)."""
+
+        # 1. Handle LineEdits and TextEdits
+        for widget in self.findChildren(QLineEdit):
+            widget.setReadOnly(False)
+            widget.setStyleSheet("")
+
+        for widget in self.findChildren(QTextEdit):
+            widget.setReadOnly(False)
+            widget.setStyleSheet("")
+
+        # 2. Handle Selection Widgets
+        for widget in self.findChildren(QComboBox):
+            widget.setEnabled(True)
+
+        for widget in self.findChildren(SmartDateEdit):
+            widget.setEnabled(True)
+
+        # 3. Handle Buttons
+        for btn in self.findChildren(QPushButton):
+            btn.setEnabled(True)
+            btn.setObjectName("")
+            btn.style().unpolish(btn)
+            btn.style().polish(btn)
+
+        # 4. Restore Table interactions
+        self.materials_table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.materials_table.setContextMenuPolicy(Qt.ContextMenuPolicy.DefaultContextMenu)
 
     def sync_rm(self):
         thread = QThread()

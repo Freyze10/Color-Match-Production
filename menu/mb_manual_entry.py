@@ -833,6 +833,11 @@ class MBManualEntry(QWidget):
     def new_production(self):
         """Initialize a new production entry."""
         self.current_production_id = None
+
+        allowed = {"Production", "Information Technology"}
+        if self.mac_department in allowed and self.user_department in allowed:
+            self.remove_viewer_restrictions()
+
         try:
             latest_prod = get_latest_prod_id()
             self.production_id_input.setText(str(latest_prod + 1))
@@ -868,6 +873,7 @@ class MBManualEntry(QWidget):
 
         self.save_btn.setText("Save")
         self.save_btn.setObjectName("InfoButton")
+        self.save_btn.setEnabled(True)
         self.save_btn.style().unpolish(self.save_btn)
         self.save_btn.style().polish(self.save_btn)
 
@@ -1065,6 +1071,48 @@ class MBManualEntry(QWidget):
         # 4. Special case: Disable Table interactions
         self.materials_table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
         self.materials_table.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
+
+    def remove_viewer_restrictions(self):
+        """Re-enables all input fields and action buttons (reverses apply_viewer_restrictions)."""
+
+        for widget in self.findChildren(QLineEdit):
+            widget.setReadOnly(False)
+            widget.setStyleSheet("")
+
+        for widget in self.findChildren(QTextEdit):
+            widget.setReadOnly(False)
+            widget.setStyleSheet("")
+
+        for widget in self.findChildren(QComboBox):
+            widget.setEnabled(True)
+
+        for widget in self.findChildren(QCheckBox):
+            widget.setEnabled(True)
+
+        for widget in self.findChildren(SmartDateEdit):
+            widget.setEnabled(True)
+
+        for btn in self.findChildren(QPushButton):
+            btn.setEnabled(True)
+
+        self.materials_table.setContextMenuPolicy(Qt.ContextMenuPolicy.DefaultContextMenu)
+
+        # Re-apply the hardcoded field colors that the blanket stylesheet reset above wiped out
+        self.form_type_combo.setStyleSheet("background-color: #FDECCE;")
+        self.production_date_input.setStyleSheet("background-color: #FDECCE;")
+        self.material_code_combo.setStyleSheet("background-color: #FDECCE;")
+        self.material_code_lineedit.setStyleSheet("background-color: #FDECCE;")
+        self.large_scale_input.setStyleSheet("background-color: #fff9c4;")
+        self.small_scale_input.setStyleSheet("background-color: #fff9c4;")
+        self.total_weight_input.setStyleSheet("background-color: #fff9c4;")
+        self.production_confirmation_display.setStyleSheet("background-color: #fff9c4;")
+        self.encoded_by_display.setStyleSheet("background-color: #e9ecef;")
+        self.production_encoded_display.setStyleSheet("background-color: #e9ecef;")
+
+        # These three stay read-only regardless of permission level
+        self.encoded_by_display.setReadOnly(True)
+        self.production_encoded_display.setReadOnly(True)
+        self.production_confirmation_display.setReadOnly(True)
 
     def eventFilter(self, watched, event):
         # Check if the event is a key press and specifically the Tab key
