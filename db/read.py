@@ -319,12 +319,12 @@ def get_user_info_by_mac(mac):
     return record  # Returns (hostname, ip_address)
 
 
-def get_audit_trail_report(start_date=None, end_date=None):
+def get_audit_trail_report(start_date=None, end_date=None, mac_department=None):
     try:
         conn = get_connection()
         cursor = conn.cursor()
 
-        # 1. Base Query - Added u.username to the selection
+        # 1. Base Query joining User and Role
         query = """
             SELECT 
                 a.timestamp, 
@@ -332,20 +332,28 @@ def get_audit_trail_report(start_date=None, end_date=None):
                 u.username, 
                 a.action_type, 
                 a.details, 
-                u.ip_address, 
-                u.mac_address
+                u.ipaddress, 
+                u.mac,
+                r.department
             FROM tbl_audit_trail a
             INNER JOIN tbl_user u ON a.user_id = u.user_id
+            INNER JOIN tbl_role r ON u.role_id = r.role_id
+            WHERE 1=1
         """
-
         params = []
 
-        # 2. Add Date Filtering
+        # 2. Add Department Filtering Logic
+        # If IT, show all. Otherwise, filter by specific department.
+        if mac_department and mac_department != 'Information Technology':
+            query += " AND r.department = %s"
+            params.append(mac_department)
+
+        # 3. Add Date Filtering
         if start_date and end_date:
-            query += " WHERE a.timestamp::date BETWEEN %s AND %s"
+            query += " AND a.timestamp::date BETWEEN %s AND %s"
             params.extend([start_date, end_date])
 
-        # 3. Add Ordering
+        # 4. Add Ordering
         query += " ORDER BY a.timestamp DESC"
 
         cursor.execute(query, params)
@@ -354,16 +362,16 @@ def get_audit_trail_report(start_date=None, end_date=None):
         formatted_rows = []
         for row in rows:
             ts = row[0].strftime("%Y-%m-%d %I:%M %p") if row[0] else ""
-
             user_display = f"{row[1]}\\{row[2]}"
 
             formatted_rows.append([
-                ts,  # Index 0: Timestamp
-                user_display,  # Index 1: Hostname\Username
-                row[3],  # Index 2: Action Type
-                row[4],  # Index 3: Details
-                row[5],  # Index 4: IP Address
-                row[6]  # Index 5: MAC Address
+                ts,             # 0: Timestamp
+                user_display,   # 1: Hostname\Username
+                row[3],         # 2: Action Type
+                row[4],         # 3: Details
+                row[5],         # 4: IP Address
+                row[6],         # 5: MAC Address
+                row[7]          # 6: Department
             ])
 
         cursor.close()
@@ -373,8 +381,6 @@ def get_audit_trail_report(start_date=None, end_date=None):
     except Exception as e:
         print(f"Database Error: {e}")
         return []
-
-
 def get_audit_date_bounds():
     """Returns (min_date, max_date) as Python date objects."""
     try:
