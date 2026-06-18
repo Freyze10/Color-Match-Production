@@ -117,14 +117,6 @@
       <option name="presentableId" value="Default" />
       <updated>1780293734655</updated>
     </task>
-    <task id="LOCAL-00058" summary="updated the dc formula to match the validation of the mb formula">
-      <option name="closed" value="true" />
-      <created>1780904865768</created>
-      <option name="number" value="00058" />
-      <option name="presentableId" value="LOCAL-00058" />
-      <option name="project" value="LOCAL" />
-      <updated>1780904865768</updated>
-    </task>
     <task id="LOCAL-00059" summary="modified css to fit more button for navigation">
       <option name="closed" value="true" />
       <created>1780905366220</created>
@@ -509,7 +501,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781746602583</updated>
     </task>
-    <option name="localTasksCounter" value="107" />
+    <task id="LOCAL-00107" summary="updated the database call for the audit trail to filter it based on the department">
+      <option name="closed" value="true" />
+      <created>1781748596729</created>
+      <option name="number" value="00107" />
+      <option name="presentableId" value="LOCAL-00107" />
+      <option name="project" value="LOCAL" />
+      <updated>1781748596729</updated>
+    </task>
+    <option name="localTasksCounter" value="108" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -524,7 +524,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="updated the positioning of the process coises" />
     <MESSAGE value="updated the position for the color requirements too" />
     <MESSAGE value="updated the tab pages to contain also the smartdate edt" />
     <MESSAGE value="added a new page for rs entry" />
@@ -549,6 +548,7 @@
     <MESSAGE value="updated the schema for the legacy syncing databas3" />
     <MESSAGE value="updated the user access in the production form afterr viewing record" />
     <MESSAGE value="passed the mac_department to the audit trail" />
-    <option name="LAST_COMMIT_MESSAGE" value="passed the mac_department to the audit trail" />
+    <MESSAGE value="updated the database call for the audit trail to filter it based on the department" />
+    <option name="LAST_COMMIT_MESSAGE" value="updated the database call for the audit trail to filter it based on the department" />
   </component>
 </project>

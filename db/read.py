@@ -332,8 +332,8 @@ def get_audit_trail_report(start_date=None, end_date=None, mac_department=None):
                 u.username, 
                 a.action_type, 
                 a.details, 
-                u.ipaddress, 
-                u.mac,
+                u.ip_address, 
+                u.mac_address,
                 r.department
             FROM tbl_audit_trail a
             INNER JOIN tbl_user u ON a.user_id = u.user_id
