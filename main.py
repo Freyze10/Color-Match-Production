@@ -270,7 +270,7 @@ class MainWindow(QMainWindow):
                 self.dc_auto_entry = DCAutoEntry(self.mac_department, self.user_department)
                 new_widget = self.dc_auto_entry
             elif index == 4:
-                self.audit_trail = AuditTrail(self.user_department)
+                self.audit_trail = AuditTrail(self.mac_department, self.user_department)
                 new_widget = self.audit_trail
             elif index == 5:
                 self.user_management = PermissionsManager()

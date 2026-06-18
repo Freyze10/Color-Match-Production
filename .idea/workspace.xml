@@ -117,14 +117,6 @@
       <option name="presentableId" value="Default" />
       <updated>1780293734655</updated>
     </task>
-    <task id="LOCAL-00056" summary="updated the numeric delegate to accept 7 decimal">
-      <option name="closed" value="true" />
-      <created>1780901511520</created>
-      <option name="number" value="00056" />
-      <option name="presentableId" value="LOCAL-00056" />
-      <option name="project" value="LOCAL" />
-      <updated>1780901511520</updated>
-    </task>
     <task id="LOCAL-00057" summary="added validation in the total weight field for the mb">
       <option name="closed" value="true" />
       <created>1780903491694</created>
@@ -509,7 +501,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781663273681</updated>
     </task>
-    <option name="localTasksCounter" value="105" />
+    <task id="LOCAL-00105" summary="updated the user access in the production form afterr viewing record">
+      <option name="closed" value="true" />
+      <created>1781666361692</created>
+      <option name="number" value="00105" />
+      <option name="presentableId" value="LOCAL-00105" />
+      <option name="project" value="LOCAL" />
+      <updated>1781666361692</updated>
+    </task>
+    <option name="localTasksCounter" value="106" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -524,7 +524,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="updated the smart date edit class to accept multiple dates" />
     <MESSAGE value="modified the smart date edit to display the calendar if the user wants it" />
     <MESSAGE value="updated the positioning of the process coises" />
     <MESSAGE value="updated the position for the color requirements too" />
@@ -549,7 +548,8 @@
     <MESSAGE value="changed the fields to add only the one for the feedback" />
     <MESSAGE value="changed the layout and  remove the unecessary bold" />
     <MESSAGE value="updated the schema for the legacy syncing databas3" />
-    <option name="LAST_COMMIT_MESSAGE" value="updated the schema for the legacy syncing databas3" />
+    <MESSAGE value="updated the user access in the production form afterr viewing record" />
+    <option name="LAST_COMMIT_MESSAGE" value="updated the user access in the production form afterr viewing record" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
