@@ -84,6 +84,14 @@ class AuditTrail(QWidget):
 
         fields_layout = QHBoxLayout()
 
+        # --- Department Filter Dropdown (Visible only to IT) ---
+        self.dept_filter_combo = QComboBox()
+        self.dept_filter_combo.setFixedWidth(150)
+        self.dept_filter_combo.addItems(["All Department", "Production", "Laboratory"])
+        self.dept_filter_combo.currentTextChanged.connect(self.fetch_data)
+        # Only show this if the PC department is IT
+        self.dept_filter_combo.setVisible(self.mac_department == "Information Technology")
+
         self.audit_column_combo = QComboBox()
         self.audit_column_combo.setFixedWidth(170)
         self.audit_column_combo.addItems([
@@ -107,6 +115,7 @@ class AuditTrail(QWidget):
         self.reset_btn.clicked.connect(self.refresh_records)
 
         fields_layout.addWidget(search_label)
+        fields_layout.addWidget(self.dept_filter_combo) # Added Dept Dropdown
         fields_layout.addWidget(self.audit_column_combo)
         fields_layout.addWidget(self.search_filter)
         fields_layout.addWidget(self.reset_btn)
@@ -124,6 +133,7 @@ class AuditTrail(QWidget):
         results_header = QHBoxLayout()
         results_title = QLabel("Audit Records", objectName="table_label")
         results_title.setFont(QFont("Segoe UI", 11, QFont.Weight.Bold))
+        results_title.setStyleSheet("color: #111827;")
         results_header.addWidget(results_title)
 
         self.record_count_label = QLabel("0 records", objectName="light_label")
@@ -141,18 +151,17 @@ class AuditTrail(QWidget):
         header = self.table_audit_records.horizontalHeader()
         header.setSectionResizeMode(QHeaderView.ResizeMode.Interactive)
 
-        # Configure specific column behaviors
-        header.setSectionResizeMode(1, QHeaderView.ResizeMode.ResizeToContents)  # Hostname
-        header.setSectionResizeMode(3, QHeaderView.ResizeMode.Stretch)  # Details
-        header.setSectionResizeMode(6, QHeaderView.ResizeMode.ResizeToContents)  # Department
+        header.setSectionResizeMode(1, QHeaderView.ResizeMode.ResizeToContents)
+        header.setSectionResizeMode(3, QHeaderView.ResizeMode.Stretch)
+        header.setSectionResizeMode(6, QHeaderView.ResizeMode.ResizeToContents)
 
-        self.table_audit_records.setColumnWidth(0, 140)  # Timestamp
-        self.table_audit_records.setColumnWidth(5, 140)  # MAC Address
+        self.table_audit_records.setColumnWidth(0, 140)
+        self.table_audit_records.setColumnWidth(5, 140)
 
         self.table_audit_records.verticalHeader().setVisible(False)
         self.table_audit_records.setShowGrid(True)
-        self.table_audit_records.setSelectionBehavior(QTableView.SelectionBehavior.SelectRows)
-        self.table_audit_records.setSelectionMode(QTableView.SelectionMode.SingleSelection)
+        self.table_audit_records.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
+        self.table_audit_records.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
         self.table_audit_records.setSortingEnabled(True)
         self.table_audit_records.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.table_audit_records.sortByColumn(0, Qt.SortOrder.DescendingOrder)
@@ -165,7 +174,6 @@ class AuditTrail(QWidget):
         try:
             min_pydate, max_pydate = get_audit_date_bounds()
 
-            # Set the date widgets
             self.date_start.blockSignals(True)
             self.date_end.blockSignals(True)
             self.date_start.setDate(QDate(min_pydate.year, min_pydate.month, min_pydate.day))
@@ -173,14 +181,13 @@ class AuditTrail(QWidget):
             self.date_start.blockSignals(False)
             self.date_end.blockSignals(False)
 
-            # Fetch data with department filter
-            self.rows = get_audit_trail_report(min_pydate, max_pydate, self.mac_department)
-            self.table_model.set_data(self.rows)
+            # Reset Dept Filter if visible
+            if self.mac_department == "Information Technology":
+                self.dept_filter_combo.blockSignals(True)
+                self.dept_filter_combo.setCurrentIndex(0)
+                self.dept_filter_combo.blockSignals(False)
 
-            self.record_count_label.setText(f"{len(self.rows)} records")
-            self.table_audit_records.clearSelection()
-            self.table_audit_records.sortByColumn(0, Qt.SortOrder.DescendingOrder)
-            self.search_filter.clear()
+            self.fetch_data()
 
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Failed to refresh data: {e}")
@@ -202,12 +209,20 @@ class AuditTrail(QWidget):
         self.record_count_label.setText(f"{self.table_model.rowCount()} records")
 
     def fetch_data(self):
-        """Triggered when date widgets change."""
+        """Triggered when date widgets or department dropdown change."""
         try:
             start_date = self.date_start.date().toPyDate()
             end_date = self.date_end.date().toPyDate()
 
-            self.rows = get_audit_trail_report(start_date, end_date, self.mac_department)
+            # Determine which department to send to the SQL query
+            if self.mac_department == "Information Technology":
+                selection = self.dept_filter_combo.currentText()
+                # If "All Department", we send "Information Technology" to trigger the 'show all' SQL logic
+                dept_to_query = "Information Technology" if selection == "All Department" else selection
+            else:
+                dept_to_query = self.mac_department
+
+            self.rows = get_audit_trail_report(start_date, end_date, dept_to_query)
             self.table_model.set_data(self.rows)
             self.record_count_label.setText(f"{len(self.rows)} records")
 
